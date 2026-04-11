@@ -1,0 +1,3 @@
+{
+  "extends": "@adinko/config/tsconfig.base.json"
+}

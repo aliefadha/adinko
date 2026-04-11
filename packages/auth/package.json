@@ -1,0 +1,24 @@
+{
+  "name": "@adinko/auth",
+  "type": "module",
+  "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    },
+    "./*": {
+      "default": "./src/*.ts"
+    }
+  },
+  "scripts": {},
+  "dependencies": {
+    "@adinko/db": "workspace:*",
+    "@adinko/env": "workspace:*",
+    "better-auth": "catalog:",
+    "dotenv": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@adinko/config": "workspace:*",
+    "typescript": "^5"
+  }
+}
