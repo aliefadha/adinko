@@ -45,7 +45,7 @@ app.post("/file", async (c) => {
 		},
 	});
 
-	const publicUrl = `${env.R2_PUBLIC_URL}/${env.R2_BUCKET_NAME}/${key}`;
+	const publicUrl = `${env.R2_PUBLIC_URL}/${key}`;
 
 	return c.json({ data: { key, publicUrl } });
 });
