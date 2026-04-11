@@ -4,7 +4,7 @@ import {
 	Outlet,
 	redirect,
 } from "@tanstack/react-router";
-import { FolderIcon, LayoutDashboardIcon, SettingsIcon } from "lucide-react";
+import { LayoutDashboardIcon, SettingsIcon } from "lucide-react";
 
 import { Button } from "@adinko/ui/components/button";
 import { getUser } from "@/functions/get-user";
@@ -57,36 +57,51 @@ function AdminLayout() {
 									to="/admin/kategori"
 									className="flex items-center gap-2 px-2 py-1.5 text-xs hover:bg-muted"
 								>
-									<FolderIcon className="size-4" />
 									Kategori
 								</Link>
 								<Link
 									to="/admin/portfolio"
 									className="flex items-center gap-2 px-2 py-1.5 text-xs hover:bg-muted"
 								>
-									<FolderIcon className="size-4" />
 									Portfolio
 								</Link>
 								<Link
 									to="/admin/testimoni"
 									className="flex items-center gap-2 px-2 py-1.5 text-xs hover:bg-muted"
 								>
-									<FolderIcon className="size-4" />
 									Testimoni
 								</Link>
 								<Link
 									to="/admin/layanan"
 									className="flex items-center gap-2 px-2 py-1.5 text-xs hover:bg-muted"
 								>
-									<FolderIcon className="size-4" />
 									Layanan
 								</Link>
 								<Link
 									to="/admin/kontak"
 									className="flex items-center gap-2 px-2 py-1.5 text-xs hover:bg-muted"
 								>
-									<FolderIcon className="size-4" />
 									Kontak
+								</Link>
+							</div>
+
+							<div className="mb-4">
+								<p className="px-2 text-xs font-medium text-muted-foreground">
+									Perusahaan
+								</p>
+								<Link
+									to="/admin/perusahaan/$nama"
+									params={{ nama: "Adinko" }}
+									className="flex items-center gap-2 px-2 py-1.5 text-xs hover:bg-muted"
+								>
+									Adinko
+								</Link>
+								<Link
+									to="/admin/perusahaan/$nama"
+									params={{ nama: "Ghazisportshub" }}
+									className="flex items-center gap-2 px-2 py-1.5 text-xs hover:bg-muted"
+								>
+									Ghazisportshub
 								</Link>
 							</div>
 						</div>

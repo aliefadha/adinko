@@ -18,6 +18,7 @@ import { Route as AdminPortfolioRouteImport } from './routes/admin/portfolio'
 import { Route as AdminLayananRouteImport } from './routes/admin/layanan'
 import { Route as AdminKontakRouteImport } from './routes/admin/kontak'
 import { Route as AdminKategoriRouteImport } from './routes/admin/kategori'
+import { Route as AdminPerusahaanNamaRouteImport } from './routes/admin/perusahaan.$nama'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -64,6 +65,11 @@ const AdminKategoriRoute = AdminKategoriRouteImport.update({
   path: '/kategori',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminPerusahaanNamaRoute = AdminPerusahaanNamaRouteImport.update({
+  id: '/perusahaan/$nama',
+  path: '/perusahaan/$nama',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -75,6 +81,7 @@ export interface FileRoutesByFullPath {
   '/admin/layanan': typeof AdminLayananRoute
   '/admin/portfolio': typeof AdminPortfolioRoute
   '/admin/testimoni': typeof AdminTestimoniRoute
+  '/admin/perusahaan/$nama': typeof AdminPerusahaanNamaRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -86,6 +93,7 @@ export interface FileRoutesByTo {
   '/admin/layanan': typeof AdminLayananRoute
   '/admin/portfolio': typeof AdminPortfolioRoute
   '/admin/testimoni': typeof AdminTestimoniRoute
+  '/admin/perusahaan/$nama': typeof AdminPerusahaanNamaRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -98,6 +106,7 @@ export interface FileRoutesById {
   '/admin/layanan': typeof AdminLayananRoute
   '/admin/portfolio': typeof AdminPortfolioRoute
   '/admin/testimoni': typeof AdminTestimoniRoute
+  '/admin/perusahaan/$nama': typeof AdminPerusahaanNamaRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -111,6 +120,7 @@ export interface FileRouteTypes {
     | '/admin/layanan'
     | '/admin/portfolio'
     | '/admin/testimoni'
+    | '/admin/perusahaan/$nama'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -122,6 +132,7 @@ export interface FileRouteTypes {
     | '/admin/layanan'
     | '/admin/portfolio'
     | '/admin/testimoni'
+    | '/admin/perusahaan/$nama'
   id:
     | '__root__'
     | '/'
@@ -133,6 +144,7 @@ export interface FileRouteTypes {
     | '/admin/layanan'
     | '/admin/portfolio'
     | '/admin/testimoni'
+    | '/admin/perusahaan/$nama'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -207,6 +219,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminKategoriRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/perusahaan/$nama': {
+      id: '/admin/perusahaan/$nama'
+      path: '/perusahaan/$nama'
+      fullPath: '/admin/perusahaan/$nama'
+      preLoaderRoute: typeof AdminPerusahaanNamaRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
@@ -216,6 +235,7 @@ interface AdminRouteChildren {
   AdminLayananRoute: typeof AdminLayananRoute
   AdminPortfolioRoute: typeof AdminPortfolioRoute
   AdminTestimoniRoute: typeof AdminTestimoniRoute
+  AdminPerusahaanNamaRoute: typeof AdminPerusahaanNamaRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
@@ -224,6 +244,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminLayananRoute: AdminLayananRoute,
   AdminPortfolioRoute: AdminPortfolioRoute,
   AdminTestimoniRoute: AdminTestimoniRoute,
+  AdminPerusahaanNamaRoute: AdminPerusahaanNamaRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
