@@ -11,7 +11,13 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminTestimoniRouteImport } from './routes/admin/testimoni'
+import { Route as AdminPortfolioRouteImport } from './routes/admin/portfolio'
+import { Route as AdminLayananRouteImport } from './routes/admin/layanan'
+import { Route as AdminKontakRouteImport } from './routes/admin/kontak'
+import { Route as AdminKategoriRouteImport } from './routes/admin/kategori'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -23,38 +29,115 @@ const DashboardRoute = DashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminTestimoniRoute = AdminTestimoniRouteImport.update({
+  id: '/testimoni',
+  path: '/testimoni',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPortfolioRoute = AdminPortfolioRouteImport.update({
+  id: '/portfolio',
+  path: '/portfolio',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminLayananRoute = AdminLayananRouteImport.update({
+  id: '/layanan',
+  path: '/layanan',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminKontakRoute = AdminKontakRouteImport.update({
+  id: '/kontak',
+  path: '/kontak',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminKategoriRoute = AdminKategoriRouteImport.update({
+  id: '/kategori',
+  path: '/kategori',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
+  '/admin/kategori': typeof AdminKategoriRoute
+  '/admin/kontak': typeof AdminKontakRoute
+  '/admin/layanan': typeof AdminLayananRoute
+  '/admin/portfolio': typeof AdminPortfolioRoute
+  '/admin/testimoni': typeof AdminTestimoniRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
+  '/admin/kategori': typeof AdminKategoriRoute
+  '/admin/kontak': typeof AdminKontakRoute
+  '/admin/layanan': typeof AdminLayananRoute
+  '/admin/portfolio': typeof AdminPortfolioRoute
+  '/admin/testimoni': typeof AdminTestimoniRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
+  '/admin/kategori': typeof AdminKategoriRoute
+  '/admin/kontak': typeof AdminKontakRoute
+  '/admin/layanan': typeof AdminLayananRoute
+  '/admin/portfolio': typeof AdminPortfolioRoute
+  '/admin/testimoni': typeof AdminTestimoniRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard' | '/login'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/dashboard'
+    | '/login'
+    | '/admin/kategori'
+    | '/admin/kontak'
+    | '/admin/layanan'
+    | '/admin/portfolio'
+    | '/admin/testimoni'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/login'
-  id: '__root__' | '/' | '/dashboard' | '/login'
+  to:
+    | '/'
+    | '/admin'
+    | '/dashboard'
+    | '/login'
+    | '/admin/kategori'
+    | '/admin/kontak'
+    | '/admin/layanan'
+    | '/admin/portfolio'
+    | '/admin/testimoni'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/dashboard'
+    | '/login'
+    | '/admin/kategori'
+    | '/admin/kontak'
+    | '/admin/layanan'
+    | '/admin/portfolio'
+    | '/admin/testimoni'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRouteWithChildren
   DashboardRoute: typeof DashboardRoute
   LoginRoute: typeof LoginRoute
 }
@@ -75,6 +158,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -82,11 +172,65 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/testimoni': {
+      id: '/admin/testimoni'
+      path: '/testimoni'
+      fullPath: '/admin/testimoni'
+      preLoaderRoute: typeof AdminTestimoniRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/portfolio': {
+      id: '/admin/portfolio'
+      path: '/portfolio'
+      fullPath: '/admin/portfolio'
+      preLoaderRoute: typeof AdminPortfolioRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/layanan': {
+      id: '/admin/layanan'
+      path: '/layanan'
+      fullPath: '/admin/layanan'
+      preLoaderRoute: typeof AdminLayananRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/kontak': {
+      id: '/admin/kontak'
+      path: '/kontak'
+      fullPath: '/admin/kontak'
+      preLoaderRoute: typeof AdminKontakRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/kategori': {
+      id: '/admin/kategori'
+      path: '/kategori'
+      fullPath: '/admin/kategori'
+      preLoaderRoute: typeof AdminKategoriRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
+interface AdminRouteChildren {
+  AdminKategoriRoute: typeof AdminKategoriRoute
+  AdminKontakRoute: typeof AdminKontakRoute
+  AdminLayananRoute: typeof AdminLayananRoute
+  AdminPortfolioRoute: typeof AdminPortfolioRoute
+  AdminTestimoniRoute: typeof AdminTestimoniRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminKategoriRoute: AdminKategoriRoute,
+  AdminKontakRoute: AdminKontakRoute,
+  AdminLayananRoute: AdminLayananRoute,
+  AdminPortfolioRoute: AdminPortfolioRoute,
+  AdminTestimoniRoute: AdminTestimoniRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRouteWithChildren,
   DashboardRoute: DashboardRoute,
   LoginRoute: LoginRoute,
 }
