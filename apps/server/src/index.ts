@@ -8,6 +8,7 @@ import portfolioRoute from "./routes/portfolio";
 import testimoniRoute from "./routes/testimoni";
 import layananRoute from "./routes/layanan";
 import kontakRoute from "./routes/kontak";
+import uploadRoute from "./routes/upload";
 
 const app = new Hono();
 
@@ -29,6 +30,7 @@ app.route("/api/portfolio", portfolioRoute);
 app.route("/api/testimoni", testimoniRoute);
 app.route("/api/layanan", layananRoute);
 app.route("/api/kontak", kontakRoute);
+app.route("/api/upload", uploadRoute);
 
 app.get("/", (c) => {
 	return c.text("OK");

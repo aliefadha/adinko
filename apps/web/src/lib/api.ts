@@ -161,6 +161,25 @@ const api = {
 				body: JSON.stringify(data),
 			}).then((r) => r.json()),
 	},
+	upload: {
+		uploadFile: async (file: File, entity: "portfolio" | "layanan") => {
+			const formData = new FormData();
+			formData.append("file", file);
+			formData.append("entity", entity);
+
+			const response = await fetch(`${env.VITE_SERVER_URL}/api/upload/file`, {
+				method: "POST",
+				credentials: "include",
+				body: formData,
+			});
+
+			const result = await response.json();
+			if (!result.data?.publicUrl) {
+				throw new Error("Failed to upload file");
+			}
+			return result.data.publicUrl;
+		},
+	},
 };
 
 export { api };

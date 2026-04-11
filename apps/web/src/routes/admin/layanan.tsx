@@ -37,6 +37,65 @@ type Layanan = {
 	image: string | null;
 };
 
+function ImageUpload({
+	value,
+	onChange,
+}: {
+	value: string;
+	onChange: (url: string) => void;
+}) {
+	const [preview, setPreview] = useState<string | null>(value || null);
+	const [uploading, setUploading] = useState(false);
+
+	const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+		const file = e.target.files?.[0];
+		if (!file) return;
+
+		setPreview(URL.createObjectURL(file));
+		setUploading(true);
+
+		try {
+			const url = await api.upload.uploadFile(file, "layanan");
+			onChange(url);
+			toast.success("Image uploaded");
+		} catch {
+			toast.error("Failed to upload image");
+			setPreview(null);
+		} finally {
+			setUploading(false);
+		}
+	};
+
+	return (
+		<div className="flex flex-col gap-2">
+			<Label>Image</Label>
+			<input
+				type="file"
+				accept="image/*"
+				onChange={handleFileChange}
+				className="text-sm"
+			/>
+			{uploading && (
+				<p className="text-xs text-muted-foreground">Uploading...</p>
+			)}
+			{preview && (
+				<img
+					src={preview}
+					alt="Preview"
+					className="size-24 object-cover border"
+				/>
+			)}
+			{value && !preview && (
+				<img
+					src={value}
+					alt="Current"
+					className="size-24 object-cover border"
+				/>
+			)}
+		</div>
+	);
+}
+
 function LayananPage() {
 	const { data: layananList } = useQuery({
 		queryKey: ["layanan"],
@@ -146,16 +205,16 @@ function LayananPage() {
 
 function CreateForm({ onSuccess }: { onSuccess: () => void }) {
 	const queryClient = useQueryClient();
+	const [imageUrl, setImageUrl] = useState("");
 	const form = useForm({
 		defaultValues: {
 			title: "",
-			image: "",
 		},
 		onSubmit: async ({ value }) => {
 			try {
 				await api.layanan.create({
 					title: value.title,
-					image: value.image || undefined,
+					image: imageUrl || undefined,
 				});
 				toast.success("Layanan created");
 				queryClient.invalidateQueries({ queryKey: ["layanan"] });
@@ -196,20 +255,7 @@ function CreateForm({ onSuccess }: { onSuccess: () => void }) {
 				)}
 			</form.Field>
 
-			<form.Field name="image">
-				{(field) => (
-					<div className="flex flex-col gap-2">
-						<Label htmlFor={field.name}>Image URL</Label>
-						<Input
-							id={field.name}
-							name={field.name}
-							value={field.state.value}
-							onBlur={field.handleBlur}
-							onChange={(e) => field.handleChange(e.target.value)}
-						/>
-					</div>
-				)}
-			</form.Field>
+			<ImageUpload value={imageUrl} onChange={setImageUrl} />
 
 			<DialogFooter>
 				<DialogClose render={<Button variant="outline">Cancel</Button>}>
@@ -235,16 +281,16 @@ function EditForm({
 	onSuccess: () => void;
 }) {
 	const queryClient = useQueryClient();
+	const [imageUrl, setImageUrl] = useState(layanan.image || "");
 	const form = useForm({
 		defaultValues: {
 			title: layanan.title,
-			image: layanan.image || "",
 		},
 		onSubmit: async ({ value }) => {
 			try {
 				await api.layanan.update(layanan.id, {
 					title: value.title,
-					image: value.image || undefined,
+					image: imageUrl || undefined,
 				});
 				toast.success("Layanan updated");
 				queryClient.invalidateQueries({ queryKey: ["layanan"] });
@@ -285,20 +331,7 @@ function EditForm({
 				)}
 			</form.Field>
 
-			<form.Field name="image">
-				{(field) => (
-					<div className="flex flex-col gap-2">
-						<Label htmlFor={field.name}>Image URL</Label>
-						<Input
-							id={field.name}
-							name={field.name}
-							value={field.state.value}
-							onBlur={field.handleBlur}
-							onChange={(e) => field.handleChange(e.target.value)}
-						/>
-					</div>
-				)}
-			</form.Field>
+			<ImageUpload value={imageUrl} onChange={setImageUrl} />
 
 			<DialogFooter>
 				<DialogClose render={<Button variant="outline">Cancel</Button>}>
