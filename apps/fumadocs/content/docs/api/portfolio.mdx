@@ -1,0 +1,246 @@
+---
+title: Portfolio API
+description: API endpoints for managing portfolio entries
+---
+
+Portfolio endpoints allow you to manage portfolio entries, including title, subtitle, image, address, and year information.
+
+## Get All Portfolio
+
+Retrieve a list of all portfolio entries.
+
+**Endpoint:** `GET /api/portfolio`  
+**Auth:** Not required
+
+### Response
+
+```json
+{
+  "data": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "kategoriId": "550e8400-e29b-41d4-a716-446655440001",
+      "title": "E-commerce Website Redesign",
+      "subtitle": "Complete redesign of online store",
+      "image": "https://example.com/images/portfolio-1.jpg",
+      "alamat": "Jl. Sudirman No. 123",
+      "tahun": "2024",
+      "createdAt": 1704067200000
+    }
+  ]
+}
+```
+
+## Get Portfolio by ID
+
+Retrieve a single portfolio entry by its ID.
+
+**Endpoint:** `GET /api/portfolio/:id`  
+**Auth:** Not required
+
+### Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `id` | string (UUID) | The unique identifier of the portfolio entry |
+
+### Response
+
+```json
+{
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "kategoriId": "550e8400-e29b-41d4-a716-446655440001",
+    "title": "E-commerce Website Redesign",
+    "subtitle": "Complete redesign of online store",
+    "image": "https://example.com/images/portfolio-1.jpg",
+    "alamat": "Jl. Sudirman No. 123",
+    "tahun": "2024",
+    "createdAt": 1704067200000
+  }
+}
+```
+
+### Error Response (404)
+
+```json
+{
+  "data": null
+}
+```
+
+## Create Portfolio
+
+Create a new portfolio entry. **Authentication required.**
+
+**Endpoint:** `POST /api/portfolio`  
+**Auth:** Required
+
+### Request Body
+
+```json
+{
+  "kategoriId": "550e8400-e29b-41d4-a716-446655440001",
+  "title": "E-commerce Website Redesign",
+  "subtitle": "Complete redesign of online store",
+  "image": "https://example.com/images/portfolio-1.jpg",
+  "alamat": "Jl. Sudirman No. 123",
+  "tahun": "2024"
+}
+```
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `kategoriId` | string (UUID) | Yes | Category ID to link this portfolio to |
+| `title` | string | Yes | Title of the portfolio entry |
+| `subtitle` | string | No | Subtitle or description |
+| `image` | string | No | URL to the portfolio image |
+| `alamat` | string | No | Address location |
+| `tahun` | string | No | Year of the project |
+
+### Response (201)
+
+```json
+{
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "kategoriId": "550e8400-e29b-41d4-a716-446655440001",
+    "title": "E-commerce Website Redesign",
+    "subtitle": "Complete redesign of online store",
+    "image": "https://example.com/images/portfolio-1.jpg",
+    "alamat": "Jl. Sudirman No. 123",
+    "tahun": "2024",
+    "createdAt": 1704067200000
+  }
+}
+```
+
+### Error Response (400)
+
+```json
+{
+  "error": "kategoriId is required"
+}
+```
+
+## Update Portfolio
+
+Update an existing portfolio entry. **Authentication required.**
+
+**Endpoint:** `PUT /api/portfolio/:id`  
+**Auth:** Required
+
+### Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `id` | string (UUID) | The unique identifier of the portfolio entry |
+
+### Request Body
+
+All fields are optional (only provided fields will be updated):
+
+```json
+{
+  "kategoriId": "550e8400-e29b-41d4-a716-446655440002",
+  "title": "Updated Portfolio Title",
+  "subtitle": "Updated description",
+  "image": "https://example.com/images/new-image.jpg",
+  "alamat": "Jl. Merdeka No. 456",
+  "tahun": "2025"
+}
+```
+
+### Response (200)
+
+```json
+{
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "kategoriId": "550e8400-e29b-41d4-a716-446655440002",
+    "title": "Updated Portfolio Title",
+    "subtitle": "Updated description",
+    "image": "https://example.com/images/new-image.jpg",
+    "alamat": "Jl. Merdeka No. 456",
+    "tahun": "2025",
+    "createdAt": 1704067200000
+  }
+}
+```
+
+### Error Response (404)
+
+```json
+{
+  "error": "not found"
+}
+```
+
+## Delete Portfolio
+
+Delete a portfolio entry. **Authentication required.**
+
+**Endpoint:** `DELETE /api/portfolio/:id`  
+**Auth:** Required
+
+### Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `id` | string (UUID) | The unique identifier of the portfolio entry |
+
+### Response (200)
+
+```json
+{
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "kategoriId": "550e8400-e29b-41d4-a716-446655440001",
+    "title": "E-commerce Website Redesign",
+    "subtitle": "Complete redesign of online store",
+    "image": "https://example.com/images/portfolio-1.jpg",
+    "alamat": "Jl. Sudirman No. 123",
+    "tahun": "2024",
+    "createdAt": 1704067200000
+  }
+}
+```
+
+### Error Response (404)
+
+```json
+{
+  "error": "not found"
+}
+```
+
+## Usage Example
+
+### Using cURL
+
+```bash
+# Get all portfolio entries
+curl https://api.adinko.com/api/portfolio
+
+# Create a new portfolio entry (with auth)
+curl -X POST https://api.adinko.com/api/portfolio \
+  -H "Content-Type: application/json" \
+  -H "Cookie: better-auth.session_token=your-session-token" \
+  -d '{
+    "kategoriId": "550e8400-e29b-41d4-a716-446655440001",
+    "title": "E-commerce Website Redesign",
+    "subtitle": "Complete redesign of online store",
+    "alamat": "Jl. Sudirman No. 123",
+    "tahun": "2024"
+  }'
+
+# Update a portfolio entry (with auth)
+curl -X PUT https://api.adinko.com/api/portfolio/550e8400-e29b-41d4-a716-446655440000 \
+  -H "Content-Type: application/json" \
+  -H "Cookie: better-auth.session_token=your-session-token" \
+  -d '{"title": "Updated Title"}'
+
+# Delete a portfolio entry (with auth)
+curl -X DELETE https://api.adinko.com/api/portfolio/550e8400-e29b-41d4-a716-446655440000 \
+  -H "Cookie: better-auth.session_token=your-session-token"
+```

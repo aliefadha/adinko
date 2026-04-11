@@ -1,0 +1,206 @@
+---
+title: Layanan API
+description: API endpoints for managing services (layanan)
+---
+
+Layanan endpoints allow you to manage service offerings.
+
+## Get All Layanan
+
+Retrieve a list of all available services.
+
+**Endpoint:** `GET /api/layanan`  
+**Auth:** Not required
+
+### Response
+
+```json
+{
+  "data": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "title": "Website Development",
+      "image": "https://example.com/images/service-1.jpg"
+    }
+  ]
+}
+```
+
+## Get Layanan by ID
+
+Retrieve a single service by its ID.
+
+**Endpoint:** `GET /api/layanan/:id`  
+**Auth:** Not required
+
+### Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `id` | string (UUID) | The unique identifier of the service |
+
+### Response
+
+```json
+{
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "title": "Website Development",
+    "image": "https://example.com/images/service-1.jpg"
+  }
+}
+```
+
+### Error Response (404)
+
+```json
+{
+  "data": null
+}
+```
+
+## Create Layanan
+
+Create a new service entry. **Authentication required.**
+
+**Endpoint:** `POST /api/layanan`  
+**Auth:** Required
+
+### Request Body
+
+```json
+{
+  "title": "Website Development",
+  "image": "https://example.com/images/service-1.jpg"
+}
+```
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `title` | string | Yes | Title of the service |
+| `image` | string | No | URL to the service image |
+
+### Response (201)
+
+```json
+{
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "title": "Website Development",
+    "image": "https://example.com/images/service-1.jpg"
+  }
+}
+```
+
+### Error Response (400)
+
+```json
+{
+  "error": "title is required"
+}
+```
+
+## Update Layanan
+
+Update an existing service entry. **Authentication required.**
+
+**Endpoint:** `PUT /api/layanan/:id`  
+**Auth:** Required
+
+### Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `id` | string (UUID) | The unique identifier of the service |
+
+### Request Body
+
+All fields are optional (only provided fields will be updated):
+
+```json
+{
+  "title": "Updated Service Title",
+  "image": "https://example.com/images/new-image.jpg"
+}
+```
+
+### Response (200)
+
+```json
+{
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "title": "Updated Service Title",
+    "image": "https://example.com/images/new-image.jpg"
+  }
+}
+```
+
+### Error Response (404)
+
+```json
+{
+  "error": "not found"
+}
+```
+
+## Delete Layanan
+
+Delete a service entry. **Authentication required.**
+
+**Endpoint:** `DELETE /api/layanan/:id`  
+**Auth:** Required
+
+### Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `id` | string (UUID) | The unique identifier of the service |
+
+### Response (200)
+
+```json
+{
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "title": "Website Development",
+    "image": "https://example.com/images/service-1.jpg"
+  }
+}
+```
+
+### Error Response (404)
+
+```json
+{
+  "error": "not found"
+}
+```
+
+## Usage Example
+
+### Using cURL
+
+```bash
+# Get all layanan entries
+curl https://api.adinko.com/api/layanan
+
+# Create a new layanan entry (with auth)
+curl -X POST https://api.adinko.com/api/layanan \
+  -H "Content-Type: application/json" \
+  -H "Cookie: better-auth.session_token=your-session-token" \
+  -d '{
+    "title": "Website Development",
+    "image": "https://example.com/images/service-1.jpg"
+  }'
+
+# Update a layanan entry (with auth)
+curl -X PUT https://api.adinko.com/api/layanan/550e8400-e29b-41d4-a716-446655440000 \
+  -H "Content-Type: application/json" \
+  -H "Cookie: better-auth.session_token=your-session-token" \
+  -d '{"title": "Updated Title"}'
+
+# Delete a layanan entry (with auth)
+curl -X DELETE https://api.adinko.com/api/layanan/550e8400-e29b-41d4-a716-446655440000 \
+  -H "Cookie: better-auth.session_token=your-session-token"
+```

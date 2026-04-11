@@ -1,0 +1,75 @@
+---
+title: API Overview
+description: API reference for Adinko backend services
+---
+
+This section contains the API reference documentation for all Adinko backend endpoints.
+
+## Base URL
+
+```
+https://api.adinko.com
+```
+
+For local development:
+```
+http://localhost:3000
+```
+
+## Authentication
+
+Some endpoints require authentication. To authenticate, include the session cookie from the sign-in response:
+
+```
+Cookie: better-auth.session_token=<your-session-token>
+```
+
+### Endpoints Requiring Auth
+
+The following methods require authentication:
+- `POST` - Create new resources
+- `PUT` - Update existing resources
+- `DELETE` - Delete resources
+
+### Public Endpoints
+
+`GET` requests (both list and detail) are publicly accessible.
+
+## Response Format
+
+All endpoints return responses in the following format:
+
+### Success
+
+```json
+{
+  "data": { ... }
+}
+```
+
+### Error
+
+```json
+{
+  "error": "Error message"
+}
+```
+
+## Status Codes
+
+| Status | Description |
+|--------|-------------|
+| `200` | Success |
+| `201` | Created successfully |
+| `400` | Bad Request - Invalid input |
+| `401` | Unauthorized - Not authenticated |
+| `404` | Not Found - Resource doesn't exist |
+| `500` | Internal Server Error |
+
+## Available API Sections
+
+- [Kategori API](/docs/api/kategori) - Category management
+- [Portfolio API](/docs/api/portfolio) - Portfolio entries
+- [Testimoni API](/docs/api/testimoni) - Testimonials
+- [Layanan API](/docs/api/layanan) - Services
+- [Kontak API](/docs/api/kontak) - Contact information

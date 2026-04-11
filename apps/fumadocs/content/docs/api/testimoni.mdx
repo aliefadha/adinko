@@ -1,0 +1,228 @@
+---
+title: Testimoni API
+description: API endpoints for managing testimonials
+---
+
+Testimoni endpoints allow you to manage testimonial entries from clients.
+
+## Get All Testimoni
+
+Retrieve a list of all testimonial entries.
+
+**Endpoint:** `GET /api/testimoni`  
+**Auth:** Not required
+
+### Response
+
+```json
+{
+  "data": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "kategoriId": "550e8400-e29b-41d4-a716-446655440001",
+      "image": "https://example.com/images/client-1.jpg",
+      "nama": "John Doe",
+      "createdAt": 1704067200000,
+      "testimoni": "Great service and professional team!"
+    }
+  ]
+}
+```
+
+## Get Testimoni by ID
+
+Retrieve a single testimonial by its ID.
+
+**Endpoint:** `GET /api/testimoni/:id`  
+**Auth:** Not required
+
+### Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `id` | string (UUID) | The unique identifier of the testimonial |
+
+### Response
+
+```json
+{
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "kategoriId": "550e8400-e29b-41d4-a716-446655440001",
+    "image": "https://example.com/images/client-1.jpg",
+    "nama": "John Doe",
+    "createdAt": 1704067200000,
+    "testimoni": "Great service and professional team!"
+  }
+}
+```
+
+### Error Response (404)
+
+```json
+{
+  "data": null
+}
+```
+
+## Create Testimoni
+
+Create a new testimonial entry. **Authentication required.**
+
+**Endpoint:** `POST /api/testimoni`  
+**Auth:** Required
+
+### Request Body
+
+```json
+{
+  "kategoriId": "550e8400-e29b-41d4-a716-446655440001",
+  "image": "https://example.com/images/client-1.jpg",
+  "nama": "John Doe",
+  "testimoni": "Great service and professional team!"
+}
+```
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `kategoriId` | string (UUID) | Yes | Category ID to link this testimonial to |
+| `nama` | string | Yes | Name of the client |
+| `testimoni` | string | Yes | The testimonial text |
+| `image` | string | No | URL to the client's photo |
+
+### Response (201)
+
+```json
+{
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "kategoriId": "550e8400-e29b-41d4-a716-446655440001",
+    "image": "https://example.com/images/client-1.jpg",
+    "nama": "John Doe",
+    "createdAt": 1704067200000,
+    "testimoni": "Great service and professional team!"
+  }
+}
+```
+
+### Error Response (400)
+
+```json
+{
+  "error": "kategoriId is required"
+}
+```
+
+## Update Testimoni
+
+Update an existing testimonial entry. **Authentication required.**
+
+**Endpoint:** `PUT /api/testimoni/:id`  
+**Auth:** Required
+
+### Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `id` | string (UUID) | The unique identifier of the testimonial |
+
+### Request Body
+
+All fields are optional (only provided fields will be updated):
+
+```json
+{
+  "kategoriId": "550e8400-e29b-41d4-a716-446655440002",
+  "nama": "Jane Doe",
+  "testimoni": "Updated testimonial text",
+  "image": "https://example.com/images/new-photo.jpg"
+}
+```
+
+### Response (200)
+
+```json
+{
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "kategoriId": "550e8400-e29b-41d4-a716-446655440002",
+    "image": "https://example.com/images/new-photo.jpg",
+    "nama": "Jane Doe",
+    "createdAt": 1704067200000,
+    "testimoni": "Updated testimonial text"
+  }
+}
+```
+
+### Error Response (404)
+
+```json
+{
+  "error": "not found"
+}
+```
+
+## Delete Testimoni
+
+Delete a testimonial entry. **Authentication required.**
+
+**Endpoint:** `DELETE /api/testimoni/:id`  
+**Auth:** Required
+
+### Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `id` | string (UUID) | The unique identifier of the testimonial |
+
+### Response (200)
+
+```json
+{
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "kategoriId": "550e8400-e29b-41d4-a716-446655440001",
+    "image": "https://example.com/images/client-1.jpg",
+    "nama": "John Doe",
+    "createdAt": 1704067200000,
+    "testimoni": "Great service and professional team!"
+  }
+}
+```
+
+### Error Response (404)
+
+```json
+{
+  "error": "not found"
+}
+```
+
+## Usage Example
+
+### Using cURL
+
+```bash
+# Get all testimoni entries
+curl https://api.adinko.com/api/testimoni
+
+# Create a new testimoni entry (with auth)
+curl -X POST https://api.adinko.com/api/testimoni \
+  -H "Content-Type: application/json" \
+  -H "Cookie: better-auth.session_token=your-session-token" \
+  -d '{
+    "kategoriId": "550e8400-e29b-41d4-a716-446655440001",
+    "nama": "John Doe",
+    "testimoni": "Great service and professional team!"
+  }'
+
+# Update a testimoni entry (with auth)
+curl -X PUT https://api.adinko.com/api/testimoni/550e8400-e29b-41d4-a716-446655440000 \
+  -H "Content-Type: application/json" \
+  -H "Cookie: better-auth.session_token=your-session-token" \
+  -d '{"testimoni": "Updated testimonial text"}'
+
+# Delete a testimoni entry (with auth)
+curl -X DELETE https://api.adinko.com/api/testimoni/550e8400-e29b-41d4-a716-446655440000 \
+  -H "Cookie: better-auth.session_token=your-session-token"
+```

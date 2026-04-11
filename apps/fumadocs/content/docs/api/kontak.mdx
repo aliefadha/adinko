@@ -1,0 +1,124 @@
+---
+title: Kontak API
+description: API endpoints for managing contact information
+---
+
+Kontak endpoints allow you to manage contact information including address, WhatsApp, Instagram, and email.
+
+**Note:** Kontak is a singleton - only one contact record exists. All fields are optional in updates.
+
+## Get Kontak
+
+Retrieve the contact information.
+
+**Endpoint:** `GET /api/kontak`  
+**Auth:** Not required
+
+### Response
+
+```json
+{
+  "data": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "alamat": "Jl. Sudirman No. 123, Jakarta",
+      "wa": "6281234567890",
+      "instagram": "@adinko",
+      "email": "hello@adinko.com"
+    }
+  ]
+}
+```
+
+## Update Kontak
+
+Update the contact information. **Authentication required.**
+
+**Endpoint:** `PUT /api/kontak`  
+**Auth:** Required
+
+### Request Body
+
+All fields are optional (only provided fields will be updated):
+
+```json
+{
+  "alamat": "Jl. Merdeka No. 456, Jakarta",
+  "wa": "6289876543210",
+  "instagram": "@needadinko",
+  "email": "contact@adinko.com"
+}
+```
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `alamat` | string | No | Physical address |
+| `wa` | string | No | WhatsApp number (with country code) |
+| `instagram` | string | No | Instagram handle |
+| `email` | string | No | Contact email |
+
+### Response (200)
+
+```json
+{
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "alamat": "Jl. Merdeka No. 456, Jakarta",
+    "wa": "6289876543210",
+    "instagram": "@needadinko",
+    "email": "contact@adinko.com"
+  }
+}
+```
+
+## Create/Initialize Kontak
+
+Initialize contact information for the first time. **Authentication required.**
+
+**Endpoint:** `POST /api/kontak`  
+**Auth:** Required
+
+### Request Body
+
+```json
+{
+  "alamat": "Jl. Sudirman No. 123, Jakarta",
+  "wa": "6281234567890",
+  "instagram": "@adinko",
+  "email": "hello@adinko.com"
+}
+```
+
+### Response (201)
+
+```json
+{
+  "success": true
+}
+```
+
+## Usage Example
+
+### Using cURL
+
+```bash
+# Get kontak information
+curl https://api.adinko.com/api/kontak
+
+# Initialize kontak (with auth)
+curl -X POST https://api.adinko.com/api/kontak \
+  -H "Content-Type: application/json" \
+  -H "Cookie: better-auth.session_token=your-session-token" \
+  -d '{
+    "alamat": "Jl. Sudirman No. 123, Jakarta",
+    "wa": "6281234567890",
+    "instagram": "@adinko",
+    "email": "hello@adinko.com"
+  }'
+
+# Update kontak (with auth)
+curl -X PUT https://api.adinko.com/api/kontak \
+  -H "Content-Type: application/json" \
+  -H "Cookie: better-auth.session_token=your-session-token" \
+  -d '{"instagram": "@needadinko"}'
+```

@@ -1,0 +1,207 @@
+---
+title: Kategori API
+description: API endpoints for managing kategori (categories)
+---
+
+Kategori endpoints allow you to manage categories that can be linked to Portfolio and Testimoni entries.
+
+## Get All Kategori
+
+Retrieve a list of all available categories.
+
+**Endpoint:** `GET /api/kategori`  
+**Auth:** Not required
+
+### Response
+
+```json
+{
+  "data": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "nama": "Website Design",
+      "createdAt": 1704067200000
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440001",
+      "nama": "Mobile App",
+      "createdAt": 1704067200000
+    }
+  ]
+}
+```
+
+## Get Kategori by ID
+
+Retrieve a single category by its ID.
+
+**Endpoint:** `GET /api/kategori/:id`  
+**Auth:** Not required
+
+### Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `id` | string (UUID) | The unique identifier of the category |
+
+### Response
+
+```json
+{
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "nama": "Website Design",
+    "createdAt": 1704067200000
+  }
+}
+```
+
+### Error Response (404)
+
+```json
+{
+  "data": null
+}
+```
+
+## Create Kategori
+
+Create a new category. **Authentication required.**
+
+**Endpoint:** `POST /api/kategori`  
+**Auth:** Required
+
+### Request Body
+
+```json
+{
+  "nama": "Website Design"
+}
+```
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `nama` | string | Yes | Name of the category |
+
+### Response (201)
+
+```json
+{
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "nama": "Website Design",
+    "createdAt": 1704067200000
+  }
+}
+```
+
+### Error Response (400)
+
+```json
+{
+  "error": "nama is required"
+}
+```
+
+## Update Kategori
+
+Update an existing category. **Authentication required.**
+
+**Endpoint:** `PUT /api/kategori/:id`  
+**Auth:** Required
+
+### Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `id` | string (UUID) | The unique identifier of the category |
+
+### Request Body
+
+```json
+{
+  "nama": "Updated Category Name"
+}
+```
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `nama` | string | Yes | Updated name of the category |
+
+### Response (200)
+
+```json
+{
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "nama": "Updated Category Name",
+    "createdAt": 1704067200000
+  }
+}
+```
+
+### Error Response (404)
+
+```json
+{
+  "error": "not found"
+}
+```
+
+## Delete Kategori
+
+Delete a category. **Authentication required.**
+
+**Endpoint:** `DELETE /api/kategori/:id`  
+**Auth:** Required
+
+### Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `id` | string (UUID) | The unique identifier of the category |
+
+### Response (200)
+
+```json
+{
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "nama": "Website Design",
+    "createdAt": 1704067200000
+  }
+}
+```
+
+### Error Response (404)
+
+```json
+{
+  "error": "not found"
+}
+```
+
+## Usage Example
+
+### Using cURL
+
+```bash
+# Get all kategori
+curl https://api.adinko.com/api/kategori
+
+# Create a new kategori (with auth)
+curl -X POST https://api.adinko.com/api/kategori \
+  -H "Content-Type: application/json" \
+  -H "Cookie: better-auth.session_token=your-session-token" \
+  -d '{"nama": "Website Design"}'
+
+# Update a kategori (with auth)
+curl -X PUT https://api.adinko.com/api/kategori/550e8400-e29b-41d4-a716-446655440000 \
+  -H "Content-Type: application/json" \
+  -H "Cookie: better-auth.session_token=your-session-token" \
+  -d '{"nama": "Updated Name"}'
+
+# Delete a kategori (with auth)
+curl -X DELETE https://api.adinko.com/api/kategori/550e8400-e29b-41d4-a716-446655440000 \
+  -H "Cookie: better-auth.session_token=your-session-token"
+```
