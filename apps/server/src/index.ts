@@ -9,6 +9,11 @@ import testimoniRoute from "./routes/testimoni";
 import layananRoute from "./routes/layanan";
 import kontakRoute from "./routes/kontak";
 import uploadRoute from "./routes/upload";
+import perusahaanRoute from "./routes/perusahaan";
+import perusahaanImageRoute from "./routes/perusahaan-image";
+import perusahaanTagRoute from "./routes/perusahaan-tag";
+import perusahaanAlasanRoute from "./routes/perusahaan-alasan";
+import perusahaanLayananRoute from "./routes/perusahaan-layanan";
 
 const app = new Hono();
 
@@ -31,6 +36,11 @@ app.route("/api/testimoni", testimoniRoute);
 app.route("/api/layanan", layananRoute);
 app.route("/api/kontak", kontakRoute);
 app.route("/api/upload", uploadRoute);
+app.route("/api/perusahaan", perusahaanRoute);
+app.route("/api/perusahaan-image", perusahaanImageRoute);
+app.route("/api/perusahaan-tag", perusahaanTagRoute);
+app.route("/api/perusahaan-alasan", perusahaanAlasanRoute);
+app.route("/api/perusahaan-layanan", perusahaanLayananRoute);
 
 app.get("/", (c) => {
 	return c.text("OK");

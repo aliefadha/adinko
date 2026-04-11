@@ -1,0 +1,1 @@
+ALTER TABLE `perusahaan` ADD `logo` text;

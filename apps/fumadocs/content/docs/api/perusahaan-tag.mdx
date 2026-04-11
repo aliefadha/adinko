@@ -1,0 +1,181 @@
+---
+title: Perusahaan Tag API
+description: API endpoints for managing perusahaan tags
+---
+
+Perusahaan Tag endpoints allow you to manage tags for each company profile.
+
+## Get All Perusahaan Tags
+
+Retrieve a list of all perusahaan tags, optionally filtered by company.
+
+**Endpoint:** `GET /api/perusahaan-tag`  
+**Auth:** Not required
+
+### Query Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `perusahaanId` | string (UUID) | Filter by company ID |
+
+### Response
+
+```json
+{
+  "data": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "perusahaanId": "company-uuid-here",
+      "tag": "Premium Quality",
+      "createdAt": 1704067200000
+    }
+  ]
+}
+```
+
+## Create Perusahaan Tag
+
+Create a new tag entry. **Authentication required.**
+
+**Endpoint:** `POST /api/perusahaan-tag`  
+**Auth:** Required
+
+### Request Body
+
+```json
+{
+  "perusahaanId": "company-uuid-here",
+  "tag": "Premium Quality"
+}
+```
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `perusahaanId` | string (UUID) | Yes | Company ID |
+| `tag` | string | Yes | Tag text |
+
+### Response (201)
+
+```json
+{
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "perusahaanId": "company-uuid-here",
+    "tag": "Premium Quality",
+    "createdAt": 1704067200000
+  }
+}
+```
+
+### Error Response (400)
+
+```json
+{
+  "error": "perusahaanId is required"
+}
+```
+
+## Update Perusahaan Tag
+
+Update an existing tag entry. **Authentication required.**
+
+**Endpoint:** `PUT /api/perusahaan-tag/:id`  
+**Auth:** Required
+
+### Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `id` | string (UUID) | The unique identifier of the tag entry |
+
+### Request Body
+
+```json
+{
+  "tag": "Updated Tag Text"
+}
+```
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `tag` | string | Yes | Updated tag text |
+
+### Response (200)
+
+```json
+{
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "perusahaanId": "company-uuid-here",
+    "tag": "Updated Tag Text",
+    "createdAt": 1704067200000
+  }
+}
+```
+
+### Error Response (404)
+
+```json
+{
+  "error": "not found"
+}
+```
+
+## Delete Perusahaan Tag
+
+Delete a tag entry. **Authentication required.**
+
+**Endpoint:** `DELETE /api/perusahaan-tag/:id`  
+**Auth:** Required
+
+### Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `id` | string (UUID) | The unique identifier of the tag entry |
+
+### Response (200)
+
+```json
+{
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "perusahaanId": "company-uuid-here",
+    "tag": "Premium Quality",
+    "createdAt": 1704067200000
+  }
+}
+```
+
+### Error Response (404)
+
+```json
+{
+  "error": "not found"
+}
+```
+
+## Usage Example
+
+### Using cURL
+
+```bash
+# Get all tags for a company
+curl "https://api.adinko.com/api/perusahaan-tag?perusahaanId=company-uuid-here"
+
+# Create a new tag (with auth)
+curl -X POST https://api.adinko.com/api/perusahaan-tag \
+  -H "Content-Type: application/json" \
+  -H "Cookie: better-auth.session_token=your-session-token" \
+  -d '{"perusahaanId": "company-uuid-here", "tag": "New Tag"}'
+
+# Update a tag (with auth)
+curl -X PUT https://api.adinko.com/api/perusahaan-tag/550e8400-e29b-41d4-a716-446655440000 \
+  -H "Content-Type: application/json" \
+  -H "Cookie: better-auth.session_token=your-session-token" \
+  -d '{"tag": "Updated Tag"}'
+
+# Delete a tag (with auth)
+curl -X DELETE https://api.adinko.com/api/perusahaan-tag/550e8400-e29b-41d4-a716-446655440000 \
+  -H "Cookie: better-auth.session_token=your-session-token"
+```

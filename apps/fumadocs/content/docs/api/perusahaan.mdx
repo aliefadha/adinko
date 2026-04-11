@@ -1,0 +1,156 @@
+---
+title: Perusahaan API
+description: API endpoints for managing perusahaan (company profiles)
+---
+
+Perusahaan endpoints allow you to manage company profiles for Adinko and Ghazisportshub brands.
+
+## Get All Perusahaan
+
+Retrieve a list of all company profiles.
+
+**Endpoint:** `GET /api/perusahaan`  
+**Auth:** Not required
+
+### Response
+
+```json
+{
+  "data": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "nama": "Adinko",
+      "logo": null,
+      "title": null,
+      "subtitle": null,
+      "visi": null,
+      "misi": null,
+      "createdAt": 1704067200000
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440001",
+      "nama": "Ghazisportshub",
+      "logo": null,
+      "title": null,
+      "subtitle": null,
+      "visi": null,
+      "misi": null,
+      "createdAt": 1704067200000
+    }
+  ]
+}
+```
+
+## Get Perusahaan by Nama
+
+Retrieve a single company profile by its name.
+
+**Endpoint:** `GET /api/perusahaan/:nama`  
+**Auth:** Not required
+
+### Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `nama` | string | Company name ("Adinko" or "Ghazisportshub") |
+
+### Response
+
+```json
+{
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "nama": "Adinko",
+    "logo": "https://pub-xxx.r2.dev/adinko-images/logo.png",
+    "title": "Adinko Sports",
+    "subtitle": "Premium Grass Sintetis",
+    "visi": "Menjadi pemimpin industri grass sintetis",
+    "misi": "Mengediakan produk berkualitas tinggi",
+    "createdAt": 1704067200000
+  }
+}
+```
+
+### Error Response (404)
+
+```json
+{
+  "error": "not found"
+}
+```
+
+## Update Perusahaan
+
+Update an existing company profile. **Authentication required.**
+
+**Endpoint:** `PUT /api/perusahaan/:nama`  
+**Auth:** Required
+
+### Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `nama` | string | Company name ("Adinko" or "Ghazisportshub") |
+
+### Request Body
+
+```json
+{
+  "logo": "https://pub-xxx.r2.dev/adinko-images/logo.png",
+  "title": "Updated Title",
+  "subtitle": "Updated Subtitle",
+  "visi": "Updated Vision",
+  "misi": "Updated Mission"
+}
+```
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `logo` | string | No | Logo image URL |
+| `title` | string | No | Company title |
+| `subtitle` | string | No | Company subtitle |
+| `visi` | string | No | Company vision |
+| `misi` | string | No | Company mission |
+
+### Response (200)
+
+```json
+{
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "nama": "Adinko",
+    "logo": "https://pub-xxx.r2.dev/adinko-images/logo.png",
+    "title": "Updated Title",
+    "subtitle": "Updated Subtitle",
+    "visi": "Updated Vision",
+    "misi": "Updated Mission",
+    "createdAt": 1704067200000
+  }
+}
+```
+
+### Error Response (404)
+
+```json
+{
+  "error": "not found"
+}
+```
+
+## Usage Example
+
+### Using cURL
+
+```bash
+# Get all perusahaan
+curl https://api.adinko.com/api/perusahaan
+
+# Get perusahaan by name
+curl https://api.adinko.com/api/perusahaan/Adinko
+
+# Update perusahaan (with auth)
+curl -X PUT https://api.adinko.com/api/perusahaan/Adinko \
+  -H "Content-Type: application/json" \
+  -H "Cookie: better-auth.session_token=your-session-token" \
+  -d '{"title": "Adinko Sports", "visi": "Menjadi pemimpin"}'
+```

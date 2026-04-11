@@ -13,6 +13,7 @@ const app = await alchemy("adinko");
 
 const db = await D1Database("database", {
 	migrationsDir: "../../packages/db/src/migrations",
+	dev: { remote: true },
 });
 
 const r2Bucket = await R2Bucket("adinko-images", {

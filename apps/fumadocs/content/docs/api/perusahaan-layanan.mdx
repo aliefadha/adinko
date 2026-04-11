@@ -1,0 +1,205 @@
+---
+title: Perusahaan Layanan API
+description: API endpoints for managing perusahaan layanan (services)
+---
+
+Perusahaan Layanan endpoints allow you to manage layanan (services) for each company profile.
+
+## Get All Perusahaan Layanan
+
+Retrieve a list of all perusahaan layanan entries, optionally filtered by company.
+
+**Endpoint:** `GET /api/perusahaan-layanan`  
+**Auth:** Not required
+
+### Query Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `perusahaanId` | string (UUID) | Filter by company ID |
+
+### Response
+
+```json
+{
+  "data": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "perusahaanId": "company-uuid-here",
+      "title": "Layanan Utama",
+      "subtitle": "Deskripsi layanan utama",
+      "image": "https://pub-xxx.r2.dev/adinko-images/layanan1.png",
+      "namaLayanan": "Grass Sintetis Premium",
+      "createdAt": 1704067200000
+    }
+  ]
+}
+```
+
+## Create Perusahaan Layanan
+
+Create a new layanan entry. **Authentication required.**
+
+**Endpoint:** `POST /api/perusahaan-layanan`  
+**Auth:** Required
+
+### Request Body
+
+```json
+{
+  "perusahaanId": "company-uuid-here",
+  "title": "Layanan Utama",
+  "subtitle": "Deskripsi layanan utama",
+  "image": "https://pub-xxx.r2.dev/adinko-images/layanan1.png",
+  "namaLayanan": "Grass Sintetis Premium"
+}
+```
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `perusahaanId` | string (UUID) | Yes | Company ID |
+| `title` | string | Yes | Service title |
+| `subtitle` | string | No | Service subtitle/description |
+| `image` | string | No | Service image URL |
+| `namaLayanan` | string | Yes | Service name |
+
+### Response (201)
+
+```json
+{
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "perusahaanId": "company-uuid-here",
+    "title": "Layanan Utama",
+    "subtitle": "Deskripsi layanan utama",
+    "image": "https://pub-xxx.r2.dev/adinko-images/layanan1.png",
+    "namaLayanan": "Grass Sintetis Premium",
+    "createdAt": 1704067200000
+  }
+}
+```
+
+### Error Response (400)
+
+```json
+{
+  "error": "perusahaanId is required"
+}
+```
+
+## Update Perusahaan Layanan
+
+Update an existing layanan entry. **Authentication required.**
+
+**Endpoint:** `PUT /api/perusahaan-layanan/:id`  
+**Auth:** Required
+
+### Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `id` | string (UUID) | The unique identifier of the layanan entry |
+
+### Request Body
+
+```json
+{
+  "title": "Updated Title",
+  "subtitle": "Updated Subtitle",
+  "image": "https://pub-xxx.r2.dev/adinko-images/updated-layanan.png",
+  "namaLayanan": "Updated Service Name"
+}
+```
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `title` | string | No | Updated service title |
+| `subtitle` | string | No | Updated service subtitle |
+| `image` | string | No | Updated service image URL |
+| `namaLayanan` | string | No | Updated service name |
+
+### Response (200)
+
+```json
+{
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "perusahaanId": "company-uuid-here",
+    "title": "Updated Title",
+    "subtitle": "Updated Subtitle",
+    "image": "https://pub-xxx.r2.dev/adinko-images/updated-layanan.png",
+    "namaLayanan": "Updated Service Name",
+    "createdAt": 1704067200000
+  }
+}
+```
+
+### Error Response (404)
+
+```json
+{
+  "error": "not found"
+}
+```
+
+## Delete Perusahaan Layanan
+
+Delete a layanan entry. **Authentication required.**
+
+**Endpoint:** `DELETE /api/perusahaan-layanan/:id`  
+**Auth:** Required
+
+### Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `id` | string (UUID) | The unique identifier of the layanan entry |
+
+### Response (200)
+
+```json
+{
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "perusahaanId": "company-uuid-here",
+    "title": "Layanan Utama",
+    "subtitle": "Deskripsi layanan utama",
+    "image": "https://pub-xxx.r2.dev/adinko-images/layanan1.png",
+    "namaLayanan": "Grass Sintetis Premium",
+    "createdAt": 1704067200000
+  }
+}
+```
+
+### Error Response (404)
+
+```json
+{
+  "error": "not found"
+}
+```
+
+## Usage Example
+
+### Using cURL
+
+```bash
+# Get all layanan for a company
+curl "https://api.adinko.com/api/perusahaan-layanan?perusahaanId=company-uuid-here"
+
+# Create a new layanan (with auth)
+curl -X POST https://api.adinko.com/api/perusahaan-layanan \
+  -H "Content-Type: application/json" \
+  -H "Cookie: better-auth.session_token=your-session-token" \
+  -d '{"perusahaanId": "company-uuid-here", "title": "New Service", "namaLayanan": "Grass Sintetis"}'
+
+# Update a layanan (with auth)
+curl -X PUT https://api.adinko.com/api/perusahaan-layanan/550e8400-e29b-41d4-a716-446655440000 \
+  -H "Content-Type: application/json" \
+  -H "Cookie: better-auth.session_token=your-session-token" \
+  -d '{"title": "Updated Title", "namaLayanan": "Updated Service Name"}'
+
+# Delete a layanan (with auth)
+curl -X DELETE https://api.adinko.com/api/perusahaan-layanan/550e8400-e29b-41d4-a716-446655440000 \
+  -H "Cookie: better-auth.session_token=your-session-token"
+```

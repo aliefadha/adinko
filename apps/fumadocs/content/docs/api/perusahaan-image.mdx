@@ -1,0 +1,196 @@
+---
+title: Perusahaan Image API
+description: API endpoints for managing perusahaan images (Siapa Kami section)
+---
+
+Perusahaan Image endpoints allow you to manage images for the "Siapa Kami" (About Us) section of each company profile.
+
+## Get All Perusahaan Images
+
+Retrieve a list of all perusahaan images, optionally filtered by company.
+
+**Endpoint:** `GET /api/perusahaan-image`  
+**Auth:** Not required
+
+### Query Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `perusahaanId` | string (UUID) | Filter by company ID |
+
+### Response
+
+```json
+{
+  "data": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "perusahaanId": "company-uuid-here",
+      "image": "https://pub-xxx.r2.dev/adinko-images/image1.png",
+      "createdAt": 1704067200000
+    }
+  ]
+}
+```
+
+### Filtered Response (with perusahaanId)
+
+```json
+{
+  "data": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "perusahaanId": "company-uuid-here",
+      "image": "https://pub-xxx.r2.dev/adinko-images/image1.png",
+      "createdAt": 1704067200000
+    }
+  ]
+}
+```
+
+## Create Perusahaan Image
+
+Create a new image entry. **Authentication required.**
+
+**Endpoint:** `POST /api/perusahaan-image`  
+**Auth:** Required
+
+### Request Body
+
+```json
+{
+  "perusahaanId": "company-uuid-here",
+  "image": "https://pub-xxx.r2.dev/adinko-images/new-image.png"
+}
+```
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `perusahaanId` | string (UUID) | Yes | Company ID |
+| `image` | string | Yes | Image URL |
+
+### Response (201)
+
+```json
+{
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "perusahaanId": "company-uuid-here",
+    "image": "https://pub-xxx.r2.dev/adinko-images/new-image.png",
+    "createdAt": 1704067200000
+  }
+}
+```
+
+### Error Response (400)
+
+```json
+{
+  "error": "perusahaanId is required"
+}
+```
+
+## Update Perusahaan Image
+
+Update an existing image entry. **Authentication required.**
+
+**Endpoint:** `PUT /api/perusahaan-image/:id`  
+**Auth:** Required
+
+### Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `id` | string (UUID) | The unique identifier of the image entry |
+
+### Request Body
+
+```json
+{
+  "image": "https://pub-xxx.r2.dev/adinko-images/updated-image.png"
+}
+```
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `image` | string | Yes | Updated image URL |
+
+### Response (200)
+
+```json
+{
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "perusahaanId": "company-uuid-here",
+    "image": "https://pub-xxx.r2.dev/adinko-images/updated-image.png",
+    "createdAt": 1704067200000
+  }
+}
+```
+
+### Error Response (404)
+
+```json
+{
+  "error": "not found"
+}
+```
+
+## Delete Perusahaan Image
+
+Delete an image entry. **Authentication required.**
+
+**Endpoint:** `DELETE /api/perusahaan-image/:id`  
+**Auth:** Required
+
+### Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `id` | string (UUID) | The unique identifier of the image entry |
+
+### Response (200)
+
+```json
+{
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "perusahaanId": "company-uuid-here",
+    "image": "https://pub-xxx.r2.dev/adinko-images/image.png",
+    "createdAt": 1704067200000
+  }
+}
+```
+
+### Error Response (404)
+
+```json
+{
+  "error": "not found"
+}
+```
+
+## Usage Example
+
+### Using cURL
+
+```bash
+# Get all images for a company
+curl "https://api.adinko.com/api/perusahaan-image?perusahaanId=company-uuid-here"
+
+# Create a new image (with auth)
+curl -X POST https://api.adinko.com/api/perusahaan-image \
+  -H "Content-Type: application/json" \
+  -H "Cookie: better-auth.session_token=your-session-token" \
+  -d '{"perusahaanId": "company-uuid-here", "image": "https://pub-xxx.r2.dev/adinko-images/new.png"}'
+
+# Update an image (with auth)
+curl -X PUT https://api.adinko.com/api/perusahaan-image/550e8400-e29b-41d4-a716-446655440000 \
+  -H "Content-Type: application/json" \
+  -H "Cookie: better-auth.session_token=your-session-token" \
+  -d '{"image": "https://pub-xxx.r2.dev/adinko-images/updated.png"}'
+
+# Delete an image (with auth)
+curl -X DELETE https://api.adinko.com/api/perusahaan-image/550e8400-e29b-41d4-a716-446655440000 \
+  -H "Cookie: better-auth.session_token=your-session-token"
+```

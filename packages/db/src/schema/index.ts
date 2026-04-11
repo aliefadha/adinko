@@ -1,2 +1,3 @@
 export * from "./auth";
-export {};
+export * from "./umum";
+export * from "./perusahaan";
