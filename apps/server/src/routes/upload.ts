@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import { requireAuth } from "./_middleware";
+import { env } from "@adinko/env/server";
 
 import type { R2Bucket } from "@cloudflare/workers-types";
 
@@ -44,7 +45,7 @@ app.post("/file", async (c) => {
 		},
 	});
 
-	const publicUrl = `https://adinko-images.a739e5916949d089fce41ef3f15ca53d.r2.dev/${key}`;
+	const publicUrl = `${env.R2_PUBLIC_URL}/${env.R2_BUCKET_NAME}/${key}`;
 
 	return c.json({ data: { key, publicUrl } });
 });

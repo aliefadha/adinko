@@ -15,7 +15,10 @@ const db = await D1Database("database", {
 	migrationsDir: "../../packages/db/src/migrations",
 });
 
-const r2Bucket = await R2Bucket("adinko-images");
+const r2Bucket = await R2Bucket("adinko-images", {
+	name: "adinko-images",
+	dev: { remote: true },
+});
 
 export const web = await TanStackStart("web", {
 	cwd: "../../apps/web",
@@ -35,6 +38,8 @@ export const server = await Worker("server", {
 	bindings: {
 		DB: db,
 		R2_BUCKET: r2Bucket,
+		R2_PUBLIC_URL: alchemy.env.R2_PUBLIC_URL!,
+		R2_BUCKET_NAME: alchemy.env.R2_BUCKET_NAME!,
 		CORS_ORIGIN: alchemy.env.CORS_ORIGIN!,
 		BETTER_AUTH_SECRET: alchemy.secret.env.BETTER_AUTH_SECRET!,
 		BETTER_AUTH_URL: alchemy.env.BETTER_AUTH_URL!,
