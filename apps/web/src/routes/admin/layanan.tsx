@@ -142,7 +142,16 @@ function LayananPage() {
 									key={item.id}
 									className="flex items-center justify-between border p-3"
 								>
-									<span>{item.title}</span>
+									<div className="flex items-center gap-3">
+										{item.image && (
+											<img
+												src={item.image}
+												alt={item.title}
+												className="size-16 rounded object-cover border"
+											/>
+										)}
+										<span>{item.title}</span>
+									</div>
 									<div className="flex gap-2">
 										<Button
 											size="icon-sm"

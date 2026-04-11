@@ -166,13 +166,22 @@ function PortfolioPage() {
 										key={item.id}
 										className="flex items-center justify-between border p-3"
 									>
-										<div className="flex flex-col gap-1">
-											<span className="font-medium">{item.title}</span>
-											<span className="text-xs text-muted-foreground">
-												{kategori?.nama || "Unknown"} •{" "}
-												{item.alamat || "No alamat"} •{" "}
-												{item.tahun || "No tahun"}
-											</span>
+										<div className="flex items-center gap-3">
+											{item.image && (
+												<img
+													src={item.image}
+													alt={item.title}
+													className="size-16 rounded object-cover border"
+												/>
+											)}
+											<div className="flex flex-col gap-1">
+												<span className="font-medium">{item.title}</span>
+												<span className="text-xs text-muted-foreground">
+													{kategori?.nama || "Unknown"} •{" "}
+													{item.alamat || "No alamat"} •{" "}
+													{item.tahun || "No tahun"}
+												</span>
+											</div>
 										</div>
 										<div className="flex gap-2">
 											<Button

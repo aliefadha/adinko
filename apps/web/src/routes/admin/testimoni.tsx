@@ -164,12 +164,21 @@ function TestimoniPage() {
 										key={item.id}
 										className="flex items-start justify-between border p-3"
 									>
-										<div className="flex flex-col gap-1">
-											<span className="font-medium">{item.nama}</span>
-											<span className="text-xs text-muted-foreground">
-												{kategori?.nama || "Unknown"}
-											</span>
-											<p className="text-sm">{item.testimoni}</p>
+										<div className="flex items-center gap-3">
+											{item.image && (
+												<img
+													src={item.image}
+													alt={item.nama}
+													className="size-16 rounded-full object-cover border"
+												/>
+											)}
+											<div className="flex flex-col gap-1">
+												<span className="font-medium">{item.nama}</span>
+												<span className="text-xs text-muted-foreground">
+													{kategori?.nama || "Unknown"}
+												</span>
+												<p className="text-sm">{item.testimoni}</p>
+											</div>
 										</div>
 										<div className="flex gap-2">
 											<Button
