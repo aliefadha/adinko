@@ -1,0 +1,112 @@
+---
+title: Upload API
+description: API endpoints for uploading files to R2 storage
+---
+
+The Upload API allows you to upload images and files to Cloudflare R2 storage. Files are uploaded directly to R2 and the public URL is returned.
+
+## Upload File
+
+Upload a file (image) to R2 storage. **Authentication required.**
+
+**Endpoint:** `POST /api/upload/file`  
+**Auth:** Required
+
+### Request Body (FormData)
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `file` | File | Yes | The file to upload (image/jpeg, image/png, image/webp, image/gif) |
+| `entity` | string | Yes | Entity type: "portfolio", "layanan", or "testimoni" |
+
+### Example
+
+```bash
+curl -X POST https://api.adinko.com/api/upload/file \
+  -H "Cookie: better-auth.session_token=your-session-token" \
+  -F "file=@image.jpg" \
+  -F "entity=portfolio"
+```
+
+### Response (200)
+
+```json
+{
+  "data": {
+    "key": "portfolio/1712841234567-image.jpg",
+    "publicUrl": "https://pub-xxx.r2.dev/adinko-images/portfolio/1712841234567-image.jpg"
+  }
+}
+```
+
+### Error Response (400)
+
+```json
+{
+  "error": "file and entity are required"
+}
+```
+
+```json
+{
+  "error": "entity must be 'portfolio', 'layanan', or 'testimoni'"
+}
+```
+
+```json
+{
+  "error": "invalid file type"
+}
+```
+
+## Response Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `key` | string | The R2 object key (includes entity prefix and timestamp) |
+| `publicUrl` | string | Full public URL to access the uploaded file |
+
+## Image URL Format
+
+Uploaded images are accessible at:
+
+```
+https://pub-xxx.r2.dev/adinko-images/{entity}/{timestamp-filename}
+```
+
+Example:
+```
+https://pub-8cb5046dbd50450786d928d7094cfcdd.r2.dev/adinko-images/portfolio/1712841234567-hero.jpg
+```
+
+## Usage with Frontend API Client
+
+The web frontend provides an `api.upload.uploadFile()` helper:
+
+```typescript
+import { api } from "@/lib/api";
+
+// Upload a file
+const fileInput = document.querySelector('input[type="file"]');
+if (fileInput?.files?.[0]) {
+  const publicUrl = await api.upload.uploadFile(fileInput.files[0], "portfolio");
+  console.log("Uploaded to:", publicUrl);
+}
+```
+
+## Client-Side Upload Example
+
+```typescript
+const formData = new FormData();
+formData.append("file", fileInput.files[0]);
+formData.append("entity", "portfolio");
+
+const response = await fetch("/api/upload/file", {
+  method: "POST",
+  credentials: "include",
+  body: formData,
+});
+
+const { data } = await response.json();
+console.log(data.publicUrl); // https://pub-xxx.r2.dev/adinko-images/portfolio/xxx.jpg
+```
