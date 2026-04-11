@@ -1,1 +1,1 @@
-export type EntityType = "portfolio" | "layanan";
+export type EntityType = "portfolio" | "layanan" | "testimoni";

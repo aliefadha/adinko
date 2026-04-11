@@ -21,8 +21,11 @@ app.post("/file", async (c) => {
 		return c.json({ error: "file and entity are required" }, 400);
 	}
 
-	if (!["portfolio", "layanan"].includes(entity)) {
-		return c.json({ error: "entity must be 'portfolio' or 'layanan'" }, 400);
+	if (!["portfolio", "layanan", "testimoni"].includes(entity)) {
+		return c.json(
+			{ error: "entity must be 'portfolio', 'layanan', or 'testimoni'" },
+			400,
+		);
 	}
 
 	const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];

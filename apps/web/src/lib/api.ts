@@ -162,7 +162,10 @@ const api = {
 			}).then((r) => r.json()),
 	},
 	upload: {
-		uploadFile: async (file: File, entity: "portfolio" | "layanan") => {
+		uploadFile: async (
+			file: File,
+			entity: "portfolio" | "layanan" | "testimoni",
+		) => {
 			const formData = new FormData();
 			formData.append("file", file);
 			formData.append("entity", entity);

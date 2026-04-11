@@ -45,6 +45,65 @@ type Kategori = {
 	nama: string;
 };
 
+function ImageUpload({
+	value,
+	onChange,
+}: {
+	value: string;
+	onChange: (url: string) => void;
+}) {
+	const [preview, setPreview] = useState<string | null>(value || null);
+	const [uploading, setUploading] = useState(false);
+
+	const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+		const file = e.target.files?.[0];
+		if (!file) return;
+
+		setPreview(URL.createObjectURL(file));
+		setUploading(true);
+
+		try {
+			const url = await api.upload.uploadFile(file, "testimoni");
+			onChange(url);
+			toast.success("Image uploaded");
+		} catch {
+			toast.error("Failed to upload image");
+			setPreview(null);
+		} finally {
+			setUploading(false);
+		}
+	};
+
+	return (
+		<div className="flex flex-col gap-2">
+			<Label>Image</Label>
+			<input
+				type="file"
+				accept="image/*"
+				onChange={handleFileChange}
+				className="text-sm"
+			/>
+			{uploading && (
+				<p className="text-xs text-muted-foreground">Uploading...</p>
+			)}
+			{preview && (
+				<img
+					src={preview}
+					alt="Preview"
+					className="size-24 object-cover border"
+				/>
+			)}
+			{value && !preview && (
+				<img
+					src={value}
+					alt="Current"
+					className="size-24 object-cover border"
+				/>
+			)}
+		</div>
+	);
+}
+
 function TestimoniPage() {
 	const { data: testimoniList } = useQuery({
 		queryKey: ["testimoni"],
@@ -182,12 +241,12 @@ function CreateForm({
 	onSuccess: () => void;
 }) {
 	const queryClient = useQueryClient();
+	const [imageUrl, setImageUrl] = useState("");
 	const form = useForm({
 		defaultValues: {
 			kategoriId: "",
 			nama: "",
 			testimoni: "",
-			image: "",
 		},
 		onSubmit: async ({ value }) => {
 			try {
@@ -195,7 +254,7 @@ function CreateForm({
 					kategoriId: value.kategoriId,
 					nama: value.nama,
 					testimoni: value.testimoni,
-					image: value.image || undefined,
+					image: imageUrl || undefined,
 				});
 				toast.success("Testimoni created");
 				queryClient.invalidateQueries({ queryKey: ["testimoni"] });
@@ -276,20 +335,7 @@ function CreateForm({
 				)}
 			</form.Field>
 
-			<form.Field name="image">
-				{(field) => (
-					<div className="flex flex-col gap-2">
-						<Label htmlFor={field.name}>Image URL</Label>
-						<Input
-							id={field.name}
-							name={field.name}
-							value={field.state.value}
-							onBlur={field.handleBlur}
-							onChange={(e) => field.handleChange(e.target.value)}
-						/>
-					</div>
-				)}
-			</form.Field>
+			<ImageUpload value={imageUrl} onChange={setImageUrl} />
 
 			<DialogFooter>
 				<DialogClose render={<Button variant="outline">Cancel</Button>}>
@@ -317,12 +363,12 @@ function EditForm({
 	onSuccess: () => void;
 }) {
 	const queryClient = useQueryClient();
+	const [imageUrl, setImageUrl] = useState(testimoni.image || "");
 	const form = useForm({
 		defaultValues: {
 			kategoriId: testimoni.kategoriId,
 			nama: testimoni.nama,
 			testimoni: testimoni.testimoni,
-			image: testimoni.image || "",
 		},
 		onSubmit: async ({ value }) => {
 			try {
@@ -330,7 +376,7 @@ function EditForm({
 					kategoriId: value.kategoriId,
 					nama: value.nama,
 					testimoni: value.testimoni,
-					image: value.image || undefined,
+					image: imageUrl || undefined,
 				});
 				toast.success("Testimoni updated");
 				queryClient.invalidateQueries({ queryKey: ["testimoni"] });
@@ -411,20 +457,7 @@ function EditForm({
 				)}
 			</form.Field>
 
-			<form.Field name="image">
-				{(field) => (
-					<div className="flex flex-col gap-2">
-						<Label htmlFor={field.name}>Image URL</Label>
-						<Input
-							id={field.name}
-							name={field.name}
-							value={field.state.value}
-							onBlur={field.handleBlur}
-							onChange={(e) => field.handleChange(e.target.value)}
-						/>
-					</div>
-				)}
-			</form.Field>
+			<ImageUpload value={imageUrl} onChange={setImageUrl} />
 
 			<DialogFooter>
 				<DialogClose render={<Button variant="outline">Cancel</Button>}>
