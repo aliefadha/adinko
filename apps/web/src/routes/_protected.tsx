@@ -48,16 +48,9 @@ function ProtectedLayout() {
 				<div className="flex h-full flex-col">
 					<nav className="flex-1 overflow-y-auto p-4">
 						<div className="flex flex-col gap-1">
-							<div className="mb-4">
-								<p className="px-2 text-xs font-medium text-muted-foreground">
-									Overview
-								</p>
-								<Link
-									to="/admin"
-									className="flex items-center gap-2 px-2 py-1.5 text-xs hover:bg-muted"
-								>
-									Dashboard
-								</Link>
+							<div className="mb-4 flex gap-4 bg-[#101A00] p-4 rounded-md">
+								<img src="/logo.webp" className="w-16 h-16" />
+								<img src="/logo-ghazi.webp" className="w-16 h-16" />
 							</div>
 
 							<div className="mb-4">

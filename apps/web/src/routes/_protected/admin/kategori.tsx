@@ -55,7 +55,6 @@ function KategoriPage() {
 			<div className="flex items-center justify-between">
 				<div>
 					<h1 className="text-2xl font-bold">Kategori</h1>
-					<p className="text-muted-foreground">Manage your categories</p>
 				</div>
 				<Dialog open={createOpen} onOpenChange={setCreateOpen}>
 					<DialogTrigger render={<Button>Create</Button>}>
@@ -70,7 +69,7 @@ function KategoriPage() {
 
 			<Card>
 				<CardHeader>
-					<CardTitle>All Categories</CardTitle>
+					<CardTitle>Semua Kategori</CardTitle>
 				</CardHeader>
 				<CardContent>
 					<div className="flex flex-col gap-2">
@@ -178,8 +177,7 @@ function CreateForm({ onSuccess }: { onSuccess: () => void }) {
 			className="flex flex-col gap-4"
 		>
 			<DialogHeader>
-				<DialogTitle>Create Kategori</DialogTitle>
-				<DialogDescription>Add a new category</DialogDescription>
+				<DialogTitle>Buat Kategori</DialogTitle>
 			</DialogHeader>
 
 			<form.Field name="nama">
@@ -259,7 +257,6 @@ function EditForm({
 		>
 			<DialogHeader>
 				<DialogTitle>Edit Kategori</DialogTitle>
-				<DialogDescription>Update category name</DialogDescription>
 			</DialogHeader>
 
 			<form.Field name="nama">

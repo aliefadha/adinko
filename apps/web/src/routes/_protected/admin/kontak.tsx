@@ -41,13 +41,12 @@ function KontakPage() {
 			<div className="flex items-center justify-between">
 				<div>
 					<h1 className="text-2xl font-bold">Kontak</h1>
-					<p className="text-muted-foreground">Manage contact information</p>
 				</div>
 			</div>
 
 			<Card>
 				<CardHeader>
-					<CardTitle>Contact Information</CardTitle>
+					<CardTitle>Informasi Kontak</CardTitle>
 				</CardHeader>
 				<CardContent>
 					<EditForm kontak={kontak} />

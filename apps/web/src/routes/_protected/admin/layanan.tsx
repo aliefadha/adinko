@@ -113,7 +113,6 @@ function LayananPage() {
 			<div className="flex items-center justify-between">
 				<div>
 					<h1 className="text-2xl font-bold">Layanan</h1>
-					<p className="text-muted-foreground">Manage your services</p>
 				</div>
 				<Dialog open={createOpen} onOpenChange={setCreateOpen}>
 					<DialogTrigger render={<Button>Create</Button>}>
@@ -128,7 +127,7 @@ function LayananPage() {
 
 			<Card>
 				<CardHeader>
-					<CardTitle>All Services</CardTitle>
+					<CardTitle>Semua Layanan</CardTitle>
 				</CardHeader>
 				<CardContent>
 					<div className="flex flex-col gap-2">
@@ -244,8 +243,7 @@ function CreateForm({ onSuccess }: { onSuccess: () => void }) {
 			className="flex flex-col gap-4"
 		>
 			<DialogHeader>
-				<DialogTitle>Create Layanan</DialogTitle>
-				<DialogDescription>Add a new service</DialogDescription>
+				<DialogTitle>Buat Layanan</DialogTitle>
 			</DialogHeader>
 
 			<form.Field name="title">
@@ -321,7 +319,6 @@ function EditForm({
 		>
 			<DialogHeader>
 				<DialogTitle>Edit Layanan</DialogTitle>
-				<DialogDescription>Update service</DialogDescription>
 			</DialogHeader>
 
 			<form.Field name="title">

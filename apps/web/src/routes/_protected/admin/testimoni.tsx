@@ -128,7 +128,6 @@ function TestimoniPage() {
 			<div className="flex items-center justify-between">
 				<div>
 					<h1 className="text-2xl font-bold">Testimoni</h1>
-					<p className="text-muted-foreground">Manage your testimonials</p>
 				</div>
 				<Dialog open={createOpen} onOpenChange={setCreateOpen}>
 					<DialogTrigger render={<Button>Create</Button>}>
@@ -146,7 +145,7 @@ function TestimoniPage() {
 
 			<Card>
 				<CardHeader>
-					<CardTitle>All Testimonials</CardTitle>
+					<CardTitle>Semua Testimoni</CardTitle>
 				</CardHeader>
 				<CardContent>
 					<div className="flex flex-col gap-2">
@@ -284,8 +283,7 @@ function CreateForm({
 			className="flex flex-col gap-4"
 		>
 			<DialogHeader>
-				<DialogTitle>Create Testimoni</DialogTitle>
-				<DialogDescription>Add a new testimonial</DialogDescription>
+				<DialogTitle>Buat Testimoni</DialogTitle>
 			</DialogHeader>
 
 			<form.Field name="kategoriId">
@@ -407,7 +405,6 @@ function EditForm({
 		>
 			<DialogHeader>
 				<DialogTitle>Edit Testimoni</DialogTitle>
-				<DialogDescription>Update testimonial</DialogDescription>
 			</DialogHeader>
 
 			<form.Field name="kategoriId">

@@ -6,8 +6,8 @@ import { R2Bucket } from "alchemy/cloudflare";
 import { config } from "dotenv";
 
 config({ path: "./.env" });
-config({ path: "../../apps/web/.env" });
-config({ path: "../../apps/server/.env" });
+config({ path: "../../apps/web/.env.local" });
+config({ path: "../../apps/server/.env.local" });
 
 const app = await alchemy("adinko");
 
@@ -34,6 +34,7 @@ export const server = await Worker("server", {
 		BETTER_AUTH_SECRET: alchemy.secret.env.BETTER_AUTH_SECRET!,
 		BETTER_AUTH_URL: alchemy.env.BETTER_AUTH_URL!,
 	},
+	url: true,
 	dev: {
 		port: 3000,
 	},

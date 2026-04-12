@@ -1,13 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "@tanstack/react-form";
-import {
-	PlusIcon,
-	PencilIcon,
-	TrashIcon,
-	TagIcon,
-	ShieldIcon,
-} from "lucide-react";
+import { PlusIcon, PencilIcon, TrashIcon, TagIcon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -71,7 +65,6 @@ type PerusahaanTag = {
 type PerusahaanAlasan = {
 	id: string;
 	perusahaanId: string;
-	icon: string;
 	alasan: string;
 	sortOrder: number;
 	createdAt: string;
@@ -116,7 +109,7 @@ function ImageUpload({
 		} finally {
 			setUploading(false);
 		}
-	}
+	};
 
 	return (
 		<div className="flex flex-col gap-2">
@@ -137,133 +130,7 @@ function ImageUpload({
 				/>
 			)}
 		</div>
-	)
-}
-
-function ProfileTab({ perusahaan }: { perusahaan: Perusahaan }) {
-	const queryClient = useQueryClient();
-	const [logoUrl, setLogoUrl] = useState(perusahaan.logo || "");
-
-	const form = useForm({
-		defaultValues: {
-			title: perusahaan.title || "",
-			subtitle: perusahaan.subtitle || "",
-			visi: perusahaan.visi || "",
-			misi: perusahaan.misi || "",
-		},
-		onSubmit: async ({ value }) => {
-			try {
-				await api.perusahaan.update(perusahaan.nama, {
-					logo: logoUrl || undefined,
-					title: value.title || undefined,
-					subtitle: value.subtitle || undefined,
-					visi: value.visi || undefined,
-					misi: value.misi || undefined,
-				})
-				toast.success("Profile updated");
-				queryClient.invalidateQueries({
-					queryKey: ["perusahaan", perusahaan.nama],
-				})
-			} catch {
-				toast.error("Failed to update profile");
-			}
-		},
-	})
-
-	return (
-		<Card>
-			<CardHeader>
-				<CardTitle>Profile Information</CardTitle>
-			</CardHeader>
-			<CardContent>
-				<form
-					onSubmit={(e) => {
-						e.preventDefault();
-						e.stopPropagation();
-						form.handleSubmit();
-					}}
-					className="flex flex-col gap-4"
-				>
-					<div className="flex flex-col gap-2">
-						<Label>Logo</Label>
-						<ImageUpload
-							value={logoUrl}
-							onChange={setLogoUrl}
-							entity="perusahaan-image"
-						/>
-					</div>
-
-					<form.Field name="title">
-						{(field) => (
-							<div className="flex flex-col gap-2">
-								<Label htmlFor={field.name}>Title</Label>
-								<Input
-									id={field.name}
-									name={field.name}
-									value={field.state.value}
-									onBlur={field.handleBlur}
-									onChange={(e) => field.handleChange(e.target.value)}
-								/>
-							</div>
-						)}
-					</form.Field>
-
-					<form.Field name="subtitle">
-						{(field) => (
-							<div className="flex flex-col gap-2">
-								<Label htmlFor={field.name}>Subtitle</Label>
-								<Input
-									id={field.name}
-									name={field.name}
-									value={field.state.value}
-									onBlur={field.handleBlur}
-									onChange={(e) => field.handleChange(e.target.value)}
-								/>
-							</div>
-						)}
-					</form.Field>
-
-					<form.Field name="visi">
-						{(field) => (
-							<div className="flex flex-col gap-2">
-								<Label htmlFor={field.name}>Visi</Label>
-								<Input
-									id={field.name}
-									name={field.name}
-									value={field.state.value}
-									onBlur={field.handleBlur}
-									onChange={(e) => field.handleChange(e.target.value)}
-								/>
-							</div>
-						)}
-					</form.Field>
-
-					<form.Field name="misi">
-						{(field) => (
-							<div className="flex flex-col gap-2">
-								<Label htmlFor={field.name}>Misi</Label>
-								<Input
-									id={field.name}
-									name={field.name}
-									value={field.state.value}
-									onBlur={field.handleBlur}
-									onChange={(e) => field.handleChange(e.target.value)}
-								/>
-							</div>
-						)}
-					</form.Field>
-
-					<form.Subscribe selector={(state) => state.canSubmit}>
-						{(canSubmit) => (
-							<Button type="submit" disabled={!canSubmit}>
-								Save
-							</Button>
-						)}
-					</form.Subscribe>
-				</form>
-			</CardContent>
-		</Card>
-	)
+	);
 }
 
 function ImagesTab({ perusahaan }: { perusahaan: Perusahaan }) {
@@ -276,7 +143,7 @@ function ImagesTab({ perusahaan }: { perusahaan: Perusahaan }) {
 				.list(perusahaan.id)
 				.then((r) => r.data as PerusahaanImage[]),
 		staleTime: 0,
-	})
+	});
 
 	const [createOpen, setCreateOpen] = useState(false);
 	const [deleteOpen, setDeleteOpen] = useState(false);
@@ -300,10 +167,10 @@ function ImagesTab({ perusahaan }: { perusahaan: Perusahaan }) {
 						<CreateImageForm
 							perusahaanId={perusahaan.id}
 							onSuccess={() => {
-								setCreateOpen(false)
+								setCreateOpen(false);
 								queryClient.invalidateQueries({
 									queryKey: ["perusahaanImage", perusahaan.id],
-								})
+								});
 							}}
 						/>
 					</DialogContent>
@@ -337,8 +204,8 @@ function ImagesTab({ perusahaan }: { perusahaan: Perusahaan }) {
 									size="icon-sm"
 									variant="destructive"
 									onClick={() => {
-										setDeleteImage(img)
-										setDeleteOpen(true)
+										setDeleteImage(img);
+										setDeleteOpen(true);
 									}}
 								>
 									<TrashIcon className="size-4" />
@@ -355,18 +222,18 @@ function ImagesTab({ perusahaan }: { perusahaan: Perusahaan }) {
 						<DeleteImageConfirm
 							image={deleteImage}
 							onSuccess={() => {
-								setDeleteOpen(false)
-								setDeleteImage(null)
+								setDeleteOpen(false);
+								setDeleteImage(null);
 								queryClient.invalidateQueries({
 									queryKey: ["perusahaanImage", perusahaan.id],
-								})
+								});
 							}}
 						/>
 					)}
 				</DialogContent>
 			</Dialog>
 		</div>
-	)
+	);
 }
 
 function CreateImageForm({
@@ -381,19 +248,19 @@ function CreateImageForm({
 	const handleSubmit = async () => {
 		if (!imageUrl) {
 			toast.error("Please upload an image");
-			return
+			return;
 		}
 		try {
 			await api.perusahaanImage.create({
 				perusahaanId,
 				image: imageUrl,
-			})
+			});
 			toast.success("Image added");
 			onSuccess();
 		} catch {
 			toast.error("Failed to add image");
 		}
-	}
+	};
 
 	return (
 		<>
@@ -417,7 +284,7 @@ function CreateImageForm({
 				<Button onClick={handleSubmit}>Add</Button>
 			</DialogFooter>
 		</>
-	)
+	);
 }
 
 function DeleteImageConfirm({
@@ -436,7 +303,7 @@ function DeleteImageConfirm({
 		onError: () => {
 			toast.error("Failed to delete image");
 		},
-	})
+	});
 
 	return (
 		<>
@@ -460,7 +327,7 @@ function DeleteImageConfirm({
 				</Button>
 			</DialogFooter>
 		</>
-	)
+	);
 }
 
 function TagsTab({ perusahaan }: { perusahaan: Perusahaan }) {
@@ -473,7 +340,7 @@ function TagsTab({ perusahaan }: { perusahaan: Perusahaan }) {
 				.list(perusahaan.id)
 				.then((r) => r.data as PerusahaanTag[]),
 		staleTime: 0,
-	})
+	});
 
 	const [createOpen, setCreateOpen] = useState(false);
 	const [editOpen, setEditOpen] = useState(false);
@@ -486,9 +353,6 @@ function TagsTab({ perusahaan }: { perusahaan: Perusahaan }) {
 			<div className="flex items-center justify-between">
 				<div>
 					<h2 className="text-lg font-semibold">Tags</h2>
-					<p className="text-sm text-muted-foreground">
-						Tags for company profile
-					</p>
 				</div>
 				<Dialog open={createOpen} onOpenChange={setCreateOpen}>
 					<DialogTrigger render={<Button>Create</Button>}>
@@ -499,10 +363,10 @@ function TagsTab({ perusahaan }: { perusahaan: Perusahaan }) {
 						<CreateTagForm
 							perusahaanId={perusahaan.id}
 							onSuccess={() => {
-								setCreateOpen(false)
+								setCreateOpen(false);
 								queryClient.invalidateQueries({
 									queryKey: ["perusahaanTag", perusahaan.id],
-								})
+								});
 							}}
 						/>
 					</DialogContent>
@@ -532,8 +396,8 @@ function TagsTab({ perusahaan }: { perusahaan: Perusahaan }) {
 								size="icon-sm"
 								variant="ghost"
 								onClick={() => {
-									setEditTag(tag)
-									setEditOpen(true)
+									setEditTag(tag);
+									setEditOpen(true);
 								}}
 							>
 								<PencilIcon className="size-3" />
@@ -542,8 +406,8 @@ function TagsTab({ perusahaan }: { perusahaan: Perusahaan }) {
 								size="icon-sm"
 								variant="ghost"
 								onClick={() => {
-									setDeleteTag(tag)
-									setDeleteOpen(true)
+									setDeleteTag(tag);
+									setDeleteOpen(true);
 								}}
 							>
 								<TrashIcon className="size-3" />
@@ -559,11 +423,11 @@ function TagsTab({ perusahaan }: { perusahaan: Perusahaan }) {
 						<EditTagForm
 							tag={editTag}
 							onSuccess={() => {
-								setEditOpen(false)
-								setEditTag(null)
+								setEditOpen(false);
+								setEditTag(null);
 								queryClient.invalidateQueries({
 									queryKey: ["perusahaanTag", perusahaan.id],
-								})
+								});
 							}}
 						/>
 					)}
@@ -576,18 +440,18 @@ function TagsTab({ perusahaan }: { perusahaan: Perusahaan }) {
 						<DeleteTagConfirm
 							tag={deleteTag}
 							onSuccess={() => {
-								setDeleteOpen(false)
-								setDeleteTag(null)
+								setDeleteOpen(false);
+								setDeleteTag(null);
 								queryClient.invalidateQueries({
 									queryKey: ["perusahaanTag", perusahaan.id],
-								})
+								});
 							}}
 						/>
 					)}
 				</DialogContent>
 			</Dialog>
 		</div>
-	)
+	);
 }
 
 function CreateTagForm({
@@ -604,14 +468,14 @@ function CreateTagForm({
 				await api.perusahaanTag.create({
 					perusahaanId,
 					tag: value.tag,
-				})
+				});
 				toast.success("Tag added");
-				onSuccess()
+				onSuccess();
 			} catch {
 				toast.error("Failed to add tag");
 			}
 		},
-	})
+	});
 
 	return (
 		<form
@@ -623,8 +487,7 @@ function CreateTagForm({
 			className="flex flex-col gap-4"
 		>
 			<DialogHeader>
-				<DialogTitle>Add Tag</DialogTitle>
-				<DialogDescription>Add a new tag for the company.</DialogDescription>
+				<DialogTitle>Buat Tag</DialogTitle>
 			</DialogHeader>
 
 			<form.Field name="tag">
@@ -655,7 +518,7 @@ function CreateTagForm({
 				</form.Subscribe>
 			</DialogFooter>
 		</form>
-	)
+	);
 }
 
 function EditTagForm({
@@ -671,12 +534,12 @@ function EditTagForm({
 			try {
 				await api.perusahaanTag.update(tag.id, { tag: value.tag });
 				toast.success("Tag updated");
-				onSuccess()
+				onSuccess();
 			} catch {
 				toast.error("Failed to update tag");
 			}
 		},
-	})
+	});
 
 	return (
 		<form
@@ -689,7 +552,6 @@ function EditTagForm({
 		>
 			<DialogHeader>
 				<DialogTitle>Edit Tag</DialogTitle>
-				<DialogDescription>Update the tag name.</DialogDescription>
 			</DialogHeader>
 
 			<form.Field name="tag">
@@ -720,7 +582,7 @@ function EditTagForm({
 				</form.Subscribe>
 			</DialogFooter>
 		</form>
-	)
+	);
 }
 
 function DeleteTagConfirm({
@@ -739,7 +601,7 @@ function DeleteTagConfirm({
 		onError: () => {
 			toast.error("Failed to delete tag");
 		},
-	})
+	});
 
 	return (
 		<>
@@ -763,7 +625,7 @@ function DeleteTagConfirm({
 				</Button>
 			</DialogFooter>
 		</>
-	)
+	);
 }
 
 function AlasanTab({ perusahaan }: { perusahaan: Perusahaan }) {
@@ -776,7 +638,7 @@ function AlasanTab({ perusahaan }: { perusahaan: Perusahaan }) {
 				.list(perusahaan.id)
 				.then((r) => r.data as PerusahaanAlasan[]),
 		staleTime: 0,
-	})
+	});
 
 	const [createOpen, setCreateOpen] = useState(false);
 	const [editOpen, setEditOpen] = useState(false);
@@ -784,7 +646,7 @@ function AlasanTab({ perusahaan }: { perusahaan: Perusahaan }) {
 	const [deleteOpen, setDeleteOpen] = useState(false);
 	const [deleteAlasan, setDeleteAlasan] = useState<PerusahaanAlasan | null>(
 		null,
-	)
+	);
 
 	const MAX_ALASAN = 4;
 
@@ -793,9 +655,6 @@ function AlasanTab({ perusahaan }: { perusahaan: Perusahaan }) {
 			<div className="flex items-center justify-between">
 				<div>
 					<h2 className="text-lg font-semibold">Kenapa Memilih Kami</h2>
-					<p className="text-sm text-muted-foreground">
-						Maximum {MAX_ALASAN} reasons per company
-					</p>
 				</div>
 				{(!alasanList || alasanList.length < MAX_ALASAN) && (
 					<Dialog open={createOpen} onOpenChange={setCreateOpen}>
@@ -807,10 +666,10 @@ function AlasanTab({ perusahaan }: { perusahaan: Perusahaan }) {
 							<CreateAlasanForm
 								perusahaanId={perusahaan.id}
 								onSuccess={() => {
-									setCreateOpen(false)
+									setCreateOpen(false);
 									queryClient.invalidateQueries({
 										queryKey: ["perusahaanAlasan", perusahaan.id],
-									})
+									});
 								}}
 							/>
 						</DialogContent>
@@ -834,24 +693,16 @@ function AlasanTab({ perusahaan }: { perusahaan: Perusahaan }) {
 						<Card key={alasan.id}>
 							<CardContent className="p-4">
 								<div className="flex items-start justify-between">
-									<div className="flex items-start gap-3">
-										<div className="flex size-10 items-center justify-center rounded-lg bg-primary/10">
-											<ShieldIcon className="size-5" />
-										</div>
-										<div>
-											<p className="font-medium">{alasan.alasan}</p>
-											<p className="text-xs text-muted-foreground">
-												Icon: {alasan.icon}
-											</p>
-										</div>
+									<div className="flex-1">
+										<p className="font-medium">{alasan.alasan}</p>
 									</div>
 									<div className="flex gap-1">
 										<Button
 											size="icon-sm"
 											variant="ghost"
 											onClick={() => {
-												setEditAlasan(alasan)
-												setEditOpen(true)
+												setEditAlasan(alasan);
+												setEditOpen(true);
 											}}
 										>
 											<PencilIcon className="size-4" />
@@ -860,8 +711,8 @@ function AlasanTab({ perusahaan }: { perusahaan: Perusahaan }) {
 											size="icon-sm"
 											variant="ghost"
 											onClick={() => {
-												setDeleteAlasan(alasan)
-												setDeleteOpen(true)
+												setDeleteAlasan(alasan);
+												setDeleteOpen(true);
 											}}
 										>
 											<TrashIcon className="size-4" />
@@ -880,11 +731,11 @@ function AlasanTab({ perusahaan }: { perusahaan: Perusahaan }) {
 						<EditAlasanForm
 							alasan={editAlasan}
 							onSuccess={() => {
-								setEditOpen(false)
-								setEditAlasan(null)
+								setEditOpen(false);
+								setEditAlasan(null);
 								queryClient.invalidateQueries({
 									queryKey: ["perusahaanAlasan", perusahaan.id],
-								})
+								});
 							}}
 						/>
 					)}
@@ -897,18 +748,18 @@ function AlasanTab({ perusahaan }: { perusahaan: Perusahaan }) {
 						<DeleteAlasanConfirm
 							alasan={deleteAlasan}
 							onSuccess={() => {
-								setDeleteOpen(false)
-								setDeleteAlasan(null)
+								setDeleteOpen(false);
+								setDeleteAlasan(null);
 								queryClient.invalidateQueries({
 									queryKey: ["perusahaanAlasan", perusahaan.id],
-								})
+								});
 							}}
 						/>
 					)}
 				</DialogContent>
 			</Dialog>
 		</div>
-	)
+	);
 }
 
 function CreateAlasanForm({
@@ -919,22 +770,22 @@ function CreateAlasanForm({
 	onSuccess: () => void;
 }) {
 	const form = useForm({
-		defaultValues: { icon: "", alasan: "", sortOrder: 0 },
+		defaultValues: { alasan: "", sortOrder: 0 },
 		onSubmit: async ({ value }) => {
 			try {
 				await api.perusahaanAlasan.create({
 					perusahaanId,
-					icon: value.icon,
+					icon: '',
 					alasan: value.alasan,
 					sortOrder: value.sortOrder,
-				})
+				});
 				toast.success("Reason added");
-				onSuccess()
+				onSuccess();
 			} catch {
 				toast.error("Failed to add reason");
 			}
 		},
-	})
+	});
 
 	return (
 		<form
@@ -952,27 +803,10 @@ function CreateAlasanForm({
 				</DialogDescription>
 			</DialogHeader>
 
-			<form.Field name="icon">
-				{(field) => (
-					<div className="flex flex-col gap-2">
-						<Label htmlFor={field.name}>
-							Icon (lucide-react name, e.g. "Trophy", "Shield")
-						</Label>
-						<Input
-							id={field.name}
-							name={field.name}
-							value={field.state.value}
-							onBlur={field.handleBlur}
-							onChange={(e) => field.handleChange(e.target.value)}
-							placeholder="Trophy"
-						/>
-					</div>
-				)}
-			</form.Field>
 			<form.Field name="alasan">
 				{(field) => (
 					<div className="flex flex-col gap-2">
-						<Label htmlFor={field.name}>Reason</Label>
+						<Label htmlFor={field.name}>Title</Label>
 						<Input
 							id={field.name}
 							name={field.name}
@@ -986,7 +820,7 @@ function CreateAlasanForm({
 			<form.Field name="sortOrder">
 				{(field) => (
 					<div className="flex flex-col gap-2">
-						<Label htmlFor={field.name}>Sort Order</Label>
+						<Label htmlFor={field.name}>Urutan</Label>
 						<Input
 							id={field.name}
 							name={field.name}
@@ -1014,7 +848,7 @@ function CreateAlasanForm({
 				</form.Subscribe>
 			</DialogFooter>
 		</form>
-	)
+	);
 }
 
 function EditAlasanForm({
@@ -1026,24 +860,22 @@ function EditAlasanForm({
 }) {
 	const form = useForm({
 		defaultValues: {
-			icon: alasan.icon,
 			alasan: alasan.alasan,
 			sortOrder: alasan.sortOrder,
 		},
 		onSubmit: async ({ value }) => {
 			try {
 				await api.perusahaanAlasan.update(alasan.id, {
-					icon: value.icon,
 					alasan: value.alasan,
 					sortOrder: value.sortOrder,
-				})
+				});
 				toast.success("Reason updated");
-				onSuccess()
+				onSuccess();
 			} catch {
 				toast.error("Failed to update reason");
 			}
 		},
-	})
+	});
 
 	return (
 		<form
@@ -1055,28 +887,13 @@ function EditAlasanForm({
 			className="flex flex-col gap-4"
 		>
 			<DialogHeader>
-				<DialogTitle>Edit Reason</DialogTitle>
-				<DialogDescription>Update the reason details.</DialogDescription>
+				<DialogTitle>Edit</DialogTitle>
 			</DialogHeader>
 
-			<form.Field name="icon">
-				{(field) => (
-					<div className="flex flex-col gap-2">
-						<Label htmlFor={field.name}>Icon</Label>
-						<Input
-							id={field.name}
-							name={field.name}
-							value={field.state.value}
-							onBlur={field.handleBlur}
-							onChange={(e) => field.handleChange(e.target.value)}
-						/>
-					</div>
-				)}
-			</form.Field>
 			<form.Field name="alasan">
 				{(field) => (
 					<div className="flex flex-col gap-2">
-						<Label htmlFor={field.name}>Reason</Label>
+						<Label htmlFor={field.name}>Title</Label>
 						<Input
 							id={field.name}
 							name={field.name}
@@ -1090,7 +907,7 @@ function EditAlasanForm({
 			<form.Field name="sortOrder">
 				{(field) => (
 					<div className="flex flex-col gap-2">
-						<Label htmlFor={field.name}>Sort Order</Label>
+						<Label htmlFor={field.name}>Urutan</Label>
 						<Input
 							id={field.name}
 							name={field.name}
@@ -1118,7 +935,7 @@ function EditAlasanForm({
 				</form.Subscribe>
 			</DialogFooter>
 		</form>
-	)
+	);
 }
 
 function DeleteAlasanConfirm({
@@ -1137,7 +954,7 @@ function DeleteAlasanConfirm({
 		onError: () => {
 			toast.error("Failed to delete reason");
 		},
-	})
+	});
 
 	return (
 		<>
@@ -1161,7 +978,7 @@ function DeleteAlasanConfirm({
 				</Button>
 			</DialogFooter>
 		</>
-	)
+	);
 }
 
 function LayananTab({ perusahaan }: { perusahaan: Perusahaan }) {
@@ -1174,26 +991,23 @@ function LayananTab({ perusahaan }: { perusahaan: Perusahaan }) {
 				.list(perusahaan.id)
 				.then((r) => r.data as PerusahaanLayanan[]),
 		staleTime: 0,
-	})
+	});
 
 	const [createOpen, setCreateOpen] = useState(false);
 	const [editOpen, setEditOpen] = useState(false);
 	const [editLayanan, setEditLayanan] = useState<PerusahaanLayanan | null>(
 		null,
-	)
+	);
 	const [deleteOpen, setDeleteOpen] = useState(false);
 	const [deleteLayanan, setDeleteLayanan] = useState<PerusahaanLayanan | null>(
 		null,
-	)
+	);
 
 	return (
 		<div className="flex flex-col gap-6">
 			<div className="flex items-center justify-between">
 				<div>
 					<h2 className="text-lg font-semibold">Layanan</h2>
-					<p className="text-sm text-muted-foreground">
-						Services for company profile
-					</p>
 				</div>
 				<Dialog open={createOpen} onOpenChange={setCreateOpen}>
 					<DialogTrigger render={<Button>Create</Button>}>
@@ -1204,10 +1018,10 @@ function LayananTab({ perusahaan }: { perusahaan: Perusahaan }) {
 						<CreateLayananForm
 							perusahaanId={perusahaan.id}
 							onSuccess={() => {
-								setCreateOpen(false)
+								setCreateOpen(false);
 								queryClient.invalidateQueries({
 									queryKey: ["perusahaanLayanan", perusahaan.id],
-								})
+								});
 							}}
 						/>
 					</DialogContent>
@@ -1253,8 +1067,8 @@ function LayananTab({ perusahaan }: { perusahaan: Perusahaan }) {
 											size="icon-sm"
 											variant="ghost"
 											onClick={() => {
-												setEditLayanan(layanan)
-												setEditOpen(true)
+												setEditLayanan(layanan);
+												setEditOpen(true);
 											}}
 										>
 											<PencilIcon className="size-4" />
@@ -1263,8 +1077,8 @@ function LayananTab({ perusahaan }: { perusahaan: Perusahaan }) {
 											size="icon-sm"
 											variant="ghost"
 											onClick={() => {
-												setDeleteLayanan(layanan)
-												setDeleteOpen(true)
+												setDeleteLayanan(layanan);
+												setDeleteOpen(true);
 											}}
 										>
 											<TrashIcon className="size-4" />
@@ -1283,11 +1097,11 @@ function LayananTab({ perusahaan }: { perusahaan: Perusahaan }) {
 						<EditLayananForm
 							layanan={editLayanan}
 							onSuccess={() => {
-								setEditOpen(false)
-								setEditLayanan(null)
+								setEditOpen(false);
+								setEditLayanan(null);
 								queryClient.invalidateQueries({
 									queryKey: ["perusahaanLayanan", perusahaan.id],
-								})
+								});
 							}}
 						/>
 					)}
@@ -1300,18 +1114,18 @@ function LayananTab({ perusahaan }: { perusahaan: Perusahaan }) {
 						<DeleteLayananConfirm
 							layanan={deleteLayanan}
 							onSuccess={() => {
-								setDeleteOpen(false)
-								setDeleteLayanan(null)
+								setDeleteOpen(false);
+								setDeleteLayanan(null);
 								queryClient.invalidateQueries({
 									queryKey: ["perusahaanLayanan", perusahaan.id],
-								})
+								});
 							}}
 						/>
 					)}
 				</DialogContent>
 			</Dialog>
 		</div>
-	)
+	);
 }
 
 function CreateLayananForm({
@@ -1332,14 +1146,14 @@ function CreateLayananForm({
 					subtitle: value.subtitle || undefined,
 					image: imageUrl || undefined,
 					namaLayanan: value.namaLayanan,
-				})
+				});
 				toast.success("Service added");
-				onSuccess()
+				onSuccess();
 			} catch {
 				toast.error("Failed to add service");
 			}
 		},
-	})
+	});
 
 	return (
 		<form
@@ -1421,7 +1235,7 @@ function CreateLayananForm({
 				</form.Subscribe>
 			</DialogFooter>
 		</form>
-	)
+	);
 }
 
 function EditLayananForm({
@@ -1445,14 +1259,14 @@ function EditLayananForm({
 					subtitle: value.subtitle || undefined,
 					image: imageUrl || undefined,
 					namaLayanan: value.namaLayanan,
-				})
+				});
 				toast.success("Service updated");
-				onSuccess()
+				onSuccess();
 			} catch {
 				toast.error("Failed to update service");
 			}
 		},
-	})
+	});
 
 	return (
 		<form
@@ -1532,7 +1346,7 @@ function EditLayananForm({
 				</form.Subscribe>
 			</DialogFooter>
 		</form>
-	)
+	);
 }
 
 function DeleteLayananConfirm({
@@ -1551,7 +1365,7 @@ function DeleteLayananConfirm({
 		onError: () => {
 			toast.error("Failed to delete service");
 		},
-	})
+	});
 
 	return (
 		<>
@@ -1575,7 +1389,7 @@ function DeleteLayananConfirm({
 				</Button>
 			</DialogFooter>
 		</>
-	)
+	);
 }
 
 function PerusahaanPage() {
@@ -1585,7 +1399,7 @@ function PerusahaanPage() {
 		queryKey: ["perusahaan", nama],
 		queryFn: () => api.perusahaan.get(nama).then((r) => r.data as Perusahaan),
 		staleTime: 0,
-	})
+	});
 
 	if (isLoading) {
 		return (
@@ -1602,7 +1416,7 @@ function PerusahaanPage() {
 					</CardContent>
 				</Card>
 			</div>
-		)
+		);
 	}
 
 	if (!perusahaanData) {
@@ -1620,7 +1434,7 @@ function PerusahaanPage() {
 					</CardContent>
 				</Card>
 			</div>
-		)
+		);
 	}
 
 	return (
@@ -1632,18 +1446,14 @@ function PerusahaanPage() {
 				</div>
 			</div>
 
-			<Tabs defaultValue="profile">
+			<Tabs defaultValue="images">
 				<TabsList>
-					<TabsTrigger value="profile">Profile</TabsTrigger>
 					<TabsTrigger value="images">Images</TabsTrigger>
 					<TabsTrigger value="tags">Tags</TabsTrigger>
 					<TabsTrigger value="alasan">Why Us</TabsTrigger>
 					<TabsTrigger value="layanan">Layanan</TabsTrigger>
 				</TabsList>
 
-				<TabsContent value="profile">
-					<ProfileTab perusahaan={perusahaanData} />
-				</TabsContent>
 				<TabsContent value="images">
 					<ImagesTab perusahaan={perusahaanData} />
 				</TabsContent>
@@ -1658,5 +1468,5 @@ function PerusahaanPage() {
 				</TabsContent>
 			</Tabs>
 		</div>
-	)
+	);
 }

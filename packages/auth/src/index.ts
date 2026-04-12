@@ -36,7 +36,7 @@ export function createAuth() {
 			// https://developers.cloudflare.com/workers/wrangler/configuration/#workersdev
 			crossSubDomainCookies: {
 				enabled: true,
-				domain: "aliefadha1.workers.dev",
+				domain: "alifadha1.workers.dev",
 			},
 		},
 	});
