@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "@tanstack/react-form";
-import { MessageSquareIcon, PencilIcon, TrashIcon } from "lucide-react";
+import { ImageIcon, PencilIcon, TrashIcon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -27,16 +27,18 @@ import {
 
 import { api } from "@/lib/api";
 
-export const Route = createFileRoute("/admin/testimoni")({
-	component: TestimoniPage,
+export const Route = createFileRoute("/_protected/admin/portfolio")({
+	component: PortfolioPage,
 });
 
-type Testimoni = {
+type Portfolio = {
 	id: string;
 	kategoriId: string;
-	nama: string;
-	testimoni: string;
+	title: string;
+	subtitle: string | null;
 	image: string | null;
+	alamat: string | null;
+	tahun: string | null;
 	createdAt: string;
 };
 
@@ -63,7 +65,7 @@ function ImageUpload({
 		setUploading(true);
 
 		try {
-			const url = await api.upload.uploadFile(file, "testimoni");
+			const url = await api.upload.uploadFile(file, "portfolio");
 			onChange(url);
 			toast.success("Image uploaded");
 		} catch {
@@ -72,7 +74,7 @@ function ImageUpload({
 		} finally {
 			setUploading(false);
 		}
-	};
+	}
 
 	return (
 		<div className="flex flex-col gap-2">
@@ -101,38 +103,38 @@ function ImageUpload({
 				/>
 			)}
 		</div>
-	);
+	)
 }
 
-function TestimoniPage() {
-	const { data: testimoniList } = useQuery({
-		queryKey: ["testimoni"],
-		queryFn: () => api.testimoni.list().then((r) => r.data as Testimoni[]),
-	});
+function PortfolioPage() {
+	const { data: portfolioList } = useQuery({
+		queryKey: ["portfolio"],
+		queryFn: () => api.portfolio.list().then((r) => r.data as Portfolio[]),
+	})
 
 	const { data: kategoriList } = useQuery({
 		queryKey: ["kategori"],
 		queryFn: () => api.kategori.list().then((r) => r.data as Kategori[]),
-	});
+	})
 
 	const [createOpen, setCreateOpen] = useState(false);
 	const [editOpen, setEditOpen] = useState(false);
-	const [editTestimoni, setEditTestimoni] = useState<Testimoni | null>(null);
+	const [editPortfolio, setEditPortfolio] = useState<Portfolio | null>(null);
 	const [deleteOpen, setDeleteOpen] = useState(false);
-	const [deleteTestimoni, setDeleteTestimoni] = useState<Testimoni | null>(
+	const [deletePortfolio, setDeletePortfolio] = useState<Portfolio | null>(
 		null,
-	);
+	)
 
 	return (
 		<div className="flex flex-col gap-6">
 			<div className="flex items-center justify-between">
 				<div>
-					<h1 className="text-2xl font-bold">Testimoni</h1>
-					<p className="text-muted-foreground">Manage your testimonials</p>
+					<h1 className="text-2xl font-bold">Portfolio</h1>
+					<p className="text-muted-foreground">Manage your portfolio entries</p>
 				</div>
 				<Dialog open={createOpen} onOpenChange={setCreateOpen}>
 					<DialogTrigger render={<Button>Create</Button>}>
-						<MessageSquareIcon data-icon="inline-start" />
+						<ImageIcon data-icon="inline-start" />
 						Create
 					</DialogTrigger>
 					<DialogContent>
@@ -146,38 +148,39 @@ function TestimoniPage() {
 
 			<Card>
 				<CardHeader>
-					<CardTitle>All Testimonials</CardTitle>
+					<CardTitle>All Portfolio</CardTitle>
 				</CardHeader>
 				<CardContent>
 					<div className="flex flex-col gap-2">
-						{!testimoniList || testimoniList.length === 0 ? (
+						{!portfolioList || portfolioList.length === 0 ? (
 							<p className="py-8 text-center text-muted-foreground">
-								No testimonials yet. Create one to get started.
+								No portfolio entries yet. Create one to get started.
 							</p>
 						) : (
-							testimoniList.map((item) => {
+							portfolioList.map((item) => {
 								const kategori = kategoriList?.find(
 									(k) => k.id === item.kategoriId,
-								);
+								)
 								return (
 									<div
 										key={item.id}
-										className="flex items-start justify-between border p-3"
+										className="flex items-center justify-between border p-3"
 									>
 										<div className="flex items-center gap-3">
 											{item.image && (
 												<img
 													src={item.image}
-													alt={item.nama}
-													className="size-16 rounded-full object-cover border"
+													alt={item.title}
+													className="size-16 rounded object-cover border"
 												/>
 											)}
 											<div className="flex flex-col gap-1">
-												<span className="font-medium">{item.nama}</span>
+												<span className="font-medium">{item.title}</span>
 												<span className="text-xs text-muted-foreground">
-													{kategori?.nama || "Unknown"}
+													{kategori?.nama || "Unknown"} •{" "}
+													{item.alamat || "No alamat"} •{" "}
+													{item.tahun || "No tahun"}
 												</span>
-												<p className="text-sm">{item.testimoni}</p>
 											</div>
 										</div>
 										<div className="flex gap-2">
@@ -185,8 +188,8 @@ function TestimoniPage() {
 												size="icon-sm"
 												variant="ghost"
 												onClick={() => {
-													setEditTestimoni(item);
-													setEditOpen(true);
+													setEditPortfolio(item)
+													setEditOpen(true)
 												}}
 											>
 												<PencilIcon className="size-4" />
@@ -195,15 +198,15 @@ function TestimoniPage() {
 												size="icon-sm"
 												variant="ghost"
 												onClick={() => {
-													setDeleteTestimoni(item);
-													setDeleteOpen(true);
+													setDeletePortfolio(item)
+													setDeleteOpen(true)
 												}}
 											>
 												<TrashIcon className="size-4" />
 											</Button>
 										</div>
 									</div>
-								);
+								)
 							})
 						)}
 					</div>
@@ -212,13 +215,13 @@ function TestimoniPage() {
 
 			<Dialog open={editOpen} onOpenChange={setEditOpen}>
 				<DialogContent>
-					{editTestimoni && (
+					{editPortfolio && (
 						<EditForm
-							testimoni={editTestimoni}
+							portfolio={editPortfolio}
 							kategoriList={kategoriList || []}
 							onSuccess={() => {
-								setEditOpen(false);
-								setEditTestimoni(null);
+								setEditOpen(false)
+								setEditPortfolio(null)
 							}}
 						/>
 					)}
@@ -227,19 +230,19 @@ function TestimoniPage() {
 
 			<Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
 				<DialogContent>
-					{deleteTestimoni && (
+					{deletePortfolio && (
 						<DeleteConfirm
-							testimoni={deleteTestimoni}
+							portfolio={deletePortfolio}
 							onSuccess={() => {
-								setDeleteOpen(false);
-								setDeleteTestimoni(null);
+								setDeleteOpen(false)
+								setDeletePortfolio(null);
 							}}
 						/>
 					)}
 				</DialogContent>
 			</Dialog>
 		</div>
-	);
+	)
 }
 
 function CreateForm({
@@ -254,25 +257,29 @@ function CreateForm({
 	const form = useForm({
 		defaultValues: {
 			kategoriId: "",
-			nama: "",
-			testimoni: "",
+			title: "",
+			subtitle: "",
+			alamat: "",
+			tahun: "",
 		},
 		onSubmit: async ({ value }) => {
 			try {
-				await api.testimoni.create({
+				await api.portfolio.create({
 					kategoriId: value.kategoriId,
-					nama: value.nama,
-					testimoni: value.testimoni,
+					title: value.title,
+					subtitle: value.subtitle || undefined,
 					image: imageUrl || undefined,
-				});
-				toast.success("Testimoni created");
-				queryClient.invalidateQueries({ queryKey: ["testimoni"] });
-				onSuccess();
+					alamat: value.alamat || undefined,
+					tahun: value.tahun || undefined,
+				})
+				toast.success("Portfolio created");
+				queryClient.invalidateQueries({ queryKey: ["portfolio"] });
+				onSuccess()
 			} catch {
-				toast.error("Failed to create testimoni");
+				toast.error("Failed to create portfolio");
 			}
 		},
-	});
+	})
 
 	return (
 		<form
@@ -284,8 +291,8 @@ function CreateForm({
 			className="flex flex-col gap-4"
 		>
 			<DialogHeader>
-				<DialogTitle>Create Testimoni</DialogTitle>
-				<DialogDescription>Add a new testimonial</DialogDescription>
+				<DialogTitle>Create Portfolio</DialogTitle>
+				<DialogDescription>Add a new portfolio entry</DialogDescription>
 			</DialogHeader>
 
 			<form.Field name="kategoriId">
@@ -311,10 +318,10 @@ function CreateForm({
 				)}
 			</form.Field>
 
-			<form.Field name="nama">
+			<form.Field name="title">
 				{(field) => (
 					<div className="flex flex-col gap-2">
-						<Label htmlFor={field.name}>Nama</Label>
+						<Label htmlFor={field.name}>Title</Label>
 						<Input
 							id={field.name}
 							name={field.name}
@@ -327,18 +334,16 @@ function CreateForm({
 				)}
 			</form.Field>
 
-			<form.Field name="testimoni">
+			<form.Field name="subtitle">
 				{(field) => (
 					<div className="flex flex-col gap-2">
-						<Label htmlFor={field.name}>Testimoni</Label>
-						<textarea
+						<Label htmlFor={field.name}>Subtitle</Label>
+						<Input
 							id={field.name}
 							name={field.name}
 							value={field.state.value}
 							onBlur={field.handleBlur}
 							onChange={(e) => field.handleChange(e.target.value)}
-							className="min-h-24 w-full rounded-none border border-input bg-transparent px-2.5 py-1 text-xs"
-							aria-invalid={field.state.meta.errors.length > 0}
 						/>
 					</div>
 				)}
@@ -359,42 +364,46 @@ function CreateForm({
 				</form.Subscribe>
 			</DialogFooter>
 		</form>
-	);
+	)
 }
 
 function EditForm({
-	testimoni,
+	portfolio,
 	kategoriList,
 	onSuccess,
 }: {
-	testimoni: Testimoni;
+	portfolio: Portfolio;
 	kategoriList: Kategori[];
 	onSuccess: () => void;
 }) {
 	const queryClient = useQueryClient();
-	const [imageUrl, setImageUrl] = useState(testimoni.image || "");
+	const [imageUrl, setImageUrl] = useState(portfolio.image || "");
 	const form = useForm({
 		defaultValues: {
-			kategoriId: testimoni.kategoriId,
-			nama: testimoni.nama,
-			testimoni: testimoni.testimoni,
+			kategoriId: portfolio.kategoriId,
+			title: portfolio.title,
+			subtitle: portfolio.subtitle || "",
+			alamat: portfolio.alamat || "",
+			tahun: portfolio.tahun || "",
 		},
 		onSubmit: async ({ value }) => {
 			try {
-				await api.testimoni.update(testimoni.id, {
+				await api.portfolio.update(portfolio.id, {
 					kategoriId: value.kategoriId,
-					nama: value.nama,
-					testimoni: value.testimoni,
+					title: value.title,
+					subtitle: value.subtitle || undefined,
 					image: imageUrl || undefined,
-				});
-				toast.success("Testimoni updated");
-				queryClient.invalidateQueries({ queryKey: ["testimoni"] });
-				onSuccess();
+					alamat: value.alamat || undefined,
+					tahun: value.tahun || undefined,
+				})
+				toast.success("Portfolio updated");
+				queryClient.invalidateQueries({ queryKey: ["portfolio"] });
+				onSuccess()
 			} catch {
-				toast.error("Failed to update testimoni");
+				toast.error("Failed to update portfolio");
 			}
 		},
-	});
+	})
 
 	return (
 		<form
@@ -406,8 +415,8 @@ function EditForm({
 			className="flex flex-col gap-4"
 		>
 			<DialogHeader>
-				<DialogTitle>Edit Testimoni</DialogTitle>
-				<DialogDescription>Update testimonial</DialogDescription>
+				<DialogTitle>Edit Portfolio</DialogTitle>
+				<DialogDescription>Update portfolio entry</DialogDescription>
 			</DialogHeader>
 
 			<form.Field name="kategoriId">
@@ -433,10 +442,10 @@ function EditForm({
 				)}
 			</form.Field>
 
-			<form.Field name="nama">
+			<form.Field name="title">
 				{(field) => (
 					<div className="flex flex-col gap-2">
-						<Label htmlFor={field.name}>Nama</Label>
+						<Label htmlFor={field.name}>Title</Label>
 						<Input
 							id={field.name}
 							name={field.name}
@@ -449,24 +458,52 @@ function EditForm({
 				)}
 			</form.Field>
 
-			<form.Field name="testimoni">
+			<form.Field name="subtitle">
 				{(field) => (
 					<div className="flex flex-col gap-2">
-						<Label htmlFor={field.name}>Testimoni</Label>
-						<textarea
+						<Label htmlFor={field.name}>Subtitle</Label>
+						<Input
 							id={field.name}
 							name={field.name}
 							value={field.state.value}
 							onBlur={field.handleBlur}
 							onChange={(e) => field.handleChange(e.target.value)}
-							className="min-h-24 w-full rounded-none border border-input bg-transparent px-2.5 py-1 text-xs"
-							aria-invalid={field.state.meta.errors.length > 0}
 						/>
 					</div>
 				)}
 			</form.Field>
 
 			<ImageUpload value={imageUrl} onChange={setImageUrl} />
+
+			<form.Field name="alamat">
+				{(field) => (
+					<div className="flex flex-col gap-2">
+						<Label htmlFor={field.name}>Alamat</Label>
+						<Input
+							id={field.name}
+							name={field.name}
+							value={field.state.value}
+							onBlur={field.handleBlur}
+							onChange={(e) => field.handleChange(e.target.value)}
+						/>
+					</div>
+				)}
+			</form.Field>
+
+			<form.Field name="tahun">
+				{(field) => (
+					<div className="flex flex-col gap-2">
+						<Label htmlFor={field.name}>Tahun</Label>
+						<Input
+							id={field.name}
+							name={field.name}
+							value={field.state.value}
+							onBlur={field.handleBlur}
+							onChange={(e) => field.handleChange(e.target.value)}
+						/>
+					</div>
+				)}
+			</form.Field>
 
 			<DialogFooter>
 				<DialogClose render={<Button variant="outline">Cancel</Button>}>
@@ -481,36 +518,36 @@ function EditForm({
 				</form.Subscribe>
 			</DialogFooter>
 		</form>
-	);
+	)
 }
 
 function DeleteConfirm({
-	testimoni,
+	portfolio,
 	onSuccess,
 }: {
-	testimoni: Testimoni;
+	portfolio: Portfolio;
 	onSuccess: () => void;
 }) {
 	const queryClient = useQueryClient();
 	const deleteMutation = useMutation({
-		mutationFn: () => api.testimoni.delete(testimoni.id),
+		mutationFn: () => api.portfolio.delete(portfolio.id),
 		onSuccess: () => {
-			toast.success("Testimoni deleted");
-			queryClient.invalidateQueries({ queryKey: ["testimoni"] });
+			toast.success("Portfolio deleted");
+			queryClient.invalidateQueries({ queryKey: ["portfolio"] });
 			onSuccess();
 		},
 		onError: () => {
-			toast.error("Failed to delete testimoni");
+			toast.error("Failed to delete portfolio");
 		},
-	});
+	})
 
 	return (
 		<>
 			<DialogHeader>
-				<DialogTitle>Delete Testimoni</DialogTitle>
+				<DialogTitle>Delete Portfolio</DialogTitle>
 				<DialogDescription>
-					Are you sure you want to delete testimony from "{testimoni.nama}"?
-					This action cannot be undone.
+					Are you sure you want to delete "{portfolio.title}"? This action
+					cannot be undone.
 				</DialogDescription>
 			</DialogHeader>
 			<DialogFooter>
@@ -526,5 +563,5 @@ function DeleteConfirm({
 				</Button>
 			</DialogFooter>
 		</>
-	);
+	)
 }

@@ -16,7 +16,7 @@ import { Label } from "@adinko/ui/components/label";
 
 import { api } from "@/lib/api";
 
-export const Route = createFileRoute("/admin/kontak")({
+export const Route = createFileRoute("/_protected/admin/kontak")({
 	component: KontakPage,
 });
 
@@ -32,7 +32,7 @@ function KontakPage() {
 	const { data: kontakData } = useQuery({
 		queryKey: ["kontak"],
 		queryFn: () => api.kontak.get().then((r) => r.data as Kontak[]),
-	});
+	})
 
 	const kontak = kontakData?.[0];
 
@@ -85,7 +85,7 @@ function KontakPage() {
 				</div>
 			</div>
 		</div>
-	);
+	)
 }
 
 function EditForm({ kontak }: { kontak?: Kontak }) {
@@ -104,14 +104,14 @@ function EditForm({ kontak }: { kontak?: Kontak }) {
 					wa: value.wa || undefined,
 					instagram: value.instagram || undefined,
 					email: value.email || undefined,
-				});
+				})
 				toast.success("Kontak updated");
 				queryClient.invalidateQueries({ queryKey: ["kontak"] });
 			} catch {
 				toast.error("Failed to update kontak");
 			}
 		},
-	});
+	})
 
 	return (
 		<form
@@ -191,5 +191,5 @@ function EditForm({ kontak }: { kontak?: Kontak }) {
 				)}
 			</form.Subscribe>
 		</form>
-	);
+	)
 }

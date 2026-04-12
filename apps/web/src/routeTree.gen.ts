@@ -9,112 +9,114 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as DashboardRouteImport } from './routes/dashboard'
-import { Route as AdminRouteImport } from './routes/admin'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as AdminTestimoniRouteImport } from './routes/admin/testimoni'
-import { Route as AdminPortfolioRouteImport } from './routes/admin/portfolio'
-import { Route as AdminLayananRouteImport } from './routes/admin/layanan'
-import { Route as AdminKontakRouteImport } from './routes/admin/kontak'
-import { Route as AdminKategoriRouteImport } from './routes/admin/kategori'
-import { Route as AdminPerusahaanNamaRouteImport } from './routes/admin/perusahaan.$nama'
+import { Route as PublicRouteImport } from './routes/_public'
+import { Route as ProtectedRouteImport } from './routes/_protected'
+import { Route as AuthRouteImport } from './routes/_auth'
+import { Route as AuthLoginRouteImport } from './routes/_auth.login'
+import { Route as ProtectedAdminTestimoniRouteImport } from './routes/_protected/admin/testimoni'
+import { Route as ProtectedAdminPortfolioRouteImport } from './routes/_protected/admin/portfolio'
+import { Route as ProtectedAdminLayananRouteImport } from './routes/_protected/admin/layanan'
+import { Route as ProtectedAdminKontakRouteImport } from './routes/_protected/admin/kontak'
+import { Route as ProtectedAdminKategoriRouteImport } from './routes/_protected/admin/kategori'
+import { Route as ProtectedAdminIndexRouteImport } from './routes/_protected/admin/_index'
+import { Route as ProtectedAdminPerusahaanNamaRouteImport } from './routes/_protected/admin/perusahaan.$nama'
 
-const LoginRoute = LoginRouteImport.update({
+const PublicRoute = PublicRouteImport.update({
+  id: '/_public',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProtectedRoute = ProtectedRouteImport.update({
+  id: '/_protected',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/_auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthLoginRoute = AuthLoginRouteImport.update({
   id: '/login',
   path: '/login',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthRoute,
 } as any)
-const DashboardRoute = DashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => rootRouteImport,
+const ProtectedAdminTestimoniRoute = ProtectedAdminTestimoniRouteImport.update({
+  id: '/admin/testimoni',
+  path: '/admin/testimoni',
+  getParentRoute: () => ProtectedRoute,
 } as any)
-const AdminRoute = AdminRouteImport.update({
-  id: '/admin',
+const ProtectedAdminPortfolioRoute = ProtectedAdminPortfolioRouteImport.update({
+  id: '/admin/portfolio',
+  path: '/admin/portfolio',
+  getParentRoute: () => ProtectedRoute,
+} as any)
+const ProtectedAdminLayananRoute = ProtectedAdminLayananRouteImport.update({
+  id: '/admin/layanan',
+  path: '/admin/layanan',
+  getParentRoute: () => ProtectedRoute,
+} as any)
+const ProtectedAdminKontakRoute = ProtectedAdminKontakRouteImport.update({
+  id: '/admin/kontak',
+  path: '/admin/kontak',
+  getParentRoute: () => ProtectedRoute,
+} as any)
+const ProtectedAdminKategoriRoute = ProtectedAdminKategoriRouteImport.update({
+  id: '/admin/kategori',
+  path: '/admin/kategori',
+  getParentRoute: () => ProtectedRoute,
+} as any)
+const ProtectedAdminIndexRoute = ProtectedAdminIndexRouteImport.update({
+  id: '/admin/_index',
   path: '/admin',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => ProtectedRoute,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminTestimoniRoute = AdminTestimoniRouteImport.update({
-  id: '/testimoni',
-  path: '/testimoni',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminPortfolioRoute = AdminPortfolioRouteImport.update({
-  id: '/portfolio',
-  path: '/portfolio',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminLayananRoute = AdminLayananRouteImport.update({
-  id: '/layanan',
-  path: '/layanan',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminKontakRoute = AdminKontakRouteImport.update({
-  id: '/kontak',
-  path: '/kontak',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminKategoriRoute = AdminKategoriRouteImport.update({
-  id: '/kategori',
-  path: '/kategori',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminPerusahaanNamaRoute = AdminPerusahaanNamaRouteImport.update({
-  id: '/perusahaan/$nama',
-  path: '/perusahaan/$nama',
-  getParentRoute: () => AdminRoute,
-} as any)
+const ProtectedAdminPerusahaanNamaRoute =
+  ProtectedAdminPerusahaanNamaRouteImport.update({
+    id: '/admin/perusahaan/$nama',
+    path: '/admin/perusahaan/$nama',
+    getParentRoute: () => ProtectedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/admin': typeof AdminRouteWithChildren
-  '/dashboard': typeof DashboardRoute
-  '/login': typeof LoginRoute
-  '/admin/kategori': typeof AdminKategoriRoute
-  '/admin/kontak': typeof AdminKontakRoute
-  '/admin/layanan': typeof AdminLayananRoute
-  '/admin/portfolio': typeof AdminPortfolioRoute
-  '/admin/testimoni': typeof AdminTestimoniRoute
-  '/admin/perusahaan/$nama': typeof AdminPerusahaanNamaRoute
+  '/': typeof PublicRoute
+  '/login': typeof AuthLoginRoute
+  '/admin': typeof ProtectedAdminIndexRoute
+  '/admin/kategori': typeof ProtectedAdminKategoriRoute
+  '/admin/kontak': typeof ProtectedAdminKontakRoute
+  '/admin/layanan': typeof ProtectedAdminLayananRoute
+  '/admin/portfolio': typeof ProtectedAdminPortfolioRoute
+  '/admin/testimoni': typeof ProtectedAdminTestimoniRoute
+  '/admin/perusahaan/$nama': typeof ProtectedAdminPerusahaanNamaRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/admin': typeof AdminRouteWithChildren
-  '/dashboard': typeof DashboardRoute
-  '/login': typeof LoginRoute
-  '/admin/kategori': typeof AdminKategoriRoute
-  '/admin/kontak': typeof AdminKontakRoute
-  '/admin/layanan': typeof AdminLayananRoute
-  '/admin/portfolio': typeof AdminPortfolioRoute
-  '/admin/testimoni': typeof AdminTestimoniRoute
-  '/admin/perusahaan/$nama': typeof AdminPerusahaanNamaRoute
+  '/': typeof PublicRoute
+  '/login': typeof AuthLoginRoute
+  '/admin': typeof ProtectedAdminIndexRoute
+  '/admin/kategori': typeof ProtectedAdminKategoriRoute
+  '/admin/kontak': typeof ProtectedAdminKontakRoute
+  '/admin/layanan': typeof ProtectedAdminLayananRoute
+  '/admin/portfolio': typeof ProtectedAdminPortfolioRoute
+  '/admin/testimoni': typeof ProtectedAdminTestimoniRoute
+  '/admin/perusahaan/$nama': typeof ProtectedAdminPerusahaanNamaRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/admin': typeof AdminRouteWithChildren
-  '/dashboard': typeof DashboardRoute
-  '/login': typeof LoginRoute
-  '/admin/kategori': typeof AdminKategoriRoute
-  '/admin/kontak': typeof AdminKontakRoute
-  '/admin/layanan': typeof AdminLayananRoute
-  '/admin/portfolio': typeof AdminPortfolioRoute
-  '/admin/testimoni': typeof AdminTestimoniRoute
-  '/admin/perusahaan/$nama': typeof AdminPerusahaanNamaRoute
+  '/_auth': typeof AuthRouteWithChildren
+  '/_protected': typeof ProtectedRouteWithChildren
+  '/_public': typeof PublicRoute
+  '/_auth/login': typeof AuthLoginRoute
+  '/_protected/admin/_index': typeof ProtectedAdminIndexRoute
+  '/_protected/admin/kategori': typeof ProtectedAdminKategoriRoute
+  '/_protected/admin/kontak': typeof ProtectedAdminKontakRoute
+  '/_protected/admin/layanan': typeof ProtectedAdminLayananRoute
+  '/_protected/admin/portfolio': typeof ProtectedAdminPortfolioRoute
+  '/_protected/admin/testimoni': typeof ProtectedAdminTestimoniRoute
+  '/_protected/admin/perusahaan/$nama': typeof ProtectedAdminPerusahaanNamaRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/admin'
-    | '/dashboard'
     | '/login'
+    | '/admin'
     | '/admin/kategori'
     | '/admin/kontak'
     | '/admin/layanan'
@@ -124,9 +126,8 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/admin'
-    | '/dashboard'
     | '/login'
+    | '/admin'
     | '/admin/kategori'
     | '/admin/kontak'
     | '/admin/layanan'
@@ -135,125 +136,145 @@ export interface FileRouteTypes {
     | '/admin/perusahaan/$nama'
   id:
     | '__root__'
-    | '/'
-    | '/admin'
-    | '/dashboard'
-    | '/login'
-    | '/admin/kategori'
-    | '/admin/kontak'
-    | '/admin/layanan'
-    | '/admin/portfolio'
-    | '/admin/testimoni'
-    | '/admin/perusahaan/$nama'
+    | '/_auth'
+    | '/_protected'
+    | '/_public'
+    | '/_auth/login'
+    | '/_protected/admin/_index'
+    | '/_protected/admin/kategori'
+    | '/_protected/admin/kontak'
+    | '/_protected/admin/layanan'
+    | '/_protected/admin/portfolio'
+    | '/_protected/admin/testimoni'
+    | '/_protected/admin/perusahaan/$nama'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  AdminRoute: typeof AdminRouteWithChildren
-  DashboardRoute: typeof DashboardRoute
-  LoginRoute: typeof LoginRoute
+  AuthRoute: typeof AuthRouteWithChildren
+  ProtectedRoute: typeof ProtectedRouteWithChildren
+  PublicRoute: typeof PublicRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/login': {
-      id: '/login'
+    '/_public': {
+      id: '/_public'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof PublicRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_protected': {
+      id: '/_protected'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof ProtectedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_auth': {
+      id: '/_auth'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_auth/login': {
+      id: '/_auth/login'
       path: '/login'
       fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthLoginRouteImport
+      parentRoute: typeof AuthRoute
     }
-    '/dashboard': {
-      id: '/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardRouteImport
-      parentRoute: typeof rootRouteImport
+    '/_protected/admin/testimoni': {
+      id: '/_protected/admin/testimoni'
+      path: '/admin/testimoni'
+      fullPath: '/admin/testimoni'
+      preLoaderRoute: typeof ProtectedAdminTestimoniRouteImport
+      parentRoute: typeof ProtectedRoute
     }
-    '/admin': {
-      id: '/admin'
+    '/_protected/admin/portfolio': {
+      id: '/_protected/admin/portfolio'
+      path: '/admin/portfolio'
+      fullPath: '/admin/portfolio'
+      preLoaderRoute: typeof ProtectedAdminPortfolioRouteImport
+      parentRoute: typeof ProtectedRoute
+    }
+    '/_protected/admin/layanan': {
+      id: '/_protected/admin/layanan'
+      path: '/admin/layanan'
+      fullPath: '/admin/layanan'
+      preLoaderRoute: typeof ProtectedAdminLayananRouteImport
+      parentRoute: typeof ProtectedRoute
+    }
+    '/_protected/admin/kontak': {
+      id: '/_protected/admin/kontak'
+      path: '/admin/kontak'
+      fullPath: '/admin/kontak'
+      preLoaderRoute: typeof ProtectedAdminKontakRouteImport
+      parentRoute: typeof ProtectedRoute
+    }
+    '/_protected/admin/kategori': {
+      id: '/_protected/admin/kategori'
+      path: '/admin/kategori'
+      fullPath: '/admin/kategori'
+      preLoaderRoute: typeof ProtectedAdminKategoriRouteImport
+      parentRoute: typeof ProtectedRoute
+    }
+    '/_protected/admin/_index': {
+      id: '/_protected/admin/_index'
       path: '/admin'
       fullPath: '/admin'
-      preLoaderRoute: typeof AdminRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof ProtectedAdminIndexRouteImport
+      parentRoute: typeof ProtectedRoute
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/testimoni': {
-      id: '/admin/testimoni'
-      path: '/testimoni'
-      fullPath: '/admin/testimoni'
-      preLoaderRoute: typeof AdminTestimoniRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/portfolio': {
-      id: '/admin/portfolio'
-      path: '/portfolio'
-      fullPath: '/admin/portfolio'
-      preLoaderRoute: typeof AdminPortfolioRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/layanan': {
-      id: '/admin/layanan'
-      path: '/layanan'
-      fullPath: '/admin/layanan'
-      preLoaderRoute: typeof AdminLayananRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/kontak': {
-      id: '/admin/kontak'
-      path: '/kontak'
-      fullPath: '/admin/kontak'
-      preLoaderRoute: typeof AdminKontakRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/kategori': {
-      id: '/admin/kategori'
-      path: '/kategori'
-      fullPath: '/admin/kategori'
-      preLoaderRoute: typeof AdminKategoriRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/perusahaan/$nama': {
-      id: '/admin/perusahaan/$nama'
-      path: '/perusahaan/$nama'
+    '/_protected/admin/perusahaan/$nama': {
+      id: '/_protected/admin/perusahaan/$nama'
+      path: '/admin/perusahaan/$nama'
       fullPath: '/admin/perusahaan/$nama'
-      preLoaderRoute: typeof AdminPerusahaanNamaRouteImport
-      parentRoute: typeof AdminRoute
+      preLoaderRoute: typeof ProtectedAdminPerusahaanNamaRouteImport
+      parentRoute: typeof ProtectedRoute
     }
   }
 }
 
-interface AdminRouteChildren {
-  AdminKategoriRoute: typeof AdminKategoriRoute
-  AdminKontakRoute: typeof AdminKontakRoute
-  AdminLayananRoute: typeof AdminLayananRoute
-  AdminPortfolioRoute: typeof AdminPortfolioRoute
-  AdminTestimoniRoute: typeof AdminTestimoniRoute
-  AdminPerusahaanNamaRoute: typeof AdminPerusahaanNamaRoute
+interface AuthRouteChildren {
+  AuthLoginRoute: typeof AuthLoginRoute
 }
 
-const AdminRouteChildren: AdminRouteChildren = {
-  AdminKategoriRoute: AdminKategoriRoute,
-  AdminKontakRoute: AdminKontakRoute,
-  AdminLayananRoute: AdminLayananRoute,
-  AdminPortfolioRoute: AdminPortfolioRoute,
-  AdminTestimoniRoute: AdminTestimoniRoute,
-  AdminPerusahaanNamaRoute: AdminPerusahaanNamaRoute,
+const AuthRouteChildren: AuthRouteChildren = {
+  AuthLoginRoute: AuthLoginRoute,
 }
 
-const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
+
+interface ProtectedRouteChildren {
+  ProtectedAdminIndexRoute: typeof ProtectedAdminIndexRoute
+  ProtectedAdminKategoriRoute: typeof ProtectedAdminKategoriRoute
+  ProtectedAdminKontakRoute: typeof ProtectedAdminKontakRoute
+  ProtectedAdminLayananRoute: typeof ProtectedAdminLayananRoute
+  ProtectedAdminPortfolioRoute: typeof ProtectedAdminPortfolioRoute
+  ProtectedAdminTestimoniRoute: typeof ProtectedAdminTestimoniRoute
+  ProtectedAdminPerusahaanNamaRoute: typeof ProtectedAdminPerusahaanNamaRoute
+}
+
+const ProtectedRouteChildren: ProtectedRouteChildren = {
+  ProtectedAdminIndexRoute: ProtectedAdminIndexRoute,
+  ProtectedAdminKategoriRoute: ProtectedAdminKategoriRoute,
+  ProtectedAdminKontakRoute: ProtectedAdminKontakRoute,
+  ProtectedAdminLayananRoute: ProtectedAdminLayananRoute,
+  ProtectedAdminPortfolioRoute: ProtectedAdminPortfolioRoute,
+  ProtectedAdminTestimoniRoute: ProtectedAdminTestimoniRoute,
+  ProtectedAdminPerusahaanNamaRoute: ProtectedAdminPerusahaanNamaRoute,
+}
+
+const ProtectedRouteWithChildren = ProtectedRoute._addFileChildren(
+  ProtectedRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  AdminRoute: AdminRouteWithChildren,
-  DashboardRoute: DashboardRoute,
-  LoginRoute: LoginRoute,
+  AuthRoute: AuthRouteWithChildren,
+  ProtectedRoute: ProtectedRouteWithChildren,
+  PublicRoute: PublicRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -4,14 +4,14 @@ import {
 	Outlet,
 	redirect,
 } from "@tanstack/react-router";
-import { LayoutDashboardIcon, SettingsIcon } from "lucide-react";
+import { LogOutIcon } from "lucide-react";
 
 import { Button } from "@adinko/ui/components/button";
 import { getUser } from "@/functions/get-user";
 import { authClient } from "@/lib/auth-client";
 import { Card } from "@adinko/ui/components/card";
 
-export const Route = createFileRoute("/admin")({
+export const Route = createFileRoute("/_protected")({
 	beforeLoad: async () => {
 		const session = await getUser();
 		return { session };
@@ -24,14 +24,14 @@ export const Route = createFileRoute("/admin")({
 		}
 		return { session: context.session };
 	},
-	component: AdminLayout,
+	component: ProtectedLayout,
 });
 
-function AdminLayout() {
+function ProtectedLayout() {
 	const { session } = Route.useRouteContext();
 
 	return (
-		<div className="flex h-[calc(100vh-56px)]">
+		<div className="flex h-[calc(100vh)]">
 			<aside className="w-56 border-r bg-card">
 				<div className="flex h-full flex-col">
 					<nav className="flex-1 overflow-y-auto p-4">
@@ -41,10 +41,9 @@ function AdminLayout() {
 									Overview
 								</p>
 								<Link
-									to="/dashboard"
+									to="/admin"
 									className="flex items-center gap-2 px-2 py-1.5 text-xs hover:bg-muted"
 								>
-									<LayoutDashboardIcon className="size-4" />
 									Dashboard
 								</Link>
 							</div>
@@ -109,7 +108,7 @@ function AdminLayout() {
 
 					<div className="border-t p-4">
 						<Card className="p-3">
-							<div className="flex items-center gap-2">
+							<div className="flex items-center justify-between">
 								<div className="flex-1 truncate">
 									<p className="truncate text-xs font-medium">
 										{session?.user.name}
@@ -121,9 +120,12 @@ function AdminLayout() {
 								<Button
 									size="icon"
 									variant="ghost"
-									onClick={() => authClient.signOut()}
+									onClick={async () => {
+										await authClient.signOut();
+										window.location.href = "/login";
+									}}
 								>
-									<SettingsIcon className="size-4" data-icon="inline-start" />
+									<LogOutIcon className="size-4" data-icon="inline-start" />
 								</Button>
 							</div>
 						</Card>

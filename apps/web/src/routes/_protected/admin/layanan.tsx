@@ -1,10 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "@tanstack/react-form";
-import { PlusIcon, PencilIcon, TrashIcon } from "lucide-react";
+import { BriefcaseIcon, PencilIcon, TrashIcon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import z from "zod";
 
 import { Button } from "@adinko/ui/components/button";
 import {
@@ -28,38 +27,97 @@ import {
 
 import { api } from "@/lib/api";
 
-export const Route = createFileRoute("/admin/kategori")({
-	component: KategoriPage,
+export const Route = createFileRoute("/_protected/admin/layanan")({
+	component: LayananPage,
 });
 
-type Kategori = {
+type Layanan = {
 	id: string;
-	nama: string;
-	createdAt: string;
+	title: string;
+	image: string | null;
 };
 
-function KategoriPage() {
-	const { data: kategoriList } = useQuery({
-		queryKey: ["kategori"],
-		queryFn: () => api.kategori.list().then((r) => r.data as Kategori[]),
-	});
+function ImageUpload({
+	value,
+	onChange,
+}: {
+	value: string;
+	onChange: (url: string) => void;
+}) {
+	const [preview, setPreview] = useState<string | null>(value || null);
+	const [uploading, setUploading] = useState(false);
+
+	const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+		const file = e.target.files?.[0];
+		if (!file) return;
+
+		setPreview(URL.createObjectURL(file));
+		setUploading(true);
+
+		try {
+			const url = await api.upload.uploadFile(file, "layanan");
+			onChange(url);
+			toast.success("Image uploaded");
+		} catch {
+			toast.error("Failed to upload image");
+			setPreview(null);
+		} finally {
+			setUploading(false);
+		}
+	}
+
+	return (
+		<div className="flex flex-col gap-2">
+			<Label>Image</Label>
+			<input
+				type="file"
+				accept="image/*"
+				onChange={handleFileChange}
+				className="text-sm"
+			/>
+			{uploading && (
+				<p className="text-xs text-muted-foreground">Uploading...</p>
+			)}
+			{preview && (
+				<img
+					src={preview}
+					alt="Preview"
+					className="size-24 object-cover border"
+				/>
+			)}
+			{value && !preview && (
+				<img
+					src={value}
+					alt="Current"
+					className="size-24 object-cover border"
+				/>
+			)}
+		</div>
+	)
+}
+
+function LayananPage() {
+	const { data: layananList } = useQuery({
+		queryKey: ["layanan"],
+		queryFn: () => api.layanan.list().then((r) => r.data as Layanan[]),
+	})
 
 	const [createOpen, setCreateOpen] = useState(false);
 	const [editOpen, setEditOpen] = useState(false);
-	const [editKategori, setEditKategori] = useState<Kategori | null>(null);
+	const [editLayanan, setEditLayanan] = useState<Layanan | null>(null);
 	const [deleteOpen, setDeleteOpen] = useState(false);
-	const [deleteKategori, setDeleteKategori] = useState<Kategori | null>(null);
+	const [deleteLayanan, setDeleteLayanan] = useState<Layanan | null>(null);
 
 	return (
 		<div className="flex flex-col gap-6">
 			<div className="flex items-center justify-between">
 				<div>
-					<h1 className="text-2xl font-bold">Kategori</h1>
-					<p className="text-muted-foreground">Manage your categories</p>
+					<h1 className="text-2xl font-bold">Layanan</h1>
+					<p className="text-muted-foreground">Manage your services</p>
 				</div>
 				<Dialog open={createOpen} onOpenChange={setCreateOpen}>
 					<DialogTrigger render={<Button>Create</Button>}>
-						<PlusIcon data-icon="inline-start" />
+						<BriefcaseIcon data-icon="inline-start" />
 						Create
 					</DialogTrigger>
 					<DialogContent>
@@ -70,28 +128,37 @@ function KategoriPage() {
 
 			<Card>
 				<CardHeader>
-					<CardTitle>All Categories</CardTitle>
+					<CardTitle>All Services</CardTitle>
 				</CardHeader>
 				<CardContent>
 					<div className="flex flex-col gap-2">
-						{!kategoriList || kategoriList.length === 0 ? (
+						{!layananList || layananList.length === 0 ? (
 							<p className="py-8 text-center text-muted-foreground">
-								No categories yet. Create one to get started.
+								No services yet. Create one to get started.
 							</p>
 						) : (
-							kategoriList.map((kategori) => (
+							layananList.map((item) => (
 								<div
-									key={kategori.id}
+									key={item.id}
 									className="flex items-center justify-between border p-3"
 								>
-									<span>{kategori.nama}</span>
+									<div className="flex items-center gap-3">
+										{item.image && (
+											<img
+												src={item.image}
+												alt={item.title}
+												className="size-16 rounded object-cover border"
+											/>
+										)}
+										<span>{item.title}</span>
+									</div>
 									<div className="flex gap-2">
 										<Button
 											size="icon-sm"
 											variant="ghost"
 											onClick={() => {
-												setEditKategori(kategori);
-												setEditOpen(true);
+												setEditLayanan(item)
+												setEditOpen(true)
 											}}
 										>
 											<PencilIcon className="size-4" />
@@ -100,8 +167,8 @@ function KategoriPage() {
 											size="icon-sm"
 											variant="ghost"
 											onClick={() => {
-												setDeleteKategori(kategori);
-												setDeleteOpen(true);
+												setDeleteLayanan(item)
+												setDeleteOpen(true)
 											}}
 										>
 											<TrashIcon className="size-4" />
@@ -116,12 +183,12 @@ function KategoriPage() {
 
 			<Dialog open={editOpen} onOpenChange={setEditOpen}>
 				<DialogContent>
-					{editKategori && (
+					{editLayanan && (
 						<EditForm
-							kategori={editKategori}
+							layanan={editLayanan}
 							onSuccess={() => {
-								setEditOpen(false);
-								setEditKategori(null);
+								setEditOpen(false)
+								setEditLayanan(null)
 							}}
 						/>
 					)}
@@ -130,43 +197,42 @@ function KategoriPage() {
 
 			<Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
 				<DialogContent>
-					{deleteKategori && (
+					{deleteLayanan && (
 						<DeleteConfirm
-							kategori={deleteKategori}
+							layanan={deleteLayanan}
 							onSuccess={() => {
-								setDeleteOpen(false);
-								setDeleteKategori(null);
+								setDeleteOpen(false)
+								setDeleteLayanan(null)
 							}}
 						/>
 					)}
 				</DialogContent>
 			</Dialog>
 		</div>
-	);
+	)
 }
 
 function CreateForm({ onSuccess }: { onSuccess: () => void }) {
 	const queryClient = useQueryClient();
+	const [imageUrl, setImageUrl] = useState("");
 	const form = useForm({
 		defaultValues: {
-			nama: "",
+			title: "",
 		},
 		onSubmit: async ({ value }) => {
 			try {
-				await api.kategori.create({ nama: value.nama });
-				toast.success("Kategori created");
-				queryClient.invalidateQueries({ queryKey: ["kategori"] });
-				onSuccess();
+				await api.layanan.create({
+					title: value.title,
+					image: imageUrl || undefined,
+				})
+				toast.success("Layanan created");
+				queryClient.invalidateQueries({ queryKey: ["layanan"] });
+				onSuccess()
 			} catch {
-				toast.error("Failed to create kategori");
+				toast.error("Failed to create layanan");
 			}
 		},
-		validators: {
-			onSubmit: z.object({
-				nama: z.string().min(1, "Nama is required"),
-			}),
-		},
-	});
+	})
 
 	return (
 		<form
@@ -178,14 +244,14 @@ function CreateForm({ onSuccess }: { onSuccess: () => void }) {
 			className="flex flex-col gap-4"
 		>
 			<DialogHeader>
-				<DialogTitle>Create Kategori</DialogTitle>
-				<DialogDescription>Add a new category</DialogDescription>
+				<DialogTitle>Create Layanan</DialogTitle>
+				<DialogDescription>Add a new service</DialogDescription>
 			</DialogHeader>
 
-			<form.Field name="nama">
+			<form.Field name="title">
 				{(field) => (
 					<div className="flex flex-col gap-2">
-						<Label htmlFor={field.name}>Nama</Label>
+						<Label htmlFor={field.name}>Title</Label>
 						<Input
 							id={field.name}
 							name={field.name}
@@ -194,14 +260,11 @@ function CreateForm({ onSuccess }: { onSuccess: () => void }) {
 							onChange={(e) => field.handleChange(e.target.value)}
 							aria-invalid={field.state.meta.errors.length > 0}
 						/>
-						{field.state.meta.errors.length > 0 && (
-							<p className="text-xs text-destructive">
-								{field.state.meta.errors[0]?.message}
-							</p>
-						)}
 					</div>
 				)}
 			</form.Field>
+
+			<ImageUpload value={imageUrl} onChange={setImageUrl} />
 
 			<DialogFooter>
 				<DialogClose render={<Button variant="outline">Cancel</Button>}>
@@ -216,37 +279,36 @@ function CreateForm({ onSuccess }: { onSuccess: () => void }) {
 				</form.Subscribe>
 			</DialogFooter>
 		</form>
-	);
+	)
 }
 
 function EditForm({
-	kategori,
+	layanan,
 	onSuccess,
 }: {
-	kategori: Kategori;
+	layanan: Layanan;
 	onSuccess: () => void;
 }) {
 	const queryClient = useQueryClient();
+	const [imageUrl, setImageUrl] = useState(layanan.image || "");
 	const form = useForm({
 		defaultValues: {
-			nama: kategori.nama,
+			title: layanan.title,
 		},
 		onSubmit: async ({ value }) => {
 			try {
-				await api.kategori.update(kategori.id, { nama: value.nama });
-				toast.success("Kategori updated");
-				queryClient.invalidateQueries({ queryKey: ["kategori"] });
-				onSuccess();
+				await api.layanan.update(layanan.id, {
+					title: value.title,
+					image: imageUrl || undefined,
+				})
+				toast.success("Layanan updated");
+				queryClient.invalidateQueries({ queryKey: ["layanan"] });
+				onSuccess()
 			} catch {
-				toast.error("Failed to update kategori");
+				toast.error("Failed to update layanan");
 			}
 		},
-		validators: {
-			onSubmit: z.object({
-				nama: z.string().min(1, "Nama is required"),
-			}),
-		},
-	});
+	})
 
 	return (
 		<form
@@ -258,14 +320,14 @@ function EditForm({
 			className="flex flex-col gap-4"
 		>
 			<DialogHeader>
-				<DialogTitle>Edit Kategori</DialogTitle>
-				<DialogDescription>Update category name</DialogDescription>
+				<DialogTitle>Edit Layanan</DialogTitle>
+				<DialogDescription>Update service</DialogDescription>
 			</DialogHeader>
 
-			<form.Field name="nama">
+			<form.Field name="title">
 				{(field) => (
 					<div className="flex flex-col gap-2">
-						<Label htmlFor={field.name}>Nama</Label>
+						<Label htmlFor={field.name}>Title</Label>
 						<Input
 							id={field.name}
 							name={field.name}
@@ -274,14 +336,11 @@ function EditForm({
 							onChange={(e) => field.handleChange(e.target.value)}
 							aria-invalid={field.state.meta.errors.length > 0}
 						/>
-						{field.state.meta.errors.length > 0 && (
-							<p className="text-xs text-destructive">
-								{field.state.meta.errors[0]?.message}
-							</p>
-						)}
 					</div>
 				)}
 			</form.Field>
+
+			<ImageUpload value={imageUrl} onChange={setImageUrl} />
 
 			<DialogFooter>
 				<DialogClose render={<Button variant="outline">Cancel</Button>}>
@@ -296,35 +355,35 @@ function EditForm({
 				</form.Subscribe>
 			</DialogFooter>
 		</form>
-	);
+	)
 }
 
 function DeleteConfirm({
-	kategori,
+	layanan,
 	onSuccess,
 }: {
-	kategori: Kategori;
+	layanan: Layanan;
 	onSuccess: () => void;
 }) {
 	const queryClient = useQueryClient();
 	const deleteMutation = useMutation({
-		mutationFn: () => api.kategori.delete(kategori.id),
+		mutationFn: () => api.layanan.delete(layanan.id),
 		onSuccess: () => {
-			toast.success("Kategori deleted");
-			queryClient.invalidateQueries({ queryKey: ["kategori"] });
+			toast.success("Layanan deleted");
+			queryClient.invalidateQueries({ queryKey: ["layanan"] });
 			onSuccess();
 		},
 		onError: () => {
-			toast.error("Failed to delete kategori");
+			toast.error("Failed to delete layanan");
 		},
-	});
+	})
 
 	return (
 		<>
 			<DialogHeader>
-				<DialogTitle>Delete Kategori</DialogTitle>
+				<DialogTitle>Delete Layanan</DialogTitle>
 				<DialogDescription>
-					Are you sure you want to delete "{kategori.nama}"? This action cannot
+					Are you sure you want to delete "{layanan.title}"? This action cannot
 					be undone.
 				</DialogDescription>
 			</DialogHeader>
@@ -341,5 +400,5 @@ function DeleteConfirm({
 				</Button>
 			</DialogFooter>
 		</>
-	);
+	)
 }

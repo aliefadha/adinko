@@ -30,7 +30,7 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp: () 
         {
           onSuccess: () => {
             navigate({
-              to: "/dashboard",
+              to: "/admin/kategori",
             });
             toast.success("Sign in successful");
           },
@@ -54,7 +54,7 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp: () 
 
   return (
     <div className="mx-auto w-full mt-10 max-w-md p-6">
-      <h1 className="mb-6 text-center text-3xl font-bold">Welcome Back</h1>
+      <h1 className="mb-6 text-center text-3xl font-bold">Welcome</h1>
 
       <form
         onSubmit={(e) => {
