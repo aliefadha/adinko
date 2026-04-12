@@ -12,7 +12,8 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as PublicRouteImport } from './routes/_public'
 import { Route as ProtectedRouteImport } from './routes/_protected'
 import { Route as AuthRouteImport } from './routes/_auth'
-import { Route as AuthLoginRouteImport } from './routes/_auth.login'
+import { Route as PublicIndexRouteImport } from './routes/_public/index'
+import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as ProtectedAdminTestimoniRouteImport } from './routes/_protected/admin/testimoni'
 import { Route as ProtectedAdminPortfolioRouteImport } from './routes/_protected/admin/portfolio'
 import { Route as ProtectedAdminLayananRouteImport } from './routes/_protected/admin/layanan'
@@ -32,6 +33,11 @@ const ProtectedRoute = ProtectedRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/_auth',
   getParentRoute: () => rootRouteImport,
+} as any)
+const PublicIndexRoute = PublicIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => PublicRoute,
 } as any)
 const AuthLoginRoute = AuthLoginRouteImport.update({
   id: '/login',
@@ -76,7 +82,7 @@ const ProtectedAdminPerusahaanNamaRoute =
   } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof PublicRoute
+  '/': typeof PublicIndexRoute
   '/login': typeof AuthLoginRoute
   '/admin': typeof ProtectedAdminIndexRoute
   '/admin/kategori': typeof ProtectedAdminKategoriRoute
@@ -87,7 +93,7 @@ export interface FileRoutesByFullPath {
   '/admin/perusahaan/$nama': typeof ProtectedAdminPerusahaanNamaRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof PublicRoute
+  '/': typeof PublicIndexRoute
   '/login': typeof AuthLoginRoute
   '/admin': typeof ProtectedAdminIndexRoute
   '/admin/kategori': typeof ProtectedAdminKategoriRoute
@@ -101,8 +107,9 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_auth': typeof AuthRouteWithChildren
   '/_protected': typeof ProtectedRouteWithChildren
-  '/_public': typeof PublicRoute
+  '/_public': typeof PublicRouteWithChildren
   '/_auth/login': typeof AuthLoginRoute
+  '/_public/': typeof PublicIndexRoute
   '/_protected/admin/_index': typeof ProtectedAdminIndexRoute
   '/_protected/admin/kategori': typeof ProtectedAdminKategoriRoute
   '/_protected/admin/kontak': typeof ProtectedAdminKontakRoute
@@ -140,6 +147,7 @@ export interface FileRouteTypes {
     | '/_protected'
     | '/_public'
     | '/_auth/login'
+    | '/_public/'
     | '/_protected/admin/_index'
     | '/_protected/admin/kategori'
     | '/_protected/admin/kontak'
@@ -152,7 +160,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   AuthRoute: typeof AuthRouteWithChildren
   ProtectedRoute: typeof ProtectedRouteWithChildren
-  PublicRoute: typeof PublicRoute
+  PublicRoute: typeof PublicRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -177,6 +185,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_public/': {
+      id: '/_public/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof PublicIndexRouteImport
+      parentRoute: typeof PublicRoute
     }
     '/_auth/login': {
       id: '/_auth/login'
@@ -271,10 +286,21 @@ const ProtectedRouteWithChildren = ProtectedRoute._addFileChildren(
   ProtectedRouteChildren,
 )
 
+interface PublicRouteChildren {
+  PublicIndexRoute: typeof PublicIndexRoute
+}
+
+const PublicRouteChildren: PublicRouteChildren = {
+  PublicIndexRoute: PublicIndexRoute,
+}
+
+const PublicRouteWithChildren =
+  PublicRoute._addFileChildren(PublicRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRouteWithChildren,
   ProtectedRoute: ProtectedRouteWithChildren,
-  PublicRoute: PublicRoute,
+  PublicRoute: PublicRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
