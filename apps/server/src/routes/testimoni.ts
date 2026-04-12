@@ -9,7 +9,21 @@ const app = new Hono();
 
 app.get("/", async (c) => {
 	const db = createDb();
-	const result = await db.select().from(schema.testimoni);
+	const result = await db
+		.select({
+			id: schema.testimoni.id,
+			kategoriId: schema.testimoni.kategoriId,
+			kategoriNama: schema.kategori.nama,
+			nama: schema.testimoni.nama,
+			testimoni: schema.testimoni.testimoni,
+			image: schema.testimoni.image,
+			createdAt: schema.testimoni.createdAt,
+		})
+		.from(schema.testimoni)
+		.leftJoin(
+			schema.kategori,
+			eq(schema.testimoni.kategoriId, schema.kategori.id),
+		);
 	return c.json({ data: result });
 });
 

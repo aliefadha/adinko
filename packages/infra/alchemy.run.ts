@@ -21,17 +21,6 @@ const r2Bucket = await R2Bucket("adinko-images", {
 	dev: { remote: true },
 });
 
-export const web = await TanStackStart("web", {
-	cwd: "../../apps/web",
-	bindings: {
-		VITE_SERVER_URL: alchemy.env.VITE_SERVER_URL!,
-		DB: db,
-		CORS_ORIGIN: alchemy.env.CORS_ORIGIN!,
-		BETTER_AUTH_SECRET: alchemy.secret.env.BETTER_AUTH_SECRET!,
-		BETTER_AUTH_URL: alchemy.env.BETTER_AUTH_URL!,
-	},
-});
-
 export const server = await Worker("server", {
 	cwd: "../../apps/server",
 	entrypoint: "src/index.ts",
@@ -48,6 +37,18 @@ export const server = await Worker("server", {
 	dev: {
 		port: 3000,
 	},
+});
+
+export const web = await TanStackStart("web", {
+	cwd: "../../apps/web",
+	bindings: {
+		VITE_SERVER_URL: alchemy.env.VITE_SERVER_URL!,
+		DB: db,
+		CORS_ORIGIN: alchemy.env.CORS_ORIGIN!,
+		BETTER_AUTH_SECRET: alchemy.secret.env.BETTER_AUTH_SECRET!,
+		BETTER_AUTH_URL: alchemy.env.BETTER_AUTH_URL!,
+	},
+	url: true,
 });
 
 console.log(`Web    -> ${web.url}`);

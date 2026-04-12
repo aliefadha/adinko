@@ -9,7 +9,23 @@ const app = new Hono();
 
 app.get("/", async (c) => {
 	const db = createDb();
-	const result = await db.select().from(schema.portfolio);
+	const result = await db
+		.select({
+			id: schema.portfolio.id,
+			kategoriId: schema.portfolio.kategoriId,
+			kategoriNama: schema.kategori.nama,
+			title: schema.portfolio.title,
+			subtitle: schema.portfolio.subtitle,
+			image: schema.portfolio.image,
+			alamat: schema.portfolio.alamat,
+			tahun: schema.portfolio.tahun,
+			createdAt: schema.portfolio.createdAt,
+		})
+		.from(schema.portfolio)
+		.leftJoin(
+			schema.kategori,
+			eq(schema.portfolio.kategoriId, schema.kategori.id),
+		);
 	return c.json({ data: result });
 });
 

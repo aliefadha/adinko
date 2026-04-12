@@ -5,6 +5,7 @@ import Loader from "./components/loader";
 
 import "./index.css";
 import { routeTree } from "./routeTree.gen";
+import type { RouterAppContext } from "./routes/__root";
 
 const queryClient = new QueryClient();
 
@@ -13,7 +14,9 @@ export const getRouter = () => {
 		routeTree,
 		scrollRestoration: true,
 		defaultPreloadStaleTime: 0,
-		context: {},
+		context: {
+			session: null,
+		} as RouterAppContext,
 		defaultPendingComponent: () => <Loader />,
 		defaultNotFoundComponent: () => <div>Not Found</div>,
 		Wrap: ({ children }) => (

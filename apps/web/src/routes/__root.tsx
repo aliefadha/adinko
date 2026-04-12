@@ -5,11 +5,25 @@ import {
 	Scripts,
 	createRootRouteWithContext,
 } from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
+import { lazy, Suspense } from "react";
 
 import appCss from "../index.css?url";
 
-export interface RouterAppContext {}
+const TanStackRouterDevtools =
+	process.env.NODE_ENV === "production"
+		? () => null
+		: lazy(() =>
+				import("@tanstack/react-router-devtools").then((res) => ({
+					default: res.TanStackRouterDevtools,
+				})),
+			);
+
+export interface RouterAppContext {
+	session: {
+		session: { id: string; expiresAt: string; token: string };
+		user: { id: string; name: string; email: string; image: string | null };
+	} | null;
+}
 
 export const Route = createRootRouteWithContext<RouterAppContext>()({
 	head: () => ({
@@ -31,6 +45,11 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
 				rel: "stylesheet",
 				href: appCss,
 			},
+			{
+				rel: "icon",
+				type: "image/x-icon",
+				href: "/favicon.ico",
+			},
 		],
 	}),
 
@@ -46,8 +65,10 @@ function RootDocument() {
 			<body>
 				<Outlet />
 				<Toaster richColors />
-				<TanStackRouterDevtools position="bottom-left" />
 				<Scripts />
+				<Suspense>
+					<TanStackRouterDevtools position="bottom-left" />
+				</Suspense>
 			</body>
 		</html>
 	);

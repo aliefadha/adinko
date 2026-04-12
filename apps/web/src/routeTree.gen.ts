@@ -13,6 +13,12 @@ import { Route as PublicRouteImport } from './routes/_public'
 import { Route as ProtectedRouteImport } from './routes/_protected'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as PublicIndexRouteImport } from './routes/_public/index'
+import { Route as PublicTestimoniRouteImport } from './routes/_public/testimoni'
+import { Route as PublicPortofolioRouteImport } from './routes/_public/portofolio'
+import { Route as PublicLayananRouteImport } from './routes/_public/layanan'
+import { Route as PublicKontakRouteImport } from './routes/_public/kontak'
+import { Route as PublicGhaziSportsHubRouteImport } from './routes/_public/ghazi-sports-hub'
+import { Route as PublicAdinkoRouteImport } from './routes/_public/adinko'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as ProtectedAdminTestimoniRouteImport } from './routes/_protected/admin/testimoni'
 import { Route as ProtectedAdminPortfolioRouteImport } from './routes/_protected/admin/portfolio'
@@ -37,6 +43,36 @@ const AuthRoute = AuthRouteImport.update({
 const PublicIndexRoute = PublicIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => PublicRoute,
+} as any)
+const PublicTestimoniRoute = PublicTestimoniRouteImport.update({
+  id: '/testimoni',
+  path: '/testimoni',
+  getParentRoute: () => PublicRoute,
+} as any)
+const PublicPortofolioRoute = PublicPortofolioRouteImport.update({
+  id: '/portofolio',
+  path: '/portofolio',
+  getParentRoute: () => PublicRoute,
+} as any)
+const PublicLayananRoute = PublicLayananRouteImport.update({
+  id: '/layanan',
+  path: '/layanan',
+  getParentRoute: () => PublicRoute,
+} as any)
+const PublicKontakRoute = PublicKontakRouteImport.update({
+  id: '/kontak',
+  path: '/kontak',
+  getParentRoute: () => PublicRoute,
+} as any)
+const PublicGhaziSportsHubRoute = PublicGhaziSportsHubRouteImport.update({
+  id: '/ghazi-sports-hub',
+  path: '/ghazi-sports-hub',
+  getParentRoute: () => PublicRoute,
+} as any)
+const PublicAdinkoRoute = PublicAdinkoRouteImport.update({
+  id: '/adinko',
+  path: '/adinko',
   getParentRoute: () => PublicRoute,
 } as any)
 const AuthLoginRoute = AuthLoginRouteImport.update({
@@ -84,6 +120,12 @@ const ProtectedAdminPerusahaanNamaRoute =
 export interface FileRoutesByFullPath {
   '/': typeof PublicIndexRoute
   '/login': typeof AuthLoginRoute
+  '/adinko': typeof PublicAdinkoRoute
+  '/ghazi-sports-hub': typeof PublicGhaziSportsHubRoute
+  '/kontak': typeof PublicKontakRoute
+  '/layanan': typeof PublicLayananRoute
+  '/portofolio': typeof PublicPortofolioRoute
+  '/testimoni': typeof PublicTestimoniRoute
   '/admin': typeof ProtectedAdminIndexRoute
   '/admin/kategori': typeof ProtectedAdminKategoriRoute
   '/admin/kontak': typeof ProtectedAdminKontakRoute
@@ -95,6 +137,12 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof PublicIndexRoute
   '/login': typeof AuthLoginRoute
+  '/adinko': typeof PublicAdinkoRoute
+  '/ghazi-sports-hub': typeof PublicGhaziSportsHubRoute
+  '/kontak': typeof PublicKontakRoute
+  '/layanan': typeof PublicLayananRoute
+  '/portofolio': typeof PublicPortofolioRoute
+  '/testimoni': typeof PublicTestimoniRoute
   '/admin': typeof ProtectedAdminIndexRoute
   '/admin/kategori': typeof ProtectedAdminKategoriRoute
   '/admin/kontak': typeof ProtectedAdminKontakRoute
@@ -109,6 +157,12 @@ export interface FileRoutesById {
   '/_protected': typeof ProtectedRouteWithChildren
   '/_public': typeof PublicRouteWithChildren
   '/_auth/login': typeof AuthLoginRoute
+  '/_public/adinko': typeof PublicAdinkoRoute
+  '/_public/ghazi-sports-hub': typeof PublicGhaziSportsHubRoute
+  '/_public/kontak': typeof PublicKontakRoute
+  '/_public/layanan': typeof PublicLayananRoute
+  '/_public/portofolio': typeof PublicPortofolioRoute
+  '/_public/testimoni': typeof PublicTestimoniRoute
   '/_public/': typeof PublicIndexRoute
   '/_protected/admin/_index': typeof ProtectedAdminIndexRoute
   '/_protected/admin/kategori': typeof ProtectedAdminKategoriRoute
@@ -123,6 +177,12 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/login'
+    | '/adinko'
+    | '/ghazi-sports-hub'
+    | '/kontak'
+    | '/layanan'
+    | '/portofolio'
+    | '/testimoni'
     | '/admin'
     | '/admin/kategori'
     | '/admin/kontak'
@@ -134,6 +194,12 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/login'
+    | '/adinko'
+    | '/ghazi-sports-hub'
+    | '/kontak'
+    | '/layanan'
+    | '/portofolio'
+    | '/testimoni'
     | '/admin'
     | '/admin/kategori'
     | '/admin/kontak'
@@ -147,6 +213,12 @@ export interface FileRouteTypes {
     | '/_protected'
     | '/_public'
     | '/_auth/login'
+    | '/_public/adinko'
+    | '/_public/ghazi-sports-hub'
+    | '/_public/kontak'
+    | '/_public/layanan'
+    | '/_public/portofolio'
+    | '/_public/testimoni'
     | '/_public/'
     | '/_protected/admin/_index'
     | '/_protected/admin/kategori'
@@ -191,6 +263,48 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof PublicIndexRouteImport
+      parentRoute: typeof PublicRoute
+    }
+    '/_public/testimoni': {
+      id: '/_public/testimoni'
+      path: '/testimoni'
+      fullPath: '/testimoni'
+      preLoaderRoute: typeof PublicTestimoniRouteImport
+      parentRoute: typeof PublicRoute
+    }
+    '/_public/portofolio': {
+      id: '/_public/portofolio'
+      path: '/portofolio'
+      fullPath: '/portofolio'
+      preLoaderRoute: typeof PublicPortofolioRouteImport
+      parentRoute: typeof PublicRoute
+    }
+    '/_public/layanan': {
+      id: '/_public/layanan'
+      path: '/layanan'
+      fullPath: '/layanan'
+      preLoaderRoute: typeof PublicLayananRouteImport
+      parentRoute: typeof PublicRoute
+    }
+    '/_public/kontak': {
+      id: '/_public/kontak'
+      path: '/kontak'
+      fullPath: '/kontak'
+      preLoaderRoute: typeof PublicKontakRouteImport
+      parentRoute: typeof PublicRoute
+    }
+    '/_public/ghazi-sports-hub': {
+      id: '/_public/ghazi-sports-hub'
+      path: '/ghazi-sports-hub'
+      fullPath: '/ghazi-sports-hub'
+      preLoaderRoute: typeof PublicGhaziSportsHubRouteImport
+      parentRoute: typeof PublicRoute
+    }
+    '/_public/adinko': {
+      id: '/_public/adinko'
+      path: '/adinko'
+      fullPath: '/adinko'
+      preLoaderRoute: typeof PublicAdinkoRouteImport
       parentRoute: typeof PublicRoute
     }
     '/_auth/login': {
@@ -287,10 +401,22 @@ const ProtectedRouteWithChildren = ProtectedRoute._addFileChildren(
 )
 
 interface PublicRouteChildren {
+  PublicAdinkoRoute: typeof PublicAdinkoRoute
+  PublicGhaziSportsHubRoute: typeof PublicGhaziSportsHubRoute
+  PublicKontakRoute: typeof PublicKontakRoute
+  PublicLayananRoute: typeof PublicLayananRoute
+  PublicPortofolioRoute: typeof PublicPortofolioRoute
+  PublicTestimoniRoute: typeof PublicTestimoniRoute
   PublicIndexRoute: typeof PublicIndexRoute
 }
 
 const PublicRouteChildren: PublicRouteChildren = {
+  PublicAdinkoRoute: PublicAdinkoRoute,
+  PublicGhaziSportsHubRoute: PublicGhaziSportsHubRoute,
+  PublicKontakRoute: PublicKontakRoute,
+  PublicLayananRoute: PublicLayananRoute,
+  PublicPortofolioRoute: PublicPortofolioRoute,
+  PublicTestimoniRoute: PublicTestimoniRoute,
   PublicIndexRoute: PublicIndexRoute,
 }
 

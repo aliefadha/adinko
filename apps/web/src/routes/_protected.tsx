@@ -7,9 +7,10 @@ import {
 import { LogOutIcon } from "lucide-react";
 
 import { Button } from "@adinko/ui/components/button";
-import { getUser } from "@/functions/get-user";
-import { authClient } from "@/lib/auth-client";
 import { Card } from "@adinko/ui/components/card";
+import { authClient } from "@/lib/auth-client";
+import { getUser } from "@/functions/get-user";
+import { Skeleton } from "@adinko/ui/components/skeleton";
 
 export const Route = createFileRoute("/_protected")({
 	beforeLoad: async () => {
@@ -22,13 +23,24 @@ export const Route = createFileRoute("/_protected")({
 				to: "/login",
 			});
 		}
-		return { session: context.session };
 	},
 	component: ProtectedLayout,
 });
 
 function ProtectedLayout() {
-	const { session } = Route.useRouteContext();
+	const { data: session, isPending } = authClient.useSession();
+
+	if (isPending) {
+		return <Skeleton className="h-9 w-24" />;
+	}
+
+	if (!session) {
+		return (
+			<Link to="/login">
+				<Button variant="outline">Sign In</Button>
+			</Link>
+		);
+	}
 
 	return (
 		<div className="flex h-[calc(100vh)]">
@@ -110,11 +122,9 @@ function ProtectedLayout() {
 						<Card className="p-3">
 							<div className="flex items-center justify-between">
 								<div className="flex-1 truncate">
-									<p className="truncate text-xs font-medium">
-										{session?.user.name}
-									</p>
+									<p className="truncate text-xs font-medium">{session.user.name}</p>
 									<p className="truncate text-xs text-muted-foreground">
-										{session?.user.email}
+										{session.user.email}
 									</p>
 								</div>
 								<Button

@@ -1,6 +1,7 @@
 import { Outlet, createFileRoute } from "@tanstack/react-router";
 
 import LandingHeader from "@/components/landing-header";
+import LandingFooter from "@/components/landing-footer";
 
 export const Route = createFileRoute("/_public")({
 	component: PublicLayout,
@@ -8,9 +9,10 @@ export const Route = createFileRoute("/_public")({
 
 function PublicLayout() {
 	return (
-		<div>
+		<div style={{ fontFamily: "'Montserrat', sans-serif" }}>
 			<LandingHeader />
 			<Outlet />
+			<LandingFooter />
 		</div>
 	);
 }
