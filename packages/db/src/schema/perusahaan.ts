@@ -41,7 +41,6 @@ export const perusahaanAlasan = sqliteTable("perusahaan_alasan", {
 	perusahaanId: text("perusahaan_id")
 		.notNull()
 		.references(() => perusahaan.id, { onDelete: "cascade" }),
-	icon: text("icon").notNull(), // lucide-react icon name e.g. "Trophy", "Shield", "Clock"
 	alasan: text("alasan").notNull(),
 	sortOrder: integer("sort_order").default(0),
 	createdAt: integer("created_at", { mode: "timestamp_ms" })

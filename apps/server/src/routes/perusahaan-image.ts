@@ -9,7 +9,21 @@ const app = new Hono();
 
 app.get("/", async (c) => {
 	const db = createDb();
-	const { perusahaanId } = c.req.query();
+	const { perusahaanId, nama } = c.req.query();
+
+	if (nama) {
+		const perusahaan = await db
+			.select()
+			.from(schema.perusahaan)
+			.where(eq(schema.perusahaan.nama, nama));
+		if (!perusahaan[0]) return c.json({ data: [] });
+
+		const result = await db
+			.select()
+			.from(schema.perusahaanImage)
+			.where(eq(schema.perusahaanImage.perusahaanId, perusahaan[0].id));
+		return c.json({ data: result });
+	}
 
 	if (perusahaanId) {
 		const result = await db

@@ -775,7 +775,6 @@ function CreateAlasanForm({
 			try {
 				await api.perusahaanAlasan.create({
 					perusahaanId,
-					icon: '',
 					alasan: value.alasan,
 					sortOrder: value.sortOrder,
 				});

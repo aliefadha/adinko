@@ -9,7 +9,21 @@ const app = new Hono();
 
 app.get("/", async (c) => {
 	const db = createDb();
-	const { perusahaanId } = c.req.query();
+	const { perusahaanId, nama } = c.req.query();
+
+	if (nama) {
+		const perusahaan = await db
+			.select()
+			.from(schema.perusahaan)
+			.where(eq(schema.perusahaan.nama, nama));
+		if (!perusahaan[0]) return c.json({ data: [] });
+
+		const result = await db
+			.select()
+			.from(schema.perusahaanAlasan)
+			.where(eq(schema.perusahaanAlasan.perusahaanId, perusahaan[0].id));
+		return c.json({ data: result });
+	}
 
 	if (perusahaanId) {
 		const result = await db
@@ -28,10 +42,9 @@ app.post("/", async (c) => {
 	if (authSession instanceof Response) return authSession;
 
 	const db = createDb();
-	const { perusahaanId, icon, alasan, sortOrder } = await c.req.json();
+	const { perusahaanId, alasan, sortOrder } = await c.req.json();
 
 	if (!perusahaanId) return c.json({ error: "perusahaanId is required" }, 400);
-	if (!icon) return c.json({ error: "icon is required" }, 400);
 	if (!alasan) return c.json({ error: "alasan is required" }, 400);
 
 	const id = randomUUID();
@@ -39,7 +52,6 @@ app.post("/", async (c) => {
 	await db.insert(schema.perusahaanAlasan).values({
 		id,
 		perusahaanId,
-		icon,
 		alasan,
 		sortOrder: sortOrder ?? 0,
 		createdAt: now,
@@ -58,10 +70,9 @@ app.put("/:id", async (c) => {
 
 	const db = createDb();
 	const { id } = c.req.param();
-	const { icon, alasan, sortOrder } = await c.req.json();
+	const { alasan, sortOrder } = await c.req.json();
 
 	const updateData: Record<string, unknown> = {};
-	if (icon !== undefined) updateData.icon = icon;
 	if (alasan !== undefined) updateData.alasan = alasan;
 	if (sortOrder !== undefined) updateData.sortOrder = sortOrder;
 
