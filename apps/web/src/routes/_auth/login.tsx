@@ -13,6 +13,6 @@ function RouteComponent() {
     return showSignUp ? (
         <SignUpForm onSwitchToSignIn={() => setShowSignUp(false)} />
     ) : (
-        <SignInForm onSwitchToSignUp={() => setShowSignUp(true)} />
+        <SignInForm />
     )
 }
