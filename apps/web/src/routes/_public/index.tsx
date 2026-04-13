@@ -1,4 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+
+import { createPageMeta, SITE_CONFIG } from "@/lib/seo";
 import {
 	ArrowRight,
 	ChevronLeft,
@@ -14,6 +16,13 @@ import { getPortfolio } from "@/functions/get-portfolio";
 import { getTestimoni } from "@/functions/get-testimoni";
 
 export const Route = createFileRoute("/_public/")({
+	head: () =>
+		createPageMeta({
+			title: "Jasa Rumput Sintetis & Lapangan Olahraga Pekanbaru",
+			description:
+				"Adinko menyediakan jasa rumput sintetis dan pembangunan lapangan olahraga profesional di Pekanbaru. Solusi lengkap untuk taman, dekorasi, futsal, minisoccer dengan hasil rapi dan bergaransi.",
+			path: "/",
+		}),
 	loader: async () => {
 		const [kategoriResponse, portfolioResponse, testimoniResponse] =
 			await Promise.all([getKategori(), getPortfolio(), getTestimoni()]);
@@ -62,7 +71,7 @@ function IndexComponent() {
 					<div className="mt-8 flex flex-wrap gap-3">
 						<a
 							id="hero-konsultasi"
-							href="https://wa.me/62"
+							href={SITE_CONFIG.whatsappUrl}
 							target="_blank"
 							rel="noreferrer"
 							className="flex items-center gap-2 rounded-full bg-[#518100] px-4 py-2 text-sm lg:px-6 lg:py-3 lg:text-base font-medium text-white hover:bg-[#518100]/80 active:scale-95 transition-all"
@@ -93,7 +102,7 @@ function IndexComponent() {
 					</span>
 					<a
 						id="hero-whatsapp"
-						href="https://wa.me/62"
+						href={SITE_CONFIG.whatsappUrl}
 						target="_blank"
 						rel="noreferrer"
 						aria-label="Chat WhatsApp"
@@ -290,7 +299,7 @@ function IndexComponent() {
 					<div className="mt-10 flex justify-center">
 						<a
 							id="keunggulan-konsultasi"
-							href="https://wa.me/62"
+							href={SITE_CONFIG.whatsappUrl}
 							target="_blank"
 							rel="noreferrer"
 							className="flex items-center gap-2 rounded-full bg-[#518100] px-7 py-3 text-white hover:bg-[#518100]/80 active:scale-95 transition-all"
@@ -420,7 +429,7 @@ function IndexComponent() {
 						<div className="rounded-2xl overflow-hidden border border-gray-100 h-44 w-full">
 							<iframe
 								title="Lokasi Adinko"
-								src="https://maps.google.com/maps?q=Jl.+Todak+No.113+Tangkerang+Barat,+Pekanbaru&output=embed"
+								src={SITE_CONFIG.googleMapsUrl}
 								width="100%"
 								height="100%"
 								style={{ border: 0 }}
@@ -432,7 +441,7 @@ function IndexComponent() {
 						{/* CTA */}
 						<a
 							id="kontak-whatsapp"
-							href="https://wa.me/62"
+							href={SITE_CONFIG.whatsappUrl}
 							target="_blank"
 							rel="noreferrer"
 							className="self-start flex items-center gap-2 rounded-full bg-[#518100] px-6 py-3 font-semibold text-white hover:bg-[#518100]/80 active:scale-95 transition-all"
@@ -754,7 +763,7 @@ function TestimoniContent() {
 						Lebih dari 1000 klien telah mempercayakan proyek mereka kepada kami.
 					</p>
 					<a
-						href="https://maps.google.com"
+						href={SITE_CONFIG.googleMapsUrl}
 						target="_blank"
 						rel="noreferrer"
 						className="inline-flex items-center gap-2 rounded-full bg-white backdrop-blur-sm px-4 py-2 text-sm hover:bg-white/80 transition-all self-start lg:self-auto"
@@ -848,7 +857,7 @@ function TestimoniContent() {
 			<div className="flex justify-center">
 				<a
 					id="testimoni-gabung"
-					href="https://wa.me/62"
+					href={SITE_CONFIG.whatsappUrl}
 					target="_blank"
 					rel="noreferrer"
 					className="flex w-full sm:w-auto justify-center text-sm lg:text-base items-center gap-2 rounded-full bg-white px-7 py-3 text-gray-900 hover:bg-white/90 active:scale-95 transition-all"

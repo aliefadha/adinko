@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArrowRight } from "lucide-react";
+
+import { createPageMeta, SITE_CONFIG } from "@/lib/seo";
 import { getPortfolio } from "@/functions/get-portfolio";
 import { getKategori } from "@/functions/get-kategori";
 
@@ -18,6 +20,13 @@ type Portfolio = {
 };
 
 export const Route = createFileRoute("/_public/portofolio")({
+	head: () =>
+		createPageMeta({
+			title: "Portofolio",
+			description:
+				"Hasil pekerjaan Adinko dari berbagai proyek rumput sintetis dan lapangan olahraga. Dari skala rumahan hingga komersial besar, setiap proyek adalah bukti komitmen kami terhadap kualitas.",
+			path: "/portofolio",
+		}),
 	loader: async () => {
 		const [kategoriResponse, portfolioResponse] = await Promise.all([
 			getKategori(),
@@ -61,7 +70,7 @@ function RouteComponent() {
 					</span>
 					<a
 						id="hero-whatsapp"
-						href="https://wa.me/62"
+						href={SITE_CONFIG.whatsappUrl}
 						target="_blank"
 						rel="noreferrer"
 						aria-label="Chat WhatsApp"
@@ -118,11 +127,10 @@ function PortfolioGrid() {
 							setActiveKategoriId(tab.id);
 							setDisplayLimit(9);
 						}}
-						className={`rounded-full px-5 py-2 text-sm font-medium transition-all ${
-							activeKategoriId === tab.id
+						className={`rounded-full px-5 py-2 text-sm font-medium transition-all ${activeKategoriId === tab.id
 								? "bg-gray-900 text-white"
 								: "border border-gray-300 text-gray-600 hover:bg-gray-100"
-						}`}
+							}`}
 					>
 						{tab.nama}
 					</button>

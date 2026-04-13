@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { useState } from "react";
+
+import { createPageMeta, SITE_CONFIG } from "@/lib/seo";
 import { getTestimoni } from "@/functions/get-testimoni";
 import { getKategori } from "@/functions/get-kategori";
 
@@ -16,6 +18,13 @@ type Testimoni = {
 };
 
 export const Route = createFileRoute("/_public/testimoni")({
+	head: () =>
+		createPageMeta({
+			title: "Testimoni Klien",
+			description:
+				"Apa kata klien kami tentang Adinko. Lebih dari 1000 klien telah mempercayakan proyek rumput sintetis dan lapangan olahraga mereka kepada kami dengan hasil memuaskan.",
+			path: "/testimoni",
+		}),
 	loader: async () => {
 		const [kategoriResponse, testimoniResponse] = await Promise.all([
 			getKategori(),
@@ -64,7 +73,7 @@ function RouteComponent() {
 					</span>
 					<a
 						id="hero-whatsapp"
-						href="https://wa.me/62"
+						href={SITE_CONFIG.whatsappUrl}
 						target="_blank"
 						rel="noreferrer"
 						aria-label="Chat WhatsApp"
@@ -146,11 +155,10 @@ function TestimoniGrid() {
 							setActiveKategoriId(tab.id);
 							setDisplayLimit(6);
 						}}
-						className={`rounded-full px-5 py-2 text-sm font-medium transition-all ${
-							activeKategoriId === tab.id
+						className={`rounded-full px-5 py-2 text-sm font-medium transition-all ${activeKategoriId === tab.id
 								? "bg-gray-900 text-white"
 								: "border border-gray-300 text-gray-600 hover:bg-gray-100"
-						}`}
+							}`}
 					>
 						{tab.nama}
 					</button>

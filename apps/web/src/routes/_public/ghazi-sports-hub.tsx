@@ -2,6 +2,8 @@ import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 
+import { createPageMeta, SITE_CONFIG } from "@/lib/seo";
+
 import { getPerusahaanByNama } from "@/functions/get-perusahaan-by-nama";
 import { getPerusahaanTag } from "@/functions/get-perusahaan-tag";
 import { getPerusahaanAlasan } from "@/functions/get-perusahaan-alasan";
@@ -9,6 +11,13 @@ import { getPerusahaanImage } from "@/functions/get-perusahaan-image";
 import { getPerusahaanLayanan } from "@/functions/get-perusahaan-layanan";
 
 export const Route = createFileRoute("/_public/ghazi-sports-hub")({
+	head: () =>
+		createPageMeta({
+			title: "Tentang GhaziSportsHub",
+			description:
+				"GhaziSportsHub adalah spesialis pembangunan lapangan olahraga profesional di Pekanbaru. Futsal, minisoccer, padel, basket, tenis, badminton - standar konstruksi tinggi dan fasilitas tahan lama.",
+			path: "/ghazi-sports-hub",
+		}),
 	loader: async () => {
 		const [perusahaanRes, tagRes, alasanRes, imageRes, layananRes] =
 			await Promise.all([
@@ -45,13 +54,13 @@ function RouteComponent() {
 		images.length > 0
 			? images.map((img) => ({ src: img.image, alt: "GhaziSportsHub image" }))
 			: [
-					{ src: "/gallery-3.png", alt: "Lapangan futsal profesional" },
-					{ src: "/gallery-4.png", alt: "Lapangan minisoccer GhaziSportsHub" },
-					{
-						src: "/layanan-komersial.png",
-						alt: "Fasilitas olahraga komersial",
-					},
-				];
+				{ src: "/gallery-3.png", alt: "Lapangan futsal profesional" },
+				{ src: "/gallery-4.png", alt: "Lapangan minisoccer GhaziSportsHub" },
+				{
+					src: "/layanan-komersial.png",
+					alt: "Fasilitas olahraga komersial",
+				},
+			];
 
 	const prev = () =>
 		setCurrent((c) => (c - 1 + carouselSlides.length) % carouselSlides.length);
@@ -96,7 +105,7 @@ function RouteComponent() {
 					</span>
 					<a
 						id="hero-whatsapp"
-						href="https://wa.me/62"
+						href={SITE_CONFIG.whatsappUrl}
 						target="_blank"
 						rel="noreferrer"
 						aria-label="Chat WhatsApp"
@@ -138,31 +147,29 @@ function RouteComponent() {
 						<div className="flex flex-wrap gap-2">
 							{tags.length > 0
 								? tags.map((tag, i) => (
-										<button
-											key={tag}
-											type="button"
-											className={`rounded-full px-5 py-2 text-sm font-semibold transition-all ${
-												i === 0
-													? "bg-[#518100] text-white hover:bg-[#518100]/80"
-													: "border border-[#518100] text-[#518100] hover:bg-[#518100]/10"
+									<button
+										key={tag}
+										type="button"
+										className={`rounded-full px-5 py-2 text-sm font-semibold transition-all ${i === 0
+												? "bg-[#518100] text-white hover:bg-[#518100]/80"
+												: "border border-[#518100] text-[#518100] hover:bg-[#518100]/10"
 											}`}
-										>
-											{tag}
-										</button>
-									))
+									>
+										{tag}
+									</button>
+								))
 								: ["Lapangan Futsal", "Minisoccer", "Padel"].map((tab, i) => (
-										<button
-											key={tab}
-											type="button"
-											className={`rounded-full px-5 py-2 text-sm font-semibold transition-all ${
-												i === 0
-													? "bg-[#518100] text-white hover:bg-[#518100]/80"
-													: "border border-[#518100] text-[#518100] hover:bg-[#518100]/10"
+									<button
+										key={tab}
+										type="button"
+										className={`rounded-full px-5 py-2 text-sm font-semibold transition-all ${i === 0
+												? "bg-[#518100] text-white hover:bg-[#518100]/80"
+												: "border border-[#518100] text-[#518100] hover:bg-[#518100]/10"
 											}`}
-										>
-											{tab}
-										</button>
-									))}
+									>
+										{tab}
+									</button>
+								))}
 						</div>
 					</div>
 
@@ -175,11 +182,10 @@ function RouteComponent() {
 									key={slide.src}
 									src={slide.src}
 									alt={slide.alt}
-									className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
-										i === current
+									className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${i === current
 											? "opacity-100"
 											: "opacity-0 pointer-events-none"
-									}`}
+										}`}
 								/>
 							))}
 						</div>
@@ -234,9 +240,8 @@ function RouteComponent() {
 									type="button"
 									onClick={() => setCurrent(i)}
 									aria-label={`Slide ${i + 1}`}
-									className={`w-2 h-2 rounded-full transition-all ${
-										i === current ? "bg-white w-4" : "bg-white/50"
-									}`}
+									className={`w-2 h-2 rounded-full transition-all ${i === current ? "bg-white w-4" : "bg-white/50"
+										}`}
 								/>
 							))}
 						</div>
@@ -278,23 +283,23 @@ function RouteComponent() {
 								<div className="flex flex-wrap gap-2">
 									{tags.length > 0
 										? tags.slice(0, 3).map((v) => (
+											<span
+												key={v}
+												className="rounded-full border border-white/50 bg-white/10 backdrop-blur-sm px-4 py-1 text-xs font-medium text-white"
+											>
+												{v}
+											</span>
+										))
+										: ["Kualitas", "Kepercayaan", "Profesionalisme"].map(
+											(v) => (
 												<span
 													key={v}
 													className="rounded-full border border-white/50 bg-white/10 backdrop-blur-sm px-4 py-1 text-xs font-medium text-white"
 												>
 													{v}
 												</span>
-											))
-										: ["Kualitas", "Kepercayaan", "Profesionalisme"].map(
-												(v) => (
-													<span
-														key={v}
-														className="rounded-full border border-white/50 bg-white/10 backdrop-blur-sm px-4 py-1 text-xs font-medium text-white"
-													>
-														{v}
-													</span>
-												),
-											)}
+											),
+										)}
 								</div>
 							</div>
 						</div>
@@ -316,28 +321,28 @@ function RouteComponent() {
 								<ul className="flex flex-col gap-3">
 									{perusahaan?.misi
 										? perusahaan.misi.split("\n").map((item: string) => (
-												<li
-													key={item}
-													className="flex items-start gap-3 text-sm text-white/90"
-												>
-													<span className="mt-0.5 w-4 h-4 rounded-full border-2 border-white/60 shrink-0" />
-													{item}
-												</li>
-											))
+											<li
+												key={item}
+												className="flex items-start gap-3 text-sm text-white/90"
+											>
+												<span className="mt-0.5 w-4 h-4 rounded-full border-2 border-white/60 shrink-0" />
+												{item}
+											</li>
+										))
 										: [
-												"Memberikan produk berkualitas tinggi dengan material premium terpilih",
-												"Pelayanan profesional",
-												"Harga kompetitif",
-												"Pengerjaan tepat waktu",
-											].map((item) => (
-												<li
-													key={item}
-													className="flex items-start gap-3 text-sm text-white/90"
-												>
-													<span className="mt-0.5 w-4 h-4 rounded-full border-2 border-white/60 shrink-0" />
-													{item}
-												</li>
-											))}
+											"Memberikan produk berkualitas tinggi dengan material premium terpilih",
+											"Pelayanan profesional",
+											"Harga kompetitif",
+											"Pengerjaan tepat waktu",
+										].map((item) => (
+											<li
+												key={item}
+												className="flex items-start gap-3 text-sm text-white/90"
+											>
+												<span className="mt-0.5 w-4 h-4 rounded-full border-2 border-white/60 shrink-0" />
+												{item}
+											</li>
+										))}
 								</ul>
 							</div>
 						</div>
@@ -359,85 +364,26 @@ function RouteComponent() {
 					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
 						{alasanList.length > 0
 							? alasanList
-									.sort((a, b) => a.sortOrder - b.sortOrder)
-									.slice(0, 4)
-									.map((item, i) => ({
-										num: String(i + 1).padStart(3, "0"),
-										label: item.alasan,
-										active: i === 0,
-									}))
-									.map(({ num, label, active }) => (
-										<div
-											key={num}
-											className={`rounded-2xl p-5 flex flex-col justify-between gap-8 min-h-44 ${
-												active
-													? "border-2 border-[#518100] bg-white"
-													: "bg-white border border-gray-100"
-											}`}
-										>
-											<div className="flex items-start justify-between">
-												<span
-													className={
-														active ? "text-[#518100]" : "text-gray-400"
-													}
-												>
-													<svg
-														xmlns="http://www.w3.org/2000/svg"
-														viewBox="0 0 24 24"
-														fill="none"
-														stroke="currentColor"
-														strokeWidth="1.5"
-														className="w-8 h-8"
-													>
-														<path
-															strokeLinecap="round"
-															strokeLinejoin="round"
-															d="M9 3.75H6.912a2.25 2.25 0 0 0-2.15 1.588L2.35 13.177a2.25 2.25 0 0 0-.1.661V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 0 0-2.15-1.588H15M2.25 13.5h3.86a2.25 2.25 0 0 1 2.012 1.244l.256.512a2.25 2.25 0 0 0 2.013 1.244h3.218a2.25 2.25 0 0 0 2.013-1.244l.256-.512a2.25 2.25 0 0 1 2.013-1.244h3.859M12 3v8.25m0 0-3-3m3 3 3-3"
-														/>
-													</svg>
-												</span>
-												<span className="text-xs text-gray-300 font-medium">
-													{num}
-												</span>
-											</div>
-											<p className="text-sm font-medium text-gray-800 leading-snug">
-												{label}
-											</p>
-										</div>
-									))
-							: [
-									{
-										num: "001",
-										label: "Material rumput sintetis berkualitas premium",
-										active: true,
-									},
-									{
-										num: "002",
-										label: "Pemasangan rapi & presisi",
-										active: false,
-									},
-									{
-										num: "003",
-										label: "Bisa custom sesuai kebutuhan desain",
-										active: false,
-									},
-									{
-										num: "004",
-										label: "Harga transparan tanpa biaya tersembunyi",
-										active: false,
-									},
-								].map(({ num, label, active }) => (
+								.sort((a, b) => a.sortOrder - b.sortOrder)
+								.slice(0, 4)
+								.map((item, i) => ({
+									num: String(i + 1).padStart(3, "0"),
+									label: item.alasan,
+									active: i === 0,
+								}))
+								.map(({ num, label, active }) => (
 									<div
 										key={num}
-										className={`rounded-2xl p-5 flex flex-col justify-between gap-8 min-h-44 ${
-											active
+										className={`rounded-2xl p-5 flex flex-col justify-between gap-8 min-h-44 ${active
 												? "border-2 border-[#518100] bg-white"
 												: "bg-white border border-gray-100"
-										}`}
+											}`}
 									>
 										<div className="flex items-start justify-between">
 											<span
-												className={active ? "text-[#518100]" : "text-gray-400"}
+												className={
+													active ? "text-[#518100]" : "text-gray-400"
+												}
 											>
 												<svg
 													xmlns="http://www.w3.org/2000/svg"
@@ -462,7 +408,64 @@ function RouteComponent() {
 											{label}
 										</p>
 									</div>
-								))}
+								))
+							: [
+								{
+									num: "001",
+									label: "Material rumput sintetis berkualitas premium",
+									active: true,
+								},
+								{
+									num: "002",
+									label: "Pemasangan rapi & presisi",
+									active: false,
+								},
+								{
+									num: "003",
+									label: "Bisa custom sesuai kebutuhan desain",
+									active: false,
+								},
+								{
+									num: "004",
+									label: "Harga transparan tanpa biaya tersembunyi",
+									active: false,
+								},
+							].map(({ num, label, active }) => (
+								<div
+									key={num}
+									className={`rounded-2xl p-5 flex flex-col justify-between gap-8 min-h-44 ${active
+											? "border-2 border-[#518100] bg-white"
+											: "bg-white border border-gray-100"
+										}`}
+								>
+									<div className="flex items-start justify-between">
+										<span
+											className={active ? "text-[#518100]" : "text-gray-400"}
+										>
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+												strokeWidth="1.5"
+												className="w-8 h-8"
+											>
+												<path
+													strokeLinecap="round"
+													strokeLinejoin="round"
+													d="M9 3.75H6.912a2.25 2.25 0 0 0-2.15 1.588L2.35 13.177a2.25 2.25 0 0 0-.1.661V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 0 0-2.15-1.588H15M2.25 13.5h3.86a2.25 2.25 0 0 1 2.012 1.244l.256.512a2.25 2.25 0 0 0 2.013 1.244h3.218a2.25 2.25 0 0 0 2.013-1.244l.256-.512a2.25 2.25 0 0 1 2.013-1.244h3.859M12 3v8.25m0 0-3-3m3 3 3-3"
+												/>
+											</svg>
+										</span>
+										<span className="text-xs text-gray-300 font-medium">
+											{num}
+										</span>
+									</div>
+									<p className="text-sm font-medium text-gray-800 leading-snug">
+										{label}
+									</p>
+								</div>
+							))}
 					</div>
 				</div>
 			</section>
@@ -490,63 +493,63 @@ function RouteComponent() {
 					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
 						{layananList.length > 0
 							? layananList.map((layanan) => (
-									<div
-										key={layanan.namaLayanan}
-										className="rounded-2xl overflow-hidden bg-white border border-gray-100 shadow-sm"
-									>
-										<img
-											src={layanan.image || "/layanan-taman.png"}
-											alt={layanan.namaLayanan}
-											className="w-full h-44 object-cover"
-										/>
-										<div className="p-4">
-											<p className="text-sm font-semibold text-gray-900">
-												{layanan.namaLayanan}
-											</p>
-										</div>
+								<div
+									key={layanan.namaLayanan}
+									className="rounded-2xl overflow-hidden bg-white border border-gray-100 shadow-sm"
+								>
+									<img
+										src={layanan.image || "/layanan-taman.png"}
+										alt={layanan.namaLayanan}
+										className="w-full h-44 object-cover"
+									/>
+									<div className="p-4">
+										<p className="text-sm font-semibold text-gray-900">
+											{layanan.namaLayanan}
+										</p>
 									</div>
-								))
+								</div>
+							))
 							: [
-									{
-										src: "/layanan-taman.png",
-										label: "Taman rumah",
-									},
-									{
-										src: "/layanan-dekorasi.png",
-										label: "Dekorasi indoor & outdoor",
-									},
-									{
-										src: "/layanan-komersial.png",
-										label: "Area komersial (cafe, kantor, dll)",
-									},
-									{
-										src: "/layanan-vertical.png",
-										label: "Vertical garden",
-									},
-								].map(({ src, label }) => (
-									<div
-										key={label}
-										className="rounded-2xl overflow-hidden bg-white border border-gray-100 shadow-sm"
-									>
-										<img
-											src={src}
-											alt={label}
-											className="w-full h-44 object-cover"
-										/>
-										<div className="p-4">
-											<p className="text-sm font-semibold text-gray-900">
-												{label}
-											</p>
-										</div>
+								{
+									src: "/layanan-taman.png",
+									label: "Taman rumah",
+								},
+								{
+									src: "/layanan-dekorasi.png",
+									label: "Dekorasi indoor & outdoor",
+								},
+								{
+									src: "/layanan-komersial.png",
+									label: "Area komersial (cafe, kantor, dll)",
+								},
+								{
+									src: "/layanan-vertical.png",
+									label: "Vertical garden",
+								},
+							].map(({ src, label }) => (
+								<div
+									key={label}
+									className="rounded-2xl overflow-hidden bg-white border border-gray-100 shadow-sm"
+								>
+									<img
+										src={src}
+										alt={label}
+										className="w-full h-44 object-cover"
+									/>
+									<div className="p-4">
+										<p className="text-sm font-semibold text-gray-900">
+											{label}
+										</p>
 									</div>
-								))}
+								</div>
+							))}
 					</div>
 
 					{/* CTA */}
 					<div className="flex justify-center">
 						<a
 							id="layanan-konsultasi"
-							href="https://wa.me/62"
+							href={SITE_CONFIG.whatsappUrl}
 							target="_blank"
 							rel="noreferrer"
 							className="flex items-center gap-2 rounded-full bg-[#518100] px-7 py-3 font-semibold text-white hover:bg-[#518100]/80 active:scale-95 transition-all"
@@ -587,7 +590,7 @@ function RouteComponent() {
 					<div className="flex justify-center">
 						<a
 							id="testimoni-gabung"
-							href="https://wa.me/62"
+							href={SITE_CONFIG.whatsappUrl}
 							target="_blank"
 							rel="noreferrer"
 							className="flex w-full sm:w-auto justify-center text-sm lg:text-base items-center gap-2 rounded-full bg-white px-7 py-3 text-gray-900 hover:bg-white/90 active:scale-95 transition-all"

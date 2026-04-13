@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
+
+import { createPageMeta, SITE_CONFIG } from "@/lib/seo";
 import { getPerusahaan } from "@/functions/get-perusahaan";
 import { getPerusahaanTag } from "@/functions/get-perusahaan-tag";
 import { getLayanan } from "@/functions/get-layanan";
@@ -15,6 +17,13 @@ type PerusahaanTag = { id: string; perusahaanId: string; tag: string };
 type Layanan = { id: string; title: string; image: string | null };
 
 export const Route = createFileRoute("/_public/layanan")({
+	head: () =>
+		createPageMeta({
+			title: "Layanan",
+			description:
+				"Adinko dan GhaziSportsHub menyediakan layanan lengkap rumput sintetis dan pembangunan lapangan olahraga profesional di Pekanbaru. Dari taman rumah hingga lapangan futsal dan minisoccer.",
+			path: "/layanan",
+		}),
 	loader: async () => {
 		const [perusahaanRes, adinkoTagRes, ghaziTagRes, layananRes] =
 			await Promise.all([
@@ -73,7 +82,7 @@ function RouteComponent() {
 					</span>
 					<a
 						id="hero-whatsapp"
-						href="https://wa.me/62"
+						href={SITE_CONFIG.whatsappUrl}
 						target="_blank"
 						rel="noreferrer"
 						aria-label="Chat WhatsApp"
@@ -129,7 +138,9 @@ function BrandSection() {
 						{adinko?.subtitle || "Rumput Sintetis & Taman"}
 					</h2>
 					<p className="mt-4 text-sm text-gray-500 leading-relaxed">
-						Untuk taman rumah, kantor, area komersial, vertical garden, hingga instalasi mini golf. Material premium, pemasangan presisi, bebas perawatan intensif.
+						Untuk taman rumah, kantor, area komersial, vertical garden, hingga
+						instalasi mini golf. Material premium, pemasangan presisi, bebas
+						perawatan intensif.
 					</p>
 				</div>
 				<div className="flex flex-wrap gap-2 mt-auto">
@@ -168,7 +179,9 @@ function BrandSection() {
 						{ghazi?.subtitle || "Lapangan Olahraga"}
 					</h2>
 					<p className="mt-4 text-sm text-gray-500 leading-relaxed">
-						Pembangunan lapangan olahraga profesional: futsal, minisoccer, padel, basket, tenis, badminton, jogging track, driving golf cage, instalasi jaring, dan lainnya.
+						Pembangunan lapangan olahraga profesional: futsal, minisoccer,
+						padel, basket, tenis, badminton, jogging track, driving golf cage,
+						instalasi jaring, dan lainnya.
 					</p>
 				</div>
 				<div className="flex flex-wrap gap-2 mt-auto">
@@ -239,7 +252,7 @@ function LayananGrid() {
 			<div className="flex justify-center">
 				<a
 					id="layanan-konsultasi"
-					href="https://wa.me/62"
+					href={SITE_CONFIG.whatsappUrl}
 					target="_blank"
 					rel="noreferrer"
 					className="flex items-center gap-2 rounded-full bg-[#518100] px-7 py-3 text-white hover:bg-[#518100]/80 active:scale-95 transition-all"
