@@ -6,8 +6,8 @@ import { R2Bucket } from "alchemy/cloudflare";
 import { config } from "dotenv";
 
 config({ path: "./.env" });
-config({ path: "../../apps/web/.env.local" });
-config({ path: "../../apps/server/.env.local" });
+config({ path: "../../apps/web/.env.production" });
+config({ path: "../../apps/server/.env.production" });
 
 const app = await alchemy("adinko");
 
@@ -33,7 +33,13 @@ export const server = await Worker("server", {
 		CORS_ORIGIN: alchemy.env.CORS_ORIGIN!,
 		BETTER_AUTH_SECRET: alchemy.secret.env.BETTER_AUTH_SECRET!,
 		BETTER_AUTH_URL: alchemy.env.BETTER_AUTH_URL!,
+		SERVER_URL: alchemy.env.SERVER_URL!,
 	},
+	compatibilityFlags: [
+		"nodejs_compat_populate_process_env",
+		"nodejs_compat",
+		"global_fetch_strictly_public",
+	],
 	url: true,
 	dev: {
 		port: 3000,
@@ -43,12 +49,17 @@ export const server = await Worker("server", {
 export const web = await TanStackStart("web", {
 	cwd: "../../apps/web",
 	bindings: {
-		VITE_SERVER_URL: alchemy.env.VITE_SERVER_URL!,
+		VITE_SERVER_URL: server.url!,
 		DB: db,
 		CORS_ORIGIN: alchemy.env.CORS_ORIGIN!,
 		BETTER_AUTH_SECRET: alchemy.secret.env.BETTER_AUTH_SECRET!,
 		BETTER_AUTH_URL: alchemy.env.BETTER_AUTH_URL!,
 	},
+	compatibilityFlags: [
+		"nodejs_compat_populate_process_env",
+		"nodejs_compat",
+		"global_fetch_strictly_public",
+	],
 	url: true,
 });
 

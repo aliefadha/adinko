@@ -1,0 +1,2 @@
+-- Migration already applied manually via wrangler
+-- Images were updated to use /api/assets proxy

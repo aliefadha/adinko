@@ -45,7 +45,7 @@ app.post("/file", async (c) => {
 		},
 	});
 
-	const publicUrl = `${env.R2_PUBLIC_URL}/${key}`;
+	const publicUrl = `${env.SERVER_URL}/api/assets/${key}`;
 
 	return c.json({ data: { key, publicUrl } });
 });
