@@ -42,11 +42,9 @@ app.post("/", async (c) => {
 	if (authSession instanceof Response) return authSession;
 
 	const db = createDb();
-	const { perusahaanId, title, subtitle, image, namaLayanan } =
-		await c.req.json();
+	const { perusahaanId, image, namaLayanan } = await c.req.json();
 
 	if (!perusahaanId) return c.json({ error: "perusahaanId is required" }, 400);
-	if (!title) return c.json({ error: "title is required" }, 400);
 	if (!namaLayanan) return c.json({ error: "namaLayanan is required" }, 400);
 
 	const id = randomUUID();
@@ -54,8 +52,6 @@ app.post("/", async (c) => {
 	await db.insert(schema.perusahaanLayanan).values({
 		id,
 		perusahaanId,
-		title,
-		subtitle,
 		image,
 		namaLayanan,
 		createdAt: now,
@@ -74,11 +70,9 @@ app.put("/:id", async (c) => {
 
 	const db = createDb();
 	const { id } = c.req.param();
-	const { title, subtitle, image, namaLayanan } = await c.req.json();
+	const { image, namaLayanan } = await c.req.json();
 
 	const updateData: Record<string, unknown> = {};
-	if (title !== undefined) updateData.title = title;
-	if (subtitle !== undefined) updateData.subtitle = subtitle;
 	if (image !== undefined) updateData.image = image;
 	if (namaLayanan !== undefined) updateData.namaLayanan = namaLayanan;
 

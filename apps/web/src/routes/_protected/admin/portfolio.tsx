@@ -50,12 +50,16 @@ type Kategori = {
 function ImageUpload({
 	value,
 	onChange,
+	onUploadingChange,
 }: {
 	value: string;
 	onChange: (url: string) => void;
+	onUploadingChange?: (uploading: boolean) => void;
 }) {
 	const [preview, setPreview] = useState<string | null>(value || null);
 	const [uploading, setUploading] = useState(false);
+	const [progress, setProgress] = useState(0);
+	const inputId = `file-upload-portfolio-${Math.random().toString(36).slice(2)}`;
 
 	const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
@@ -63,9 +67,13 @@ function ImageUpload({
 
 		setPreview(URL.createObjectURL(file));
 		setUploading(true);
+		setProgress(0);
+		onUploadingChange?.(true);
 
 		try {
-			const url = await api.upload.uploadFile(file, "portfolio");
+			const url = await api.upload.uploadFile(file, "portfolio", (p) => {
+				setProgress(p);
+			});
 			onChange(url);
 			toast.success("Image uploaded");
 		} catch {
@@ -73,33 +81,54 @@ function ImageUpload({
 			setPreview(null);
 		} finally {
 			setUploading(false);
+			onUploadingChange?.(false);
 		}
 	};
 
 	return (
-		<div className="flex flex-col gap-2">
+		<div className="flex flex-col gap-3">
 			<Label>Image</Label>
-			<input
-				type="file"
-				accept="image/*"
-				onChange={handleFileChange}
-				className="text-sm"
-			/>
-			{uploading && (
-				<p className="text-xs text-muted-foreground">Uploading...</p>
-			)}
-			{preview && (
-				<img
-					src={preview}
-					alt="Preview"
-					className="size-24 object-cover border"
+			<div className="flex items-center gap-4">
+				<input
+					type="file"
+					id={inputId}
+					accept="image/*"
+					onChange={handleFileChange}
+					className="hidden"
 				/>
+				<label
+					htmlFor={inputId}
+					className="cursor-pointer inline-flex items-center justify-center rounded-md text-sm font-medium border border-input bg-background hover:bg-accent hover:text-accent-foreground px-4 py-2"
+				>
+					Choose file
+				</label>
+				{preview && (
+					<img
+						src={preview}
+						alt="Preview"
+						className="size-16 object-cover border rounded-md"
+					/>
+				)}
+			</div>
+			{uploading && (
+				<div className="flex flex-col gap-1">
+					<div className="flex items-center justify-between text-xs">
+						<span className="text-muted-foreground">Uploading...</span>
+						<span className="font-medium">{progress}%</span>
+					</div>
+					<div className="h-2 bg-muted rounded-full overflow-hidden">
+						<div
+							className="h-full bg-primary transition-all duration-300 ease-linear"
+							style={{ width: `${progress}%` }}
+						/>
+					</div>
+				</div>
 			)}
-			{value && !preview && (
+			{value && !preview && !uploading && (
 				<img
 					src={value}
 					alt="Current"
-					className="size-24 object-cover border"
+					className="size-16 object-cover border rounded-md"
 				/>
 			)}
 		</div>
@@ -253,6 +282,7 @@ function CreateForm({
 }) {
 	const queryClient = useQueryClient();
 	const [imageUrl, setImageUrl] = useState("");
+	const [uploading, setUploading] = useState(false);
 	const form = useForm({
 		defaultValues: {
 			kategoriId: "",
@@ -347,7 +377,11 @@ function CreateForm({
 				)}
 			</form.Field>
 
-			<ImageUpload value={imageUrl} onChange={setImageUrl} />
+			<ImageUpload
+				value={imageUrl}
+				onChange={setImageUrl}
+				onUploadingChange={setUploading}
+			/>
 
 			<form.Field name="alamat">
 				{(field) => (
@@ -385,7 +419,7 @@ function CreateForm({
 				</DialogClose>
 				<form.Subscribe selector={(state) => state.canSubmit}>
 					{(canSubmit) => (
-						<Button type="submit" disabled={!canSubmit}>
+						<Button type="submit" disabled={!canSubmit || uploading}>
 							Create
 						</Button>
 					)}
@@ -406,6 +440,7 @@ function EditForm({
 }) {
 	const queryClient = useQueryClient();
 	const [imageUrl, setImageUrl] = useState(portfolio.image || "");
+	const [uploading, setUploading] = useState(false);
 	const form = useForm({
 		defaultValues: {
 			kategoriId: portfolio.kategoriId,
@@ -500,7 +535,11 @@ function EditForm({
 				)}
 			</form.Field>
 
-			<ImageUpload value={imageUrl} onChange={setImageUrl} />
+			<ImageUpload
+				value={imageUrl}
+				onChange={setImageUrl}
+				onUploadingChange={setUploading}
+			/>
 
 			<form.Field name="alamat">
 				{(field) => (
@@ -538,7 +577,7 @@ function EditForm({
 				</DialogClose>
 				<form.Subscribe selector={(state) => state.canSubmit}>
 					{(canSubmit) => (
-						<Button type="submit" disabled={!canSubmit}>
+						<Button type="submit" disabled={!canSubmit || uploading}>
 							Save
 						</Button>
 					)}

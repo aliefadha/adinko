@@ -6,8 +6,8 @@ import { R2Bucket } from "alchemy/cloudflare";
 import { config } from "dotenv";
 
 config({ path: "./.env" });
-config({ path: "../../apps/web/.env.production" });
-config({ path: "../../apps/server/.env.production" });
+config({ path: "../../apps/web/.env.local" });
+config({ path: "../../apps/server/.env.local" });
 
 const app = await alchemy("adinko");
 

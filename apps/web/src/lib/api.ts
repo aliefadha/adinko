@@ -314,7 +314,7 @@ const api = {
 			}).then((r) => r.json()),
 	},
 	upload: {
-		uploadFile: async (
+		uploadFile: (
 			file: File,
 			entity:
 				| "portfolio"
@@ -322,22 +322,47 @@ const api = {
 				| "testimoni"
 				| "perusahaan-image"
 				| "perusahaan-layanan",
-		) => {
-			const formData = new FormData();
-			formData.append("file", file);
-			formData.append("entity", entity);
+			onProgress?: (progress: number) => void,
+		): Promise<string> => {
+			return new Promise<string>((resolve, reject) => {
+				const xhr = new XMLHttpRequest();
+				const formData = new FormData();
+				formData.append("file", file);
+				formData.append("entity", entity);
 
-			const response = await fetch(`${env.VITE_SERVER_URL}/api/upload/file`, {
-				method: "POST",
-				credentials: "include",
-				body: formData,
+				xhr.upload.addEventListener("progress", (e) => {
+					if (e.lengthComputable && onProgress) {
+						onProgress(Math.round((e.loaded / e.total) * 100));
+					}
+				});
+
+				xhr.addEventListener("load", () => {
+					if (xhr.status >= 200 && xhr.status < 300) {
+						try {
+							const result = JSON.parse(xhr.responseText) as {
+								data?: { publicUrl?: string };
+							};
+							if (!result.data?.publicUrl) {
+								reject(new Error("Failed to upload file"));
+							} else {
+								resolve(result.data.publicUrl as string);
+							}
+						} catch {
+							reject(new Error("Invalid response"));
+						}
+					} else {
+						reject(new Error(`Upload failed with status ${xhr.status}`));
+					}
+				});
+
+				xhr.addEventListener("error", () => {
+					reject(new Error("Upload failed"));
+				});
+
+				xhr.open("POST", `${env.VITE_SERVER_URL}/api/upload/file`);
+				xhr.withCredentials = true;
+				xhr.send(formData);
 			});
-
-			const result = await response.json();
-			if (!result.data?.publicUrl) {
-				throw new Error("Failed to upload file");
-			}
-			return result.data.publicUrl;
 		},
 	},
 };

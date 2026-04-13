@@ -16,14 +16,17 @@ type Layanan = { id: string; title: string; image: string | null };
 
 export const Route = createFileRoute("/_public/layanan")({
 	loader: async () => {
-		const [perusahaanRes, tagRes, layananRes] = await Promise.all([
-			getPerusahaan(),
-			getPerusahaanTag(),
-			getLayanan(),
-		]);
+		const [perusahaanRes, adinkoTagRes, ghaziTagRes, layananRes] =
+			await Promise.all([
+				getPerusahaan(),
+				getPerusahaanTag({ data: { nama: "Adinko" } }),
+				getPerusahaanTag({ data: { nama: "Ghazisportshub" } }),
+				getLayanan(),
+			]);
 		return {
 			perusahaanList: perusahaanRes.data as Perusahaan[],
-			tagList: tagRes.data as PerusahaanTag[],
+			adinkoTagList: adinkoTagRes.data as PerusahaanTag[],
+			ghaziTagList: ghaziTagRes.data as PerusahaanTag[],
 			layananList: layananRes.data as Layanan[],
 		};
 	},
@@ -107,12 +110,12 @@ function RouteComponent() {
 }
 
 function BrandSection() {
-	const { perusahaanList, tagList } = Route.useLoaderData();
+	const { perusahaanList, adinkoTagList, ghaziTagList } = Route.useLoaderData();
 
 	const adinko = perusahaanList.find((p) => p.nama === "Adinko");
 	const ghazi = perusahaanList.find((p) => p.nama === "Ghazisportshub");
-	const adinkoTags = tagList.filter((t) => t.perusahaanId === adinko?.id);
-	const ghaziTags = tagList.filter((t) => t.perusahaanId === ghazi?.id);
+	const adinkoTags = adinkoTagList.filter((t) => t.perusahaanId === adinko?.id);
+	const ghaziTags = ghaziTagList.filter((t) => t.perusahaanId === ghazi?.id);
 
 	return (
 		<>
@@ -126,34 +129,32 @@ function BrandSection() {
 						{adinko?.subtitle || "Rumput Sintetis & Taman"}
 					</h2>
 					<p className="mt-4 text-sm text-gray-500 leading-relaxed">
-						{adinko?.title
-							? `Layanan ${adinko.title} dari Adinko`
-							: "Untuk taman rumah, kantor, area komersial, vertical garden, hingga instalasi mini golf. Material premium, pemasangan presisi, bebas perawatan intensif."}
+						Untuk taman rumah, kantor, area komersial, vertical garden, hingga instalasi mini golf. Material premium, pemasangan presisi, bebas perawatan intensif.
 					</p>
 				</div>
 				<div className="flex flex-wrap gap-2 mt-auto">
 					{adinkoTags.length > 0
 						? adinkoTags.map((tag) => (
-								<span
-									key={tag.id}
-									className="rounded-full border border-[#518100]/30 bg-[#ECF3E0] px-4 py-1.5 font-medium text-[#518100]"
-								>
-									{tag.tag}
-								</span>
-							))
+							<span
+								key={tag.id}
+								className="rounded-full border border-[#518100]/30 bg-[#ECF3E0] px-4 py-1.5 font-medium text-[#518100]"
+							>
+								{tag.tag}
+							</span>
+						))
 						: [
-								"Rumput Sintetis",
-								"Vertical Garden",
-								"Taman Custom",
-								"Mini Golf",
-							].map((tag) => (
-								<span
-									key={tag}
-									className="rounded-full border border-[#518100]/30 bg-[#ECF3E0] px-4 py-1.5 font-medium text-[#518100]"
-								>
-									{tag}
-								</span>
-							))}
+							"Rumput Sintetis",
+							"Vertical Garden",
+							"Taman Custom",
+							"Mini Golf",
+						].map((tag) => (
+							<span
+								key={tag}
+								className="rounded-full border border-[#518100]/30 bg-[#ECF3E0] px-4 py-1.5 font-medium text-[#518100]"
+							>
+								{tag}
+							</span>
+						))}
 				</div>
 			</div>
 
@@ -167,34 +168,32 @@ function BrandSection() {
 						{ghazi?.subtitle || "Lapangan Olahraga"}
 					</h2>
 					<p className="mt-4 text-sm text-gray-500 leading-relaxed">
-						{ghazi?.title
-							? `Layanan ${ghazi.title} dari GhaziSportsHub`
-							: "Pembangunan lapangan olahraga profesional: futsal, minisoccer, padel, basket, tenis, badminton, jogging track, driving golf cage, instalasi jaring, dan lainnya."}
+						Pembangunan lapangan olahraga profesional: futsal, minisoccer, padel, basket, tenis, badminton, jogging track, driving golf cage, instalasi jaring, dan lainnya.
 					</p>
 				</div>
 				<div className="flex flex-wrap gap-2 mt-auto">
 					{ghaziTags.length > 0
 						? ghaziTags.map((tag) => (
-								<span
-									key={tag.id}
-									className="rounded-full border border-gray-300 bg-gray-100 px-4 py-1.5 font-medium text-gray-600"
-								>
-									{tag.tag}
-								</span>
-							))
+							<span
+								key={tag.id}
+								className="rounded-full border border-gray-300 bg-[#26272529] px-4 py-1.5 font-medium"
+							>
+								{tag.tag}
+							</span>
+						))
 						: [
-								"Futsal & Minisoccer",
-								"Padel & Tenis",
-								"Basket & Voli",
-								"Instalasi Jaring",
-							].map((tag) => (
-								<span
-									key={tag}
-									className="rounded-full border border-gray-300 bg-gray-100 px-4 py-1.5 font-medium text-gray-600"
-								>
-									{tag}
-								</span>
-							))}
+							"Futsal & Minisoccer",
+							"Padel & Tenis",
+							"Basket & Voli",
+							"Instalasi Jaring",
+						].map((tag) => (
+							<span
+								key={tag}
+								className="rounded-full border border-gray-300 bg-[#26272529] px-4 py-1.5 font-medium"
+							>
+								{tag}
+							</span>
+						))}
 				</div>
 			</div>
 		</>

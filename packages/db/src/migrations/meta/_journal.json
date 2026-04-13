@@ -29,6 +29,13 @@
       "when": 1775927201228,
       "tag": "0003_abandoned_barracuda",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1776050544925,
+      "tag": "0004_good_network",
+      "breakpoints": true
     }
   ]
 }

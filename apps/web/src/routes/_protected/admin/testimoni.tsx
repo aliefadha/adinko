@@ -48,12 +48,16 @@ type Kategori = {
 function ImageUpload({
 	value,
 	onChange,
+	onUploadingChange,
 }: {
 	value: string;
 	onChange: (url: string) => void;
+	onUploadingChange?: (uploading: boolean) => void;
 }) {
 	const [preview, setPreview] = useState<string | null>(value || null);
 	const [uploading, setUploading] = useState(false);
+	const [progress, setProgress] = useState(0);
+	const inputId = `file-upload-testimoni-${Math.random().toString(36).slice(2)}`;
 
 	const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
@@ -61,9 +65,13 @@ function ImageUpload({
 
 		setPreview(URL.createObjectURL(file));
 		setUploading(true);
+		setProgress(0);
+		onUploadingChange?.(true);
 
 		try {
-			const url = await api.upload.uploadFile(file, "testimoni");
+			const url = await api.upload.uploadFile(file, "testimoni", (p) => {
+				setProgress(p);
+			});
 			onChange(url);
 			toast.success("Image uploaded");
 		} catch {
@@ -71,49 +79,70 @@ function ImageUpload({
 			setPreview(null);
 		} finally {
 			setUploading(false);
+			onUploadingChange?.(false);
 		}
-	}
+	};
 
 	return (
-		<div className="flex flex-col gap-2">
+		<div className="flex flex-col gap-3">
 			<Label>Image</Label>
-			<input
-				type="file"
-				accept="image/*"
-				onChange={handleFileChange}
-				className="text-sm"
-			/>
-			{uploading && (
-				<p className="text-xs text-muted-foreground">Uploading...</p>
-			)}
-			{preview && (
-				<img
-					src={preview}
-					alt="Preview"
-					className="size-24 object-cover border"
+			<div className="flex items-center gap-4">
+				<input
+					type="file"
+					id={inputId}
+					accept="image/*"
+					onChange={handleFileChange}
+					className="hidden"
 				/>
+				<label
+					htmlFor={inputId}
+					className="cursor-pointer inline-flex items-center justify-center rounded-md text-sm font-medium border border-input bg-background hover:bg-accent hover:text-accent-foreground px-4 py-2"
+				>
+					Choose file
+				</label>
+				{preview && (
+					<img
+						src={preview}
+						alt="Preview"
+						className="size-16 object-cover border rounded-md"
+					/>
+				)}
+			</div>
+			{uploading && (
+				<div className="flex flex-col gap-1">
+					<div className="flex items-center justify-between text-xs">
+						<span className="text-muted-foreground">Uploading...</span>
+						<span className="font-medium">{progress}%</span>
+					</div>
+					<div className="h-2 bg-muted rounded-full overflow-hidden">
+						<div
+							className="h-full bg-primary transition-all duration-300 ease-linear"
+							style={{ width: `${progress}%` }}
+						/>
+					</div>
+				</div>
 			)}
-			{value && !preview && (
+			{value && !preview && !uploading && (
 				<img
 					src={value}
 					alt="Current"
-					className="size-24 object-cover border"
+					className="size-16 object-cover border rounded-md"
 				/>
 			)}
 		</div>
-	)
+	);
 }
 
 function TestimoniPage() {
 	const { data: testimoniList } = useQuery({
 		queryKey: ["testimoni"],
 		queryFn: () => api.testimoni.list().then((r) => r.data as Testimoni[]),
-	})
+	});
 
 	const { data: kategoriList } = useQuery({
 		queryKey: ["kategori"],
 		queryFn: () => api.kategori.list().then((r) => r.data as Kategori[]),
-	})
+	});
 
 	const [createOpen, setCreateOpen] = useState(false);
 	const [editOpen, setEditOpen] = useState(false);
@@ -121,7 +150,7 @@ function TestimoniPage() {
 	const [deleteOpen, setDeleteOpen] = useState(false);
 	const [deleteTestimoni, setDeleteTestimoni] = useState<Testimoni | null>(
 		null,
-	)
+	);
 
 	return (
 		<div className="flex flex-col gap-6">
@@ -157,7 +186,7 @@ function TestimoniPage() {
 							testimoniList.map((item) => {
 								const kategori = kategoriList?.find(
 									(k) => k.id === item.kategoriId,
-								)
+								);
 								return (
 									<div
 										key={item.id}
@@ -184,8 +213,8 @@ function TestimoniPage() {
 												size="icon-sm"
 												variant="ghost"
 												onClick={() => {
-													setEditTestimoni(item)
-													setEditOpen(true)
+													setEditTestimoni(item);
+													setEditOpen(true);
 												}}
 											>
 												<PencilIcon className="size-4" />
@@ -194,15 +223,15 @@ function TestimoniPage() {
 												size="icon-sm"
 												variant="ghost"
 												onClick={() => {
-													setDeleteTestimoni(item)
-													setDeleteOpen(true)
+													setDeleteTestimoni(item);
+													setDeleteOpen(true);
 												}}
 											>
 												<TrashIcon className="size-4" />
 											</Button>
 										</div>
 									</div>
-								)
+								);
 							})
 						)}
 					</div>
@@ -216,8 +245,8 @@ function TestimoniPage() {
 							testimoni={editTestimoni}
 							kategoriList={kategoriList || []}
 							onSuccess={() => {
-								setEditOpen(false)
-								setEditTestimoni(null)
+								setEditOpen(false);
+								setEditTestimoni(null);
 							}}
 						/>
 					)}
@@ -230,7 +259,7 @@ function TestimoniPage() {
 						<DeleteConfirm
 							testimoni={deleteTestimoni}
 							onSuccess={() => {
-								setDeleteOpen(false)
+								setDeleteOpen(false);
 								setDeleteTestimoni(null);
 							}}
 						/>
@@ -238,7 +267,7 @@ function TestimoniPage() {
 				</DialogContent>
 			</Dialog>
 		</div>
-	)
+	);
 }
 
 function CreateForm({
@@ -250,6 +279,7 @@ function CreateForm({
 }) {
 	const queryClient = useQueryClient();
 	const [imageUrl, setImageUrl] = useState("");
+	const [uploading, setUploading] = useState(false);
 	const form = useForm({
 		defaultValues: {
 			kategoriId: "",
@@ -263,15 +293,15 @@ function CreateForm({
 					nama: value.nama,
 					testimoni: value.testimoni,
 					image: imageUrl || undefined,
-				})
+				});
 				toast.success("Testimoni created");
 				queryClient.invalidateQueries({ queryKey: ["testimoni"] });
-				onSuccess()
+				onSuccess();
 			} catch {
 				toast.error("Failed to create testimoni");
 			}
 		},
-	})
+	});
 
 	return (
 		<form
@@ -342,7 +372,11 @@ function CreateForm({
 				)}
 			</form.Field>
 
-			<ImageUpload value={imageUrl} onChange={setImageUrl} />
+			<ImageUpload
+				value={imageUrl}
+				onChange={setImageUrl}
+				onUploadingChange={setUploading}
+			/>
 
 			<DialogFooter>
 				<DialogClose render={<Button variant="outline">Cancel</Button>}>
@@ -350,14 +384,14 @@ function CreateForm({
 				</DialogClose>
 				<form.Subscribe selector={(state) => state.canSubmit}>
 					{(canSubmit) => (
-						<Button type="submit" disabled={!canSubmit}>
+						<Button type="submit" disabled={!canSubmit || uploading}>
 							Create
 						</Button>
 					)}
 				</form.Subscribe>
 			</DialogFooter>
 		</form>
-	)
+	);
 }
 
 function EditForm({
@@ -371,6 +405,7 @@ function EditForm({
 }) {
 	const queryClient = useQueryClient();
 	const [imageUrl, setImageUrl] = useState(testimoni.image || "");
+	const [uploading, setUploading] = useState(false);
 	const form = useForm({
 		defaultValues: {
 			kategoriId: testimoni.kategoriId,
@@ -384,15 +419,15 @@ function EditForm({
 					nama: value.nama,
 					testimoni: value.testimoni,
 					image: imageUrl || undefined,
-				})
+				});
 				toast.success("Testimoni updated");
 				queryClient.invalidateQueries({ queryKey: ["testimoni"] });
-				onSuccess()
+				onSuccess();
 			} catch {
 				toast.error("Failed to update testimoni");
 			}
 		},
-	})
+	});
 
 	return (
 		<form
@@ -463,7 +498,11 @@ function EditForm({
 				)}
 			</form.Field>
 
-			<ImageUpload value={imageUrl} onChange={setImageUrl} />
+			<ImageUpload
+				value={imageUrl}
+				onChange={setImageUrl}
+				onUploadingChange={setUploading}
+			/>
 
 			<DialogFooter>
 				<DialogClose render={<Button variant="outline">Cancel</Button>}>
@@ -471,14 +510,14 @@ function EditForm({
 				</DialogClose>
 				<form.Subscribe selector={(state) => state.canSubmit}>
 					{(canSubmit) => (
-						<Button type="submit" disabled={!canSubmit}>
+						<Button type="submit" disabled={!canSubmit || uploading}>
 							Save
 						</Button>
 					)}
 				</form.Subscribe>
 			</DialogFooter>
 		</form>
-	)
+	);
 }
 
 function DeleteConfirm({
@@ -499,7 +538,7 @@ function DeleteConfirm({
 		onError: () => {
 			toast.error("Failed to delete testimoni");
 		},
-	})
+	});
 
 	return (
 		<>
@@ -523,5 +562,5 @@ function DeleteConfirm({
 				</Button>
 			</DialogFooter>
 		</>
-	)
+	);
 }

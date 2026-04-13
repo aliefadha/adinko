@@ -14,8 +14,8 @@ Retrieve a list of all perusahaan alasan entries, optionally filtered by company
 
 ### Query Parameters
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
+| Parameter      | Type          | Description          |
+| -------------- | ------------- | -------------------- |
 | `perusahaanId` | string (UUID) | Filter by company ID |
 
 ### Response
@@ -26,7 +26,6 @@ Retrieve a list of all perusahaan alasan entries, optionally filtered by company
     {
       "id": "550e8400-e29b-41d4-a716-446655440000",
       "perusahaanId": "company-uuid-here",
-      "icon": "Trophy",
       "alasan": "Produk Berkualitas Tinggi",
       "sortOrder": 0,
       "createdAt": 1704067200000
@@ -47,18 +46,16 @@ Create a new alasan entry. **Authentication required.**
 ```json
 {
   "perusahaanId": "company-uuid-here",
-  "icon": "🏆",
   "alasan": "Produk Berkualitas Tinggi",
   "sortOrder": 0
 }
 ```
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `perusahaanId` | string (UUID) | Yes | Company ID |
-| `icon` | string | Yes | lucide-react icon name (e.g. "Trophy", "Shield", "Clock") |
-| `alasan` | string | Yes | Reason text |
-| `sortOrder` | number | No | Display order (default: 0) |
+| Field          | Type          | Required | Description                |
+| -------------- | ------------- | -------- | -------------------------- |
+| `perusahaanId` | string (UUID) | Yes      | Company ID                 |
+| `alasan`       | string        | Yes      | Reason text                |
+| `sortOrder`    | number        | No       | Display order (default: 0) |
 
 ### Response (201)
 
@@ -67,7 +64,6 @@ Create a new alasan entry. **Authentication required.**
   "data": {
     "id": "550e8400-e29b-41d4-a716-446655440000",
     "perusahaanId": "company-uuid-here",
-    "icon": "🏆",
     "alasan": "Produk Berkualitas Tinggi",
     "sortOrder": 0,
     "createdAt": 1704067200000
@@ -92,25 +88,23 @@ Update an existing alasan entry. **Authentication required.**
 
 ### Parameters
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `id` | string (UUID) | The unique identifier of the alasan entry |
+| Parameter | Type          | Description                               |
+| --------- | ------------- | ----------------------------------------- |
+| `id`      | string (UUID) | The unique identifier of the alasan entry |
 
 ### Request Body
 
 ```json
 {
-  "icon": "⭐",
   "alasan": "Updated Reason Text",
   "sortOrder": 1
 }
 ```
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `icon` | string | No | Updated icon |
-| `alasan` | string | No | Updated reason text |
-| `sortOrder` | number | No | Updated display order |
+| Field       | Type   | Required | Description           |
+| ----------- | ------ | -------- | --------------------- |
+| `alasan`    | string | No       | Updated reason text   |
+| `sortOrder` | number | No       | Updated display order |
 
 ### Response (200)
 
@@ -119,7 +113,6 @@ Update an existing alasan entry. **Authentication required.**
   "data": {
     "id": "550e8400-e29b-41d4-a716-446655440000",
     "perusahaanId": "company-uuid-here",
-  "icon": "Star",
     "alasan": "Updated Reason Text",
     "sortOrder": 1,
     "createdAt": 1704067200000
@@ -144,9 +137,9 @@ Delete an alasan entry. **Authentication required.**
 
 ### Parameters
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `id` | string (UUID) | The unique identifier of the alasan entry |
+| Parameter | Type          | Description                               |
+| --------- | ------------- | ----------------------------------------- |
+| `id`      | string (UUID) | The unique identifier of the alasan entry |
 
 ### Response (200)
 
@@ -155,7 +148,6 @@ Delete an alasan entry. **Authentication required.**
   "data": {
     "id": "550e8400-e29b-41d4-a716-446655440000",
     "perusahaanId": "company-uuid-here",
-    "icon": "🏆",
     "alasan": "Produk Berkualitas Tinggi",
     "sortOrder": 0,
     "createdAt": 1704067200000
@@ -183,13 +175,13 @@ curl "https://api.adinko.com/api/perusahaan-alasan?perusahaanId=company-uuid-her
 curl -X POST https://api.adinko.com/api/perusahaan-alasan \
   -H "Content-Type: application/json" \
   -H "Cookie: better-auth.session_token=your-session-token" \
-  -d '{"perusahaanId": "company-uuid-here", "icon": "Trophy", "alasan": "Produk Berkualitas", "sortOrder": 0}'
+  -d '{"perusahaanId": "company-uuid-here", "alasan": "Produk Berkualitas", "sortOrder": 0}'
 
 # Update an alasan (with auth)
 curl -X PUT https://api.adinko.com/api/perusahaan-alasan/550e8400-e29b-41d4-a716-446655440000 \
   -H "Content-Type: application/json" \
   -H "Cookie: better-auth.session_token=your-session-token" \
-  -d '{"icon": "Star", "alasan": "Updated Reason"}'
+  -d '{"alasan": "Updated Reason"}'
 
 # Delete an alasan (with auth)
 curl -X DELETE https://api.adinko.com/api/perusahaan-alasan/550e8400-e29b-41d4-a716-446655440000 \

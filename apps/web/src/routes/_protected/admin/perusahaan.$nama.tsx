@@ -6,12 +6,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import { Button } from "@adinko/ui/components/button";
-import {
-	Card,
-	CardContent,
-	CardHeader,
-	CardTitle,
-} from "@adinko/ui/components/card";
+import { Card, CardContent } from "@adinko/ui/components/card";
 import {
 	Dialog,
 	DialogClose,
@@ -73,8 +68,6 @@ type PerusahaanAlasan = {
 type PerusahaanLayanan = {
 	id: string;
 	perusahaanId: string;
-	title: string;
-	subtitle: string | null;
 	image: string | null;
 	namaLayanan: string;
 	createdAt: string;
@@ -84,13 +77,17 @@ function ImageUpload({
 	value,
 	onChange,
 	entity,
+	onUploadingChange,
 }: {
 	value: string;
 	onChange: (url: string) => void;
-	entity: "perusahaan-image" | "perusahaan-layanan";
+	entity: "perusahaan-image" | "perusahaan-layanan" | "layanan";
+	onUploadingChange?: (uploading: boolean) => void;
 }) {
 	const [preview, setPreview] = useState<string | null>(value || null);
 	const [uploading, setUploading] = useState(false);
+	const [progress, setProgress] = useState(0);
+	const inputId = `file-upload-${entity}-${Math.random().toString(36).slice(2)}`;
 
 	const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
@@ -98,9 +95,13 @@ function ImageUpload({
 
 		setPreview(URL.createObjectURL(file));
 		setUploading(true);
+		setProgress(0);
+		onUploadingChange?.(true);
 
 		try {
-			const url = await api.upload.uploadFile(file, entity);
+			const url = await api.upload.uploadFile(file, entity, (p) => {
+				setProgress(p);
+			});
 			onChange(url);
 			toast.success("Image uploaded");
 		} catch {
@@ -108,26 +109,47 @@ function ImageUpload({
 			setPreview(null);
 		} finally {
 			setUploading(false);
+			onUploadingChange?.(false);
 		}
 	};
 
 	return (
-		<div className="flex flex-col gap-2">
-			<input
-				type="file"
-				accept="image/*"
-				onChange={handleFileChange}
-				className="text-sm"
-			/>
-			{uploading && (
-				<p className="text-xs text-muted-foreground">Uploading...</p>
-			)}
-			{preview && (
-				<img
-					src={preview}
-					alt="Preview"
-					className="size-24 object-cover border"
+		<div className="flex flex-col gap-3">
+			<div className="flex items-center gap-4">
+				<input
+					type="file"
+					id={inputId}
+					accept="image/*"
+					onChange={handleFileChange}
+					className="hidden"
 				/>
+				<label
+					htmlFor={inputId}
+					className="cursor-pointer inline-flex items-center justify-center rounded-md text-sm font-medium border border-input bg-background hover:bg-accent hover:text-accent-foreground px-4 py-2"
+				>
+					Choose file
+				</label>
+				{preview && (
+					<img
+						src={preview}
+						alt="Preview"
+						className="size-16 object-cover border rounded-md"
+					/>
+				)}
+			</div>
+			{uploading && (
+				<div className="flex flex-col gap-1">
+					<div className="flex items-center justify-between text-xs">
+						<span className="text-muted-foreground">Uploading...</span>
+						<span className="font-medium">{progress}%</span>
+					</div>
+					<div className="h-2 bg-muted rounded-full overflow-hidden">
+						<div
+							className="h-full bg-primary transition-all duration-300 ease-linear"
+							style={{ width: `${progress}%` }}
+						/>
+					</div>
+				</div>
 			)}
 		</div>
 	);
@@ -244,6 +266,7 @@ function CreateImageForm({
 	onSuccess: () => void;
 }) {
 	const [imageUrl, setImageUrl] = useState("");
+	const [uploading, setUploading] = useState(false);
 
 	const handleSubmit = async () => {
 		if (!imageUrl) {
@@ -275,13 +298,16 @@ function CreateImageForm({
 					value={imageUrl}
 					onChange={setImageUrl}
 					entity="perusahaan-image"
+					onUploadingChange={setUploading}
 				/>
 			</div>
 			<DialogFooter>
 				<DialogClose render={<Button variant="outline">Cancel</Button>}>
 					Cancel
 				</DialogClose>
-				<Button onClick={handleSubmit}>Add</Button>
+				<Button onClick={handleSubmit} disabled={uploading}>
+					Add
+				</Button>
 			</DialogFooter>
 		</>
 	);
@@ -1052,14 +1078,6 @@ function LayananTab({ perusahaan }: { perusahaan: Perusahaan }) {
 									)}
 									<div className="flex-1">
 										<p className="font-medium">{layanan.namaLayanan}</p>
-										<p className="text-sm text-muted-foreground">
-											{layanan.title}
-										</p>
-										{layanan.subtitle && (
-											<p className="text-xs text-muted-foreground">
-												{layanan.subtitle}
-											</p>
-										)}
 									</div>
 									<div className="flex gap-1">
 										<Button
@@ -1135,14 +1153,13 @@ function CreateLayananForm({
 	onSuccess: () => void;
 }) {
 	const [imageUrl, setImageUrl] = useState("");
+	const [uploading, setUploading] = useState(false);
 	const form = useForm({
-		defaultValues: { title: "", subtitle: "", namaLayanan: "" },
+		defaultValues: { namaLayanan: "" },
 		onSubmit: async ({ value }) => {
 			try {
 				await api.perusahaanLayanan.create({
 					perusahaanId,
-					title: value.title,
-					subtitle: value.subtitle || undefined,
 					image: imageUrl || undefined,
 					namaLayanan: value.namaLayanan,
 				});
@@ -1170,34 +1187,6 @@ function CreateLayananForm({
 				</DialogDescription>
 			</DialogHeader>
 
-			<form.Field name="title">
-				{(field) => (
-					<div className="flex flex-col gap-2">
-						<Label htmlFor={field.name}>Title</Label>
-						<Input
-							id={field.name}
-							name={field.name}
-							value={field.state.value}
-							onBlur={field.handleBlur}
-							onChange={(e) => field.handleChange(e.target.value)}
-						/>
-					</div>
-				)}
-			</form.Field>
-			<form.Field name="subtitle">
-				{(field) => (
-					<div className="flex flex-col gap-2">
-						<Label htmlFor={field.name}>Subtitle</Label>
-						<Input
-							id={field.name}
-							name={field.name}
-							value={field.state.value}
-							onBlur={field.handleBlur}
-							onChange={(e) => field.handleChange(e.target.value)}
-						/>
-					</div>
-				)}
-			</form.Field>
 			<form.Field name="namaLayanan">
 				{(field) => (
 					<div className="flex flex-col gap-2">
@@ -1217,7 +1206,8 @@ function CreateLayananForm({
 				<ImageUpload
 					value={imageUrl}
 					onChange={setImageUrl}
-					entity="perusahaan-layanan"
+					entity="layanan"
+					onUploadingChange={setUploading}
 				/>
 			</div>
 
@@ -1227,7 +1217,7 @@ function CreateLayananForm({
 				</DialogClose>
 				<form.Subscribe selector={(state) => state.canSubmit}>
 					{(canSubmit) => (
-						<Button type="submit" disabled={!canSubmit}>
+						<Button type="submit" disabled={!canSubmit || uploading}>
 							Add
 						</Button>
 					)}
@@ -1245,17 +1235,14 @@ function EditLayananForm({
 	onSuccess: () => void;
 }) {
 	const [imageUrl, setImageUrl] = useState(layanan.image || "");
+	const [uploading, setUploading] = useState(false);
 	const form = useForm({
 		defaultValues: {
-			title: layanan.title,
-			subtitle: layanan.subtitle || "",
 			namaLayanan: layanan.namaLayanan,
 		},
 		onSubmit: async ({ value }) => {
 			try {
 				await api.perusahaanLayanan.update(layanan.id, {
-					title: value.title,
-					subtitle: value.subtitle || undefined,
 					image: imageUrl || undefined,
 					namaLayanan: value.namaLayanan,
 				});
@@ -1281,34 +1268,6 @@ function EditLayananForm({
 				<DialogDescription>Update the service details.</DialogDescription>
 			</DialogHeader>
 
-			<form.Field name="title">
-				{(field) => (
-					<div className="flex flex-col gap-2">
-						<Label htmlFor={field.name}>Title</Label>
-						<Input
-							id={field.name}
-							name={field.name}
-							value={field.state.value}
-							onBlur={field.handleBlur}
-							onChange={(e) => field.handleChange(e.target.value)}
-						/>
-					</div>
-				)}
-			</form.Field>
-			<form.Field name="subtitle">
-				{(field) => (
-					<div className="flex flex-col gap-2">
-						<Label htmlFor={field.name}>Subtitle</Label>
-						<Input
-							id={field.name}
-							name={field.name}
-							value={field.state.value}
-							onBlur={field.handleBlur}
-							onChange={(e) => field.handleChange(e.target.value)}
-						/>
-					</div>
-				)}
-			</form.Field>
 			<form.Field name="namaLayanan">
 				{(field) => (
 					<div className="flex flex-col gap-2">
@@ -1328,7 +1287,8 @@ function EditLayananForm({
 				<ImageUpload
 					value={imageUrl}
 					onChange={setImageUrl}
-					entity="perusahaan-layanan"
+					entity="layanan"
+					onUploadingChange={setUploading}
 				/>
 			</div>
 
@@ -1338,7 +1298,7 @@ function EditLayananForm({
 				</DialogClose>
 				<form.Subscribe selector={(state) => state.canSubmit}>
 					{(canSubmit) => (
-						<Button type="submit" disabled={!canSubmit}>
+						<Button type="submit" disabled={!canSubmit || uploading}>
 							Save
 						</Button>
 					)}

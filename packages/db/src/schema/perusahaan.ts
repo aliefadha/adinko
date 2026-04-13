@@ -53,8 +53,6 @@ export const perusahaanLayanan = sqliteTable("perusahaan_layanan", {
 	perusahaanId: text("perusahaan_id")
 		.notNull()
 		.references(() => perusahaan.id, { onDelete: "cascade" }),
-	title: text("title").notNull(),
-	subtitle: text("subtitle"),
 	image: text("image"),
 	namaLayanan: text("nama_layanan").notNull(),
 	createdAt: integer("created_at", { mode: "timestamp_ms" })
