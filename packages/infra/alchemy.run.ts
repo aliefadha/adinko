@@ -30,10 +30,10 @@ export const server = await Worker("server", {
 		R2_BUCKET: r2Bucket,
 		R2_PUBLIC_URL: alchemy.env.R2_PUBLIC_URL!,
 		R2_BUCKET_NAME: alchemy.env.R2_BUCKET_NAME!,
-		CORS_ORIGIN: alchemy.env.CORS_ORIGIN!,
 		BETTER_AUTH_SECRET: alchemy.secret.env.BETTER_AUTH_SECRET!,
 		BETTER_AUTH_URL: alchemy.env.BETTER_AUTH_URL!,
 		SERVER_URL: alchemy.env.SERVER_URL!,
+		ALLOWED_ORIGINS: alchemy.secret.env.ALLOWED_ORIGINS!,
 	},
 	compatibilityFlags: [
 		"nodejs_compat_populate_process_env",
@@ -51,7 +51,6 @@ export const web = await TanStackStart("web", {
 	bindings: {
 		VITE_SERVER_URL: server.url!,
 		DB: db,
-		CORS_ORIGIN: alchemy.env.CORS_ORIGIN!,
 		BETTER_AUTH_SECRET: alchemy.secret.env.BETTER_AUTH_SECRET!,
 		BETTER_AUTH_URL: alchemy.env.BETTER_AUTH_URL!,
 	},
