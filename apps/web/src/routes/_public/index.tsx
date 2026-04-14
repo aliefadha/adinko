@@ -128,7 +128,7 @@ function IndexComponent() {
 				</p>
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 lg:divide-x divide-gray-300 max-w-5xl mx-auto">
 					{[
-						{ stat: "500+", label: "Proyek Selesai" },
+						{ stat: "1000+", label: "Proyek Selesai" },
 						{ stat: "Expert", label: "Tim Profesional" },
 						{ stat: "Premium", label: "Material Pilihan" },
 						{ stat: "Gratis", label: "Layanan Survey" },
@@ -631,11 +631,10 @@ function GalleryContent() {
 							setActiveKategoriId(tab.id);
 							setDisplayLimit(6);
 						}}
-						className={`rounded-full px-4 py-1.5 text-sm font-medium transition-all ${
-							activeKategoriId === tab.id
+						className={`rounded-full px-4 py-1.5 text-sm font-medium transition-all ${activeKategoriId === tab.id
 								? "bg-gray-900 text-white"
 								: "border border-gray-300 text-gray-600 hover:bg-gray-100"
-						}`}
+							}`}
 					>
 						{tab.nama}
 					</button>

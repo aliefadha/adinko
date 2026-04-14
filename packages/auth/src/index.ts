@@ -4,6 +4,18 @@ import { env } from "@adinko/env/server";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 
+const getAllowedOrigins = (): string[] => {
+	const defaultOrigins = ["http://localhost:3000", "http://localhost:5173"];
+	const envOrigins = env.ALLOWED_ORIGINS;
+	if (!envOrigins) {
+		return defaultOrigins;
+	}
+	return envOrigins
+		.split(",")
+		.map((origin) => origin.trim())
+		.filter(Boolean);
+};
+
 export function createAuth() {
 	const db = createDb();
 
@@ -13,7 +25,7 @@ export function createAuth() {
 
 			schema: schema,
 		}),
-		trustedOrigins: [env.CORS_ORIGIN],
+		trustedOrigins: getAllowedOrigins(),
 		emailAndPassword: {
 			enabled: true,
 		},

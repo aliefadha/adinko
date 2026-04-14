@@ -16,18 +16,31 @@ import perusahaanAlasanRoute from "./routes/perusahaan-alasan";
 import perusahaanLayananRoute from "./routes/perusahaan-layanan";
 import assetsRoute from "./routes/assets";
 
+const getAllowedOrigins = (): string[] => {
+	const defaultOrigins = ["http://localhost:3000", "http://localhost:5173"];
+	const envOrigins = env.ALLOWED_ORIGINS;
+	if (!envOrigins) {
+		return defaultOrigins;
+	}
+	return envOrigins
+		.split(",")
+		.map((origin) => origin.trim())
+		.filter(Boolean);
+};
+
 const app = new Hono();
 
-app.use(logger());
 app.use(
 	"/*",
 	cors({
-		origin: env.CORS_ORIGIN.split(",").map((s) => s.trim()),
+		origin: getAllowedOrigins(),
 		allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
 		allowHeaders: ["Content-Type", "Authorization"],
+		exposeHeaders: ["Content-Length"],
 		credentials: true,
 	}),
 );
+app.use(logger());
 
 app.on(["POST", "GET"], "/api/auth/*", (c) => createAuth().handler(c.req.raw));
 
