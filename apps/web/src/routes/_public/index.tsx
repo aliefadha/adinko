@@ -1058,8 +1058,6 @@ function TestimoniContent() {
 				<Link
 					id="testimoni-gabung"
 					to="/testimoni"
-					target="_blank"
-					rel="noreferrer"
 					className="flex w-full sm:w-auto justify-center text-sm lg:text-base items-center gap-2 rounded-full bg-[#518100] text-white px-7 py-3 hover:bg-[#518100]/80 active:scale-95 transition-all"
 				>
 					Lihat Testimoni

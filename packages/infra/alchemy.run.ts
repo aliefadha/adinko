@@ -3,6 +3,7 @@ import { TanStackStart } from "alchemy/cloudflare";
 import { Worker } from "alchemy/cloudflare";
 import { D1Database } from "alchemy/cloudflare";
 import { R2Bucket } from "alchemy/cloudflare";
+import { KVNamespace } from "alchemy/cloudflare";
 import { config } from "dotenv";
 
 config({ path: "./.env" });
@@ -21,6 +22,10 @@ const r2Bucket = await R2Bucket("adinko-images", {
 	dev: { remote: true },
 });
 
+const reviewsCache = await KVNamespace("adinko-google-reviews", {
+	title: "Google Reviews Cache",
+});
+
 export const server = await Worker("server", {
 	cwd: "../../apps/server",
 	entrypoint: "src/index.ts",
@@ -35,7 +40,8 @@ export const server = await Worker("server", {
 		SERVER_URL: alchemy.env.SERVER_URL!,
 		ALLOWED_ORIGINS: alchemy.secret.env.ALLOWED_ORIGINS!,
 		GOOGLE_PLACE_ID: alchemy.env.GOOGLE_PLACE_ID!,
-		SERPAPI_API_KEY: alchemy.env.SERPAPI_API_KEY!
+		SERPAPI_API_KEY: alchemy.env.SERPAPI_API_KEY!,
+		REVIEWS_CACHE: reviewsCache,
 	},
 	compatibilityFlags: [
 		"nodejs_compat_populate_process_env",

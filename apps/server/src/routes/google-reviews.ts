@@ -1,9 +1,16 @@
 import { Hono } from "hono";
 import { randomUUID } from "crypto";
+import type { KVNamespace } from "@cloudflare/workers-types";
 
-const CACHE_DURATION_MS = 3 * 24 * 60 * 60 * 1000; // 3 days
+const CACHE_DURATION_SECONDS = 3 * 24 * 60 * 60; // 3 days in seconds
 
 const app = new Hono();
+
+interface Env {
+	SERPAPI_API_KEY: string;
+	GOOGLE_PLACE_ID: string;
+	REVIEWS_CACHE: KVNamespace;
+}
 
 interface CachedData {
 	reviews: Array<{
@@ -59,13 +66,9 @@ interface SerpApiResponse {
 	};
 }
 
-const reviewCache: {
-	data: CachedData | null;
-	promise: Promise<CachedData> | null;
-} = {
-	data: null,
-	promise: null,
-};
+const KV_KEY = "google-reviews";
+
+let fetchPromise: Promise<CachedData> | null = null;
 
 async function getGoogleReviewsFromSerpApi(
 	placeId: string,
@@ -111,16 +114,26 @@ async function getGoogleReviewsFromSerpApi(
 	};
 }
 
-async function getGoogleReviews(pageToken?: string): Promise<CachedData> {
-	const serpApiKey = process.env.SERPAPI_API_KEY;
-	const placeId = process.env.GOOGLE_PLACE_ID;
+async function getGoogleReviews(
+	env: Env,
+	pageToken?: string,
+): Promise<CachedData> {
+	const {
+		SERPAPI_API_KEY: serpApiKey,
+		GOOGLE_PLACE_ID: placeId,
+		REVIEWS_CACHE,
+	} = env;
 
 	if (!serpApiKey || !placeId) {
 		console.error(
 			"Missing SERPAPI_API_KEY or GOOGLE_PLACE_ID in environment variables",
 		);
+		const cached = (await REVIEWS_CACHE.get(
+			KV_KEY,
+			"json",
+		)) as CachedData | null;
 		return (
-			reviewCache.data || {
+			cached || {
 				reviews: [],
 				nextPageToken: null,
 				cachedAt: Date.now(),
@@ -128,21 +141,22 @@ async function getGoogleReviews(pageToken?: string): Promise<CachedData> {
 		);
 	}
 
-	if (
-		!pageToken &&
-		reviewCache.data &&
-		Date.now() - reviewCache.data.cachedAt < CACHE_DURATION_MS
-	) {
-		console.log("Returning cached reviews");
-		return reviewCache.data;
+	if (!pageToken) {
+		const cached = (await REVIEWS_CACHE.get(
+			KV_KEY,
+			"json",
+		)) as CachedData | null;
+		if (cached) {
+			return cached;
+		}
 	}
 
-	if (reviewCache.promise) {
-		console.log("Waiting for existing promise");
-		return reviewCache.promise;
+	if (fetchPromise) {
+		console.log("Waiting for existing fetch promise");
+		return fetchPromise;
 	}
 
-	reviewCache.promise = (async () => {
+	fetchPromise = (async (): Promise<CachedData> => {
 		console.log(
 			"Fetching Google reviews via SerpApi for place:",
 			placeId,
@@ -171,8 +185,14 @@ async function getGoogleReviews(pageToken?: string): Promise<CachedData> {
 			}));
 
 			let allReviews = transformedReviews;
-			if (pageToken && reviewCache.data) {
-				allReviews = [...reviewCache.data.reviews, ...transformedReviews];
+			if (pageToken) {
+				const existingCache = (await REVIEWS_CACHE.get(
+					KV_KEY,
+					"json",
+				)) as CachedData | null;
+				if (existingCache) {
+					allReviews = [...existingCache.reviews, ...transformedReviews];
+				}
 			}
 
 			const result: CachedData = {
@@ -181,8 +201,9 @@ async function getGoogleReviews(pageToken?: string): Promise<CachedData> {
 				cachedAt: Date.now(),
 			};
 
-			reviewCache.data = result;
-			reviewCache.promise = null;
+			await REVIEWS_CACHE.put(KV_KEY, JSON.stringify(result), {
+				expirationTtl: CACHE_DURATION_SECONDS,
+			});
 
 			console.log(
 				"Cached",
@@ -193,27 +214,33 @@ async function getGoogleReviews(pageToken?: string): Promise<CachedData> {
 			return result;
 		} catch (error) {
 			console.error("Error fetching Google reviews:", error);
-			reviewCache.promise = null;
+			const cached = (await REVIEWS_CACHE.get(
+				KV_KEY,
+				"json",
+			)) as CachedData | null;
 			return (
-				reviewCache.data || {
+				cached || {
 					reviews: [],
 					nextPageToken: null,
 					cachedAt: Date.now(),
 				}
 			);
+		} finally {
+			fetchPromise = null;
 		}
 	})();
 
-	return reviewCache.promise;
+	return fetchPromise;
 }
 
 app.get("/", async (c) => {
+	const env = c.env as Env;
 	const pageToken = c.req.query("page_token");
 	console.log(
 		"Received request to /api/google-reviews",
 		pageToken ? "(with page token)" : "",
 	);
-	const cachedData = await getGoogleReviews(pageToken);
+	const cachedData = await getGoogleReviews(env, pageToken);
 	console.log(
 		"Returning",
 		cachedData.reviews.length,
