@@ -29,12 +29,12 @@ app.post("/", async (c) => {
 	if (authSession instanceof Response) return authSession;
 
 	const db = createDb();
-	const { nama } = await c.req.json();
+	const { nama, image } = await c.req.json();
 	if (!nama) return c.json({ error: "nama is required" }, 400);
 
 	const id = randomUUID();
 	const now = new Date();
-	await db.insert(schema.kategori).values({ id, nama, createdAt: now });
+	await db.insert(schema.kategori).values({ id, nama, image, createdAt: now });
 
 	const created = await db
 		.select()
@@ -49,13 +49,17 @@ app.put("/:id", async (c) => {
 
 	const db = createDb();
 	const { id } = c.req.param();
-	const { nama } = await c.req.json();
+	const { nama, image } = await c.req.json();
 	if (!nama) return c.json({ error: "nama is required" }, 400);
+
+	const updateData: Record<string, unknown> = { nama };
+	if (image !== undefined) updateData.image = image;
 
 	await db
 		.update(schema.kategori)
-		.set({ nama })
+		.set(updateData)
 		.where(eq(schema.kategori.id, id));
+
 	const updated = await db
 		.select()
 		.from(schema.kategori)

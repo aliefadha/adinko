@@ -1,19 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 
 import { createPageMeta, SITE_CONFIG } from "@/lib/seo";
-import {
-	ArrowRight,
-	ChevronLeft,
-	ChevronRight,
-	CloudCheck,
-	Gem,
-	Star,
-	Users,
-} from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight, Star } from "lucide-react";
 import { useState } from "react";
 import { getKategori } from "@/functions/get-kategori";
 import { getPortfolio } from "@/functions/get-portfolio";
-import { getTestimoni } from "@/functions/get-testimoni";
+import { getGoogleReviews } from "@/functions/get-google-reviews";
+import { getLayanan } from "@/functions/get-layanan";
+import { useKontak } from "@/hooks/use-kontak";
 
 export const Route = createFileRoute("/_public/")({
 	head: () =>
@@ -24,18 +18,158 @@ export const Route = createFileRoute("/_public/")({
 			path: "/",
 		}),
 	loader: async () => {
-		const [kategoriResponse, portfolioResponse, testimoniResponse] =
-			await Promise.all([getKategori(), getPortfolio(), getTestimoni()]);
+		const [
+			kategoriResponse,
+			portfolioResponse,
+			googleReviewsResponse,
+			layananResponse,
+		] = await Promise.all([
+			getKategori(),
+			getPortfolio(),
+			getGoogleReviews(),
+			getLayanan(),
+		]);
 		return {
 			kategoriList: kategoriResponse.data as Kategori[],
 			portfolioList: portfolioResponse.data as Portfolio[],
-			testimoniList: testimoniResponse.data as Testimoni[],
+			testimoniList: googleReviewsResponse.data as Testimoni[],
+			layananList: layananResponse.data as { id: string; title: string }[],
 		};
 	},
 	component: IndexComponent,
 });
 
 function IndexComponent() {
+	const { whatsappUrl, alamat } = useKontak();
+	const { layananList } = Route.useLoaderData();
+	const [activeCard, setActiveCard] = useState<number | null>(null);
+
+	const [nama, setNama] = useState("");
+	const [wa, setWa] = useState("");
+	const [lokasi, setLokasi] = useState("");
+	const [kebutuhan, setKebutuhan] = useState("");
+	const [keterangan, setKeterangan] = useState("");
+	const [errors, setErrors] = useState<{ nama?: string; wa?: string }>({});
+
+	const validate = () => {
+		const newErrors: { nama?: string; wa?: string } = {};
+		if (!nama.trim()) newErrors.nama = "Nama wajib diisi";
+		if (!wa.trim()) newErrors.wa = "WhatsApp wajib diisi";
+		setErrors(newErrors);
+		return Object.keys(newErrors).length === 0;
+	};
+
+	const handleSubmit = (e: React.FormEvent) => {
+		e.preventDefault();
+		if (!validate()) return;
+
+		const message = `Saya ingin berkonsultasi tentang:
+
+*Nama:* ${nama}
+*WhatsApp:* ${wa}
+*Lokasi Proyek:* ${lokasi}
+*Kebutuhan:* ${kebutuhan}
+*Keterangan:* ${keterangan}`.trim();
+
+		const encodedMessage = encodeURIComponent(message);
+		window.open(`${whatsappUrl}?text=${encodedMessage}`, "_blank");
+	};
+
+	const keunggulanCards = [
+		{
+			id: 1,
+			title: "Hasil Presisi",
+			description: "Pemasangan rapi ditangani tim ahli untuk hasil maksimal.",
+			image: "card-1.webp",
+		},
+		{
+			id: 2,
+			title: "Custom Desain",
+			description:
+				"Personalisasi desain sesuai dengan keinginan dan kebutuhan Anda.",
+			image: "card-2.webp",
+		},
+		{
+			id: 3,
+			title: "Harga Jujur",
+			description: "Transparansi total sejak awal tanpa ada biaya tersembunyi.",
+			image: "card-3.webp",
+		},
+		{
+			id: 4,
+			title: "After Sales",
+			description:
+				"Dukungan penuh dan garansi setelah proses pengerjaan selesai.",
+			image: "card-4.webp",
+		},
+	];
+
+	const renderIcon = (id: number) => {
+		switch (id) {
+			case 1:
+				return (
+					<svg
+						width="20"
+						height="20"
+						viewBox="0 0 20 20"
+						fill="none"
+						xmlns="http://www.w3.org/2000/svg"
+					>
+						<path
+							d="M10 2.5025C9.67202 2.5025 9.34726 2.5671 9.04425 2.69261C8.74124 2.81812 8.46592 3.00209 8.234 3.234C8.00209 3.46592 7.81812 3.74124 7.69261 4.04425C7.5671 4.34726 7.5025 4.67203 7.5025 5C7.5025 5.32798 7.5671 5.65274 7.69261 5.95575C7.81812 6.25876 8.00209 6.53409 8.234 6.766C8.46592 6.99792 8.74124 7.18188 9.04425 7.30739C9.34726 7.4329 9.67202 7.4975 10 7.4975C10.6624 7.4975 11.2976 7.23437 11.766 6.766C12.2344 6.29763 12.4975 5.66238 12.4975 5C12.4975 4.33762 12.2344 3.70238 11.766 3.234C11.2976 2.76563 10.6624 2.5025 10 2.5025ZM15.625 3.75C15.1277 3.75 14.6508 3.94755 14.2992 4.29918C13.9475 4.65081 13.75 5.12772 13.75 5.625C13.75 6.12228 13.9475 6.5992 14.2992 6.95083C14.6508 7.30246 15.1277 7.5 15.625 7.5C16.1223 7.5 16.5992 7.30246 16.9508 6.95083C17.3025 6.5992 17.5 6.12228 17.5 5.625C17.5 5.12772 17.3025 4.65081 16.9508 4.29918C16.5992 3.94755 16.1223 3.75 15.625 3.75ZM4.375 3.75C3.87772 3.75 3.40081 3.94755 3.04918 4.29918C2.69754 4.65081 2.5 5.12772 2.5 5.625C2.5 6.12228 2.69754 6.5992 3.04918 6.95083C3.40081 7.30246 3.87772 7.5 4.375 7.5C4.87228 7.5 5.3492 7.30246 5.70083 6.95083C6.05246 6.5992 6.25 6.12228 6.25 5.625C6.25 5.12772 6.05246 4.65081 5.70083 4.29918C5.3492 3.94755 4.87228 3.75 4.375 3.75ZM6.25 9.99125C6.25231 9.66125 6.38503 9.34555 6.6192 9.11302C6.85337 8.88049 7.16999 8.74999 7.5 8.75H12.5C12.8315 8.75 13.1495 8.8817 13.3839 9.11612C13.6183 9.35054 13.75 9.66848 13.75 10V13.75C13.7503 14.1434 13.6887 14.5345 13.5675 14.9088C13.2907 15.7571 12.7206 16.479 11.9594 16.9449C11.1982 17.4107 10.2959 17.5899 9.41454 17.4503C8.53313 17.3108 7.73035 16.8615 7.15035 16.1833C6.57035 15.5051 6.25113 14.6424 6.25 13.75V9.99125ZM5 10C5 9.54375 5.12125 9.1175 5.335 8.75H2.5C2.16848 8.75 1.85054 8.8817 1.61612 9.11612C1.3817 9.35054 1.25 9.66848 1.25 10V13.125C1.24983 13.6366 1.37528 14.1405 1.61534 14.5923C1.8554 15.0441 2.20272 15.4301 2.6268 15.7163C3.05088 16.0025 3.53876 16.1802 4.04757 16.2338C4.55639 16.2874 5.07058 16.2153 5.545 16.0238C5.18599 15.3192 4.99921 14.5395 5 13.7488V10ZM15 10V13.75C15 14.5688 14.8038 15.3413 14.455 16.0238C14.9294 16.2153 15.4436 16.2874 15.9524 16.2338C16.4612 16.1802 16.9491 16.0025 17.3732 15.7163C17.7973 15.4301 18.1446 15.0441 18.3847 14.5923C18.6247 14.1405 18.7502 13.6366 18.75 13.125V10C18.75 9.66848 18.6183 9.35054 18.3839 9.11612C18.1495 8.8817 17.8315 8.75 17.5 8.75H14.665C14.8775 9.1175 15 9.54375 15 10Z"
+							fill="#FEFFFF"
+						/>
+					</svg>
+				);
+			case 2:
+				return (
+					<svg
+						width="24"
+						height="24"
+						viewBox="0 0 24 24"
+						fill="none"
+						xmlns="http://www.w3.org/2000/svg"
+					>
+						<path
+							d="M3 3H11V11H3V3ZM13 3H21V11H13V3ZM3 13H11V21H3V13ZM16 13H18V16H21V18H18V21H16V18H13V16H16V13Z"
+							fill="#FEFFFF"
+						/>
+					</svg>
+				);
+			case 3:
+				return (
+					<svg
+						width="24"
+						height="24"
+						viewBox="0 0 24 24"
+						fill="none"
+						xmlns="http://www.w3.org/2000/svg"
+					>
+						<path
+							d="M9.2 8.25L11.85 3H12.15L14.8 8.25H9.2ZM11.25 20.1L2.625 9.75H11.25V20.1ZM12.75 20.1V9.75H21.375L12.75 20.1ZM16.45 8.25L13.85 3H19L21.625 8.25H16.45ZM2.375 8.25L5 3H10.15L7.55 8.25H2.375Z"
+							fill="#FEFFFF"
+						/>
+					</svg>
+				);
+			case 4:
+				return (
+					<svg
+						width="24"
+						height="24"
+						viewBox="0 0 24 24"
+						fill="none"
+						xmlns="http://www.w3.org/2000/svg"
+					>
+						<path
+							d="M12 2.40002C15.3804 2.40002 17.298 4.70762 17.5764 7.49522H17.6604C19.8384 7.49522 21.6 9.30962 21.6 11.5476C21.6 11.662 21.5956 11.7752 21.5868 11.8872C20.7254 10.8112 19.5614 10.0178 18.2449 9.60937C16.9284 9.20093 15.5197 9.19616 14.2005 9.59566C12.8813 9.99516 11.7119 10.7806 10.8432 11.8508C9.97447 12.921 9.44618 14.2268 9.32642 15.6H6.33842C4.16282 15.6 2.40002 13.7856 2.40002 11.5476C2.40002 9.30962 4.16402 7.49522 6.33842 7.49522H6.42362C6.70442 4.68962 8.61962 2.40002 12 2.40002ZM21.6 16.2C21.6 17.6322 21.0311 19.0057 20.0184 20.0184C19.0057 21.0311 17.6322 21.6 16.2 21.6C14.7679 21.6 13.3943 21.0311 12.3816 20.0184C11.369 19.0057 10.8 17.6322 10.8 16.2C10.8 14.7679 11.369 13.3943 12.3816 12.3816C13.3943 11.369 14.7679 10.8 16.2 10.8C17.6322 10.8 19.0057 11.369 20.0184 12.3816C21.0311 13.3943 21.6 14.7679 21.6 16.2ZM19.0248 13.9752C18.9691 13.9193 18.9029 13.875 18.83 13.8448C18.7571 13.8145 18.6789 13.799 18.6 13.799C18.5211 13.799 18.443 13.8145 18.3701 13.8448C18.2972 13.875 18.231 13.9193 18.1752 13.9752L15 17.1516L14.2248 16.3752C14.169 16.3194 14.1028 16.2752 14.0299 16.245C13.957 16.2148 13.8789 16.1993 13.8 16.1993C13.7211 16.1993 13.643 16.2148 13.5701 16.245C13.4972 16.2752 13.431 16.3194 13.3752 16.3752C13.3194 16.431 13.2752 16.4972 13.245 16.5701C13.2148 16.643 13.1993 16.7211 13.1993 16.8C13.1993 16.8789 13.2148 16.957 13.245 17.0299C13.2752 17.1028 13.3194 17.169 13.3752 17.2248L14.5752 18.4248C14.631 18.4807 14.6972 18.525 14.7701 18.5553C14.843 18.5855 14.9211 18.6011 15 18.6011C15.0789 18.6011 15.1571 18.5855 15.23 18.5553C15.3029 18.525 15.3691 18.4807 15.4248 18.4248L19.0248 14.8248C19.0807 14.7691 19.125 14.7029 19.1553 14.63C19.1855 14.5571 19.2011 14.4789 19.2011 14.4C19.2011 14.3211 19.1855 14.243 19.1553 14.1701C19.125 14.0972 19.0807 14.031 19.0248 13.9752Z"
+							fill="#FEFFFF"
+						/>
+					</svg>
+				);
+			default:
+				return null;
+		}
+	};
 	return (
 		<main>
 			{/* ── Hero ── */}
@@ -71,7 +205,7 @@ function IndexComponent() {
 					<div className="mt-8 flex flex-wrap gap-3">
 						<a
 							id="hero-konsultasi"
-							href={SITE_CONFIG.whatsappUrl}
+							href={whatsappUrl}
 							target="_blank"
 							rel="noreferrer"
 							className="flex items-center gap-2 rounded-full bg-[#518100] px-4 py-2 text-sm lg:px-6 lg:py-3 lg:text-base font-medium text-white hover:bg-[#518100]/80 active:scale-95 transition-all"
@@ -97,12 +231,15 @@ function IndexComponent() {
 
 				{/* Floating WhatsApp button */}
 				<div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2">
-					<span className="rounded-full bg-[#E0D28F] px-3 py-1 text-xs font-semibold text-[#3a5c00] shadow-md">
+					<span className="rounded-full bg-[#E0D28F] px-3 py-1 text-xs font-semibold text-[#3a5c00] shadow-md md:hidden">
+						Pesan slot sekarang!
+					</span>
+					<span className="hidden md:inline rounded-full bg-[#E0D28F] px-3 py-1 text-xs font-semibold text-[#3a5c00] shadow-md">
 						Slot terbatas - Pesan sekarang!
 					</span>
 					<a
 						id="hero-whatsapp"
-						href={SITE_CONFIG.whatsappUrl}
+						href={whatsappUrl}
 						target="_blank"
 						rel="noreferrer"
 						aria-label="Chat WhatsApp"
@@ -231,75 +368,77 @@ function IndexComponent() {
 
 					{/* Cards row */}
 					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-						{/* Card 1 — Hasil Presisi */}
-						<div className="bg-white rounded-2xl p-5 flex flex-col justify-between gap-8">
-							<div className="flex items-center justify-between">
-								<span className="flex items-center justify-center w-10 h-10 rounded-full bg-[#A8922E] text-white">
-									<Users className="w-5 h-t" />
-								</span>
-								<span className="text-xs font-medium text-gray-300">001</span>
-							</div>
-							<div>
-								<h3 className="font-bold text-gray-900 mb-1">Hasil Presisi</h3>
-								<p className="text-xs text-gray-500 leading-relaxed">
-									Pemasangan rapi ditangani tim ahli untuk hasil maksimal.
-								</p>
-							</div>
-						</div>
+						{keunggulanCards.map((card) => {
+							const isActive = activeCard === card.id;
 
-						{/* Card 2 — Custom Desain (featured, with image) */}
-						<div className="relative bg-gray-900 rounded-2xl overflow-hidden flex flex-col justify-end p-5 min-h-52">
-							<img
-								src="/card-1.webp"
-								alt="Custom desain instalasi"
-								className="absolute inset-0 w-full h-full object-cover opacity-70"
-							/>
-							<div className="relative z-10">
-								<h3 className="font-bold text-white mb-1">Custom Desain</h3>
-								<p className="text-xs text-white/80 leading-relaxed">
-									Personalisasi desain sesuai dengan keinginan dan kebutuhan
-									Anda.
-								</p>
-							</div>
-						</div>
+							return (
+								<button
+									key={card.id}
+									type="button"
+									onClick={() => setActiveCard(isActive ? null : card.id)}
+									onMouseEnter={() => setActiveCard(card.id)}
+									onMouseLeave={() => setActiveCard(null)}
+									className={`relative rounded-2xl overflow-hidden transition-all duration-300 ease-out text-left min-h-52 ${isActive ? "bg-gray-900" : "bg-white"
+										}`}
+								>
+									{/* Background image (fades in) */}
+									<div
+										className={`absolute inset-0 transition-opacity duration-300 ease-out ${isActive ? "opacity-40" : "opacity-0"
+											}`}
+									>
+										<img
+											src={`/${card.image}`}
+											alt=""
+											className="w-full h-full object-cover"
+										/>
+									</div>
 
-						{/* Card 3 — Harga Jujur */}
-						<div className="bg-white rounded-2xl p-5 flex flex-col justify-between gap-8">
-							<div className="flex items-center justify-between">
-								<span className="flex items-center justify-center w-10 h-10 rounded-full bg-[#A8922E] text-white">
-									<Gem className="w-5 h-5" />
-								</span>
-							</div>
-							<div>
-								<h3 className="font-bold text-gray-900 mb-1">Harga Jujur</h3>
-								<p className="text-xs text-gray-500 leading-relaxed">
-									Transparansi total sejak awal tanpa ada biaya tersembunyi.
-								</p>
-							</div>
-						</div>
+									{/* Content */}
+									<div className="relative z-10 flex flex-col justify-between p-5 min-h-52">
+										{/* Top: Icon badge & number */}
+										<div className="flex items-center justify-between">
+											<span
+												className={`flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 ${isActive
+													? "bg-[#A8922E]/80 text-white opacity-0"
+													: "bg-[#A8922E] text-white"
+													}`}
+											>
+												{renderIcon(card.id)}
+											</span>
+											<span
+												className={`text-xs font-medium transition-opacity duration-300 ${isActive ? "text-white/0" : "text-gray-300"
+													}`}
+											>
+												00{card.id}
+											</span>
+										</div>
 
-						{/* Card 4 — After Sales */}
-						<div className="bg-white rounded-2xl p-5 flex flex-col justify-between gap-8">
-							<div className="flex items-center justify-between">
-								<span className="flex items-center justify-center w-10 h-10 rounded-full bg-[#A8922E] text-white">
-									<CloudCheck className="w-5 h-5" />
-								</span>
-								<span className="text-xs font-medium text-gray-300">004</span>
-							</div>
-							<div>
-								<h3 className="font-bold text-gray-900 mb-1">After Sales</h3>
-								<p className="text-xs text-gray-500 leading-relaxed">
-									Dukungan penuh dan garansi setelah proses pengerjaan selesai.
-								</p>
-							</div>
-						</div>
+										{/* Bottom: Title & description */}
+										<div className="mt-auto">
+											<h3
+												className={`font-bold mb-1 transition-colors duration-300 ${isActive ? "text-white" : "text-gray-900"
+													}`}
+											>
+												{card.title}
+											</h3>
+											<p
+												className={`text-xs leading-relaxed transition-colors duration-300 ${isActive ? "text-white/80" : "text-gray-500"
+													}`}
+											>
+												{card.description}
+											</p>
+										</div>
+									</div>
+								</button>
+							);
+						})}
 					</div>
 
 					{/* CTA */}
 					<div className="mt-10 flex justify-center">
 						<a
 							id="keunggulan-konsultasi"
-							href={SITE_CONFIG.whatsappUrl}
+							href={whatsappUrl}
 							target="_blank"
 							rel="noreferrer"
 							className="flex items-center gap-2 rounded-full bg-[#518100] px-7 py-3 text-white hover:bg-[#518100]/80 active:scale-95 transition-all"
@@ -369,9 +508,7 @@ function IndexComponent() {
 								<div>
 									<p className="font-bold text-gray-900 text-sm">Alamat</p>
 									<p className="text-sm text-gray-500 mt-0.5">
-										Jl. Todak No.113 Tangkerang Barat,
-										<br />
-										Kec Marpoyan Damai, Kota Pekanbaru, Riau
+										{alamat ?? "Alamat tidak tersedia"}
 									</p>
 								</div>
 							</div>
@@ -441,7 +578,7 @@ function IndexComponent() {
 						{/* CTA */}
 						<a
 							id="kontak-whatsapp"
-							href={SITE_CONFIG.whatsappUrl}
+							href={whatsappUrl}
 							target="_blank"
 							rel="noreferrer"
 							className="self-start flex items-center gap-2 rounded-full bg-[#518100] px-6 py-3 font-semibold text-white hover:bg-[#518100]/80 active:scale-95 transition-all"
@@ -454,62 +591,91 @@ function IndexComponent() {
 					</div>
 
 					{/* Right — form */}
-					<div className="bg-[#F1F2F6] rounded-3xl p-8 flex flex-col gap-5">
+					<form
+						onSubmit={handleSubmit}
+						className="bg-[#F1F2F6] rounded-3xl p-8 flex flex-col gap-5"
+					>
 						<h2 className="text-xl font-bold text-gray-900">
 							Kirim Pesan Sekarang
 						</h2>
 
 						<div className="flex flex-col gap-4">
 							<div>
-								<label className="block text-sm font-medium text-gray-700 mb-1.5">
+								<label
+									htmlFor="kontak-nama"
+									className="block text-sm font-medium text-gray-700 mb-1.5"
+								>
 									Nama Lengkap
 								</label>
 								<input
 									id="kontak-nama"
 									type="text"
 									placeholder="Nama Anda"
+									value={nama}
+									onChange={(e) => setNama(e.target.value)}
 									className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#518100]/40"
 								/>
+								{errors.nama && (
+									<p className="text-red-500 text-xs mt-1">{errors.nama}</p>
+								)}
 							</div>
 
 							<div>
-								<label className="block text-sm font-medium text-gray-700 mb-1.5">
+								<label
+									htmlFor="kontak-wa"
+									className="block text-sm font-medium text-gray-700 mb-1.5"
+								>
 									No. WhatsApp
 								</label>
 								<input
 									id="kontak-wa"
 									type="tel"
 									placeholder="0822-xxxx-xxxx"
+									value={wa}
+									onChange={(e) => setWa(e.target.value)}
 									className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#518100]/40"
 								/>
+								{errors.wa && (
+									<p className="text-red-500 text-xs mt-1">{errors.wa}</p>
+								)}
 							</div>
 
 							<div>
-								<label className="block text-sm font-medium text-gray-700 mb-1.5">
+								<label
+									htmlFor="kontak-lokasi"
+									className="block text-sm font-medium text-gray-700 mb-1.5"
+								>
 									Lokasi Proyek
 								</label>
 								<input
 									id="kontak-lokasi"
 									type="text"
 									placeholder="Kota / Kecamatan"
+									value={lokasi}
+									onChange={(e) => setLokasi(e.target.value)}
 									className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#518100]/40"
 								/>
 							</div>
 
 							<div>
-								<label className="block text-sm font-medium text-gray-700 mb-1.5">
+								<label
+									htmlFor="kontak-kebutuhan"
+									className="block text-sm font-medium text-gray-700 mb-1.5"
+								>
 									Kebutuhan Anda
 								</label>
 								<div className="relative">
 									<select
 										id="kontak-kebutuhan"
-										defaultValue="Instalasi jaringan"
+										value={kebutuhan}
+										onChange={(e) => setKebutuhan(e.target.value)}
 										className="w-full appearance-none rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#518100]/40"
 									>
-										<option>Instalasi jaringan</option>
-										<option>Taman Rumput Sintetis</option>
-										<option>Lapangan Futsal</option>
-										<option>Lapangan Minisoccer</option>
+										{layananList.map((layanan) => (
+											<option key={layanan.id} value={layanan.title}>
+												{layanan.title}
+											</option>
+										))}
 										<option>Lainnya</option>
 									</select>
 									<span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">
@@ -530,13 +696,18 @@ function IndexComponent() {
 							</div>
 
 							<div>
-								<label className="block text-sm font-medium text-gray-700 mb-1.5">
+								<label
+									htmlFor="kontak-keterangan"
+									className="block text-sm font-medium text-gray-700 mb-1.5"
+								>
 									Keterangan
 								</label>
 								<textarea
 									id="kontak-keterangan"
 									rows={4}
 									placeholder="Ceritakan detail kebutuhan anda..."
+									value={keterangan}
+									onChange={(e) => setKeterangan(e.target.value)}
 									className="w-full resize-none rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#518100]/40"
 								/>
 							</div>
@@ -554,7 +725,7 @@ function IndexComponent() {
 								</button>
 							</div>
 						</div>
-					</div>
+					</form>
 				</div>
 			</section>
 
@@ -579,7 +750,7 @@ function IndexComponent() {
 	);
 }
 
-type Kategori = { id: string; nama: string };
+type Kategori = { id: string; nama: string; image: string | null };
 type Portfolio = {
 	id: string;
 	kategoriId: string;
@@ -598,9 +769,10 @@ type Testimoni = {
 	nama: string;
 	testimoni: string;
 	image: string | null;
+	timeSpan: string | null;
 	createdAt: Date;
+	rating: number;
 };
-
 function GalleryContent() {
 	const { kategoriList, portfolioList } = Route.useLoaderData();
 	const [activeKategoriId, setActiveKategoriId] = useState<string | null>(null);
@@ -615,14 +787,14 @@ function GalleryContent() {
 	const hasMore = filteredPortfolio.length > displayLimit;
 
 	const tabs = [
-		{ id: null, nama: "Semua" },
-		...kategoriList.map((k) => ({ id: k.id, nama: k.nama })),
+		{ id: null, nama: "Semua", image: null },
+		...kategoriList.map((k) => ({ id: k.id, nama: k.nama, image: k.image })),
 	];
 
 	return (
 		<>
 			{/* Filter tabs */}
-			<div className="flex flex-wrap justify-center gap-2 mb-10">
+			<div className="flex flex-wrap justify-center gap-5 mb-10">
 				{tabs.map((tab) => (
 					<button
 						type="button"
@@ -631,12 +803,29 @@ function GalleryContent() {
 							setActiveKategoriId(tab.id);
 							setDisplayLimit(6);
 						}}
-						className={`rounded-full px-4 py-1.5 text-sm font-medium transition-all ${activeKategoriId === tab.id
-								? "bg-gray-900 text-white"
-								: "border border-gray-300 text-gray-600 hover:bg-gray-100"
+						className={`hover:scale-120 relative rounded-full overflow-hidden px-4 py-1.5 text-sm font-medium transition-all ${activeKategoriId === tab.id ? "text-white" : "text-gray-900"
 							}`}
 					>
-						{tab.nama}
+						{tab.image ? (
+							<>
+								<img
+									src={tab.image}
+									alt=""
+									className="absolute inset-0 w-full h-full object-cover object-center"
+								/>
+								<div
+									className={`absolute inset-0 ${activeKategoriId === tab.id ? "bg-black/70" : "bg-white/60"}`}
+								/>
+							</>
+						) : (
+							<div
+								className={`absolute inset-0 rounded-full ${activeKategoriId === tab.id
+									? "bg-gray-900"
+									: "border border-gray-300 bg-white"
+									}`}
+							/>
+						)}
+						<span className="relative z-10">{tab.nama}</span>
 					</button>
 				))}
 			</div>
@@ -721,6 +910,7 @@ function getAvatarData(nama: string) {
 }
 
 function TestimoniContent() {
+	const { whatsappUrl } = useKontak();
 	const { testimoniList } = Route.useLoaderData();
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const itemsPerPage = 3;
@@ -737,7 +927,6 @@ function TestimoniContent() {
 
 	return (
 		<>
-			{/* Header row */}
 			<div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 mb-8">
 				<div>
 					<p className="text-xs lg:text-lg tracking-widest text-[#90E500] uppercase mb-2">
@@ -754,7 +943,7 @@ function TestimoniContent() {
 							))}
 						</span>
 						<span className="text-[#90E500]">•</span>
-						<span>Based on {testimoniList.length} reviews</span>
+						<span>Based on 100+ reviews</span>
 					</div>
 				</div>
 				<div className="flex flex-col gap-3 lg:items-end">
@@ -777,7 +966,6 @@ function TestimoniContent() {
 				</div>
 			</div>
 
-			{/* Review cards */}
 			{displayedTestimonies.length > 0 ? (
 				<div className="relative mb-8">
 					<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -810,8 +998,11 @@ function TestimoniContent() {
 											<p className="text-sm font-semibold text-white">
 												{item.nama}
 											</p>
+											{item.timeSpan && (
+												<p className="text-xs text-white/60">{item.timeSpan}</p>
+											)}
 											<span className="flex gap-0.5 text-yellow-400">
-												{Array.from({ length: 5 }).map((_, i) => (
+												{Array.from({ length: item.rating }).map((_, i) => (
 													<Star key={i} size={11} fill="currentColor" />
 												))}
 											</span>
@@ -822,7 +1013,6 @@ function TestimoniContent() {
 						})}
 					</div>
 
-					{/* Carousel navigation */}
 					{hasCarousel && (
 						<>
 							<button
@@ -852,11 +1042,10 @@ function TestimoniContent() {
 				</p>
 			)}
 
-			{/* CTA */}
-			<div className="flex justify-center">
+			<div className="flex justify-center gap-2">
 				<a
 					id="testimoni-gabung"
-					href={SITE_CONFIG.whatsappUrl}
+					href={whatsappUrl}
 					target="_blank"
 					rel="noreferrer"
 					className="flex w-full sm:w-auto justify-center text-sm lg:text-base items-center gap-2 rounded-full bg-white px-7 py-3 text-gray-900 hover:bg-white/90 active:scale-95 transition-all"
@@ -866,6 +1055,18 @@ function TestimoniContent() {
 						<ArrowRight className="w-4 h-4" />
 					</span>
 				</a>
+				<Link
+					id="testimoni-gabung"
+					to="/testimoni"
+					target="_blank"
+					rel="noreferrer"
+					className="flex w-full sm:w-auto justify-center text-sm lg:text-base items-center gap-2 rounded-full bg-[#518100] text-white px-7 py-3 hover:bg-[#518100]/80 active:scale-95 transition-all"
+				>
+					Lihat Testimoni
+					<span className="flex items-center justify-center w-6 h-6 rounded-full bg-[#E0D28F] text-[#518100]">
+						<ArrowRight className="w-4 h-4" />
+					</span>
+				</Link>
 			</div>
 		</>
 	);

@@ -1,0 +1,1 @@
+ALTER TABLE `kategori` ADD `image` text;

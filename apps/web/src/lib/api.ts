@@ -173,6 +173,7 @@ const api = {
 		update: (
 			nama: string,
 			data: {
+				nama?: string;
 				logo?: string;
 				title?: string;
 				subtitle?: string;
@@ -247,7 +248,6 @@ const api = {
 			).then((r) => r.json()),
 		create: (data: {
 			perusahaanId: string;
-			icon: string;
 			alasan: string;
 			sortOrder?: number;
 		}) =>
@@ -257,10 +257,7 @@ const api = {
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify(data),
 			}).then((r) => r.json()),
-		update: (
-			id: string,
-			data: { icon?: string; alasan?: string; sortOrder?: number },
-		) =>
+		update: (id: string, data: { alasan?: string; sortOrder?: number }) =>
 			fetch(`${env.VITE_SERVER_URL}/api/perusahaan-alasan/${id}`, {
 				method: "PUT",
 				credentials: "include",
@@ -281,8 +278,6 @@ const api = {
 			).then((r) => r.json()),
 		create: (data: {
 			perusahaanId: string;
-			title: string;
-			subtitle?: string;
 			image?: string;
 			namaLayanan: string;
 		}) =>
@@ -295,8 +290,6 @@ const api = {
 		update: (
 			id: string,
 			data: {
-				title?: string;
-				subtitle?: string;
 				image?: string;
 				namaLayanan?: string;
 			},

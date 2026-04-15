@@ -34,6 +34,8 @@ export const server = await Worker("server", {
 		BETTER_AUTH_URL: alchemy.env.BETTER_AUTH_URL!,
 		SERVER_URL: alchemy.env.SERVER_URL!,
 		ALLOWED_ORIGINS: alchemy.secret.env.ALLOWED_ORIGINS!,
+		GOOGLE_PLACE_ID: alchemy.env.GOOGLE_PLACE_ID!,
+		SERPAPI_API_KEY: alchemy.env.SERPAPI_API_KEY!
 	},
 	compatibilityFlags: [
 		"nodejs_compat_populate_process_env",

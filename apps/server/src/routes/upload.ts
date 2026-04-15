@@ -22,9 +22,12 @@ app.post("/file", async (c) => {
 		return c.json({ error: "file and entity are required" }, 400);
 	}
 
-	if (!["portfolio", "layanan", "testimoni"].includes(entity)) {
+	if (!["portfolio", "layanan", "testimoni", "kategori"].includes(entity)) {
 		return c.json(
-			{ error: "entity must be 'portfolio', 'layanan', or 'testimoni'" },
+			{
+				error:
+					"entity must be 'portfolio', 'layanan', 'testimoni', or 'kategori'",
+			},
 			400,
 		);
 	}

@@ -2,11 +2,12 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArrowRight } from "lucide-react";
 
-import { createPageMeta, SITE_CONFIG } from "@/lib/seo";
+import { createPageMeta } from "@/lib/seo";
+import { useKontak } from "@/hooks/use-kontak";
 import { getPortfolio } from "@/functions/get-portfolio";
 import { getKategori } from "@/functions/get-kategori";
 
-type Kategori = { id: string; nama: string };
+type Kategori = { id: string; nama: string; image: string | null };
 type Portfolio = {
 	id: string;
 	kategoriId: string;
@@ -41,6 +42,7 @@ export const Route = createFileRoute("/_public/portofolio")({
 });
 
 function RouteComponent() {
+	const { whatsappUrl } = useKontak();
 	return (
 		<div>
 			{/* ── Hero ── */}
@@ -65,12 +67,15 @@ function RouteComponent() {
 					</p>
 				</div>
 				<div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2">
-					<span className="rounded-full bg-[#E0D28F] px-3 py-1 text-xs font-semibold text-[#3a5c00] shadow-md">
+					<span className="rounded-full bg-[#E0D28F] px-3 py-1 text-xs font-semibold text-[#3a5c00] shadow-md md:hidden">
+						Pesan slot sekarang!
+					</span>
+					<span className="hidden md:inline rounded-full bg-[#E0D28F] px-3 py-1 text-xs font-semibold text-[#3a5c00] shadow-md">
 						Slot terbatas - Pesan sekarang!
 					</span>
 					<a
 						id="hero-whatsapp"
-						href={SITE_CONFIG.whatsappUrl}
+						href={whatsappUrl}
 						target="_blank"
 						rel="noreferrer"
 						aria-label="Chat WhatsApp"
@@ -111,8 +116,8 @@ function PortfolioGrid() {
 	const hasMore = filteredPortfolio.length > displayLimit;
 
 	const tabs = [
-		{ id: null, nama: "Semua" },
-		...kategoriList.map((k) => ({ id: k.id, nama: k.nama })),
+		{ id: null, nama: "Semua", image: null },
+		...kategoriList.map((k) => ({ id: k.id, nama: k.nama, image: k.image })),
 	];
 
 	return (
@@ -127,12 +132,31 @@ function PortfolioGrid() {
 							setActiveKategoriId(tab.id);
 							setDisplayLimit(9);
 						}}
-						className={`rounded-full px-5 py-2 text-sm font-medium transition-all ${activeKategoriId === tab.id
-								? "bg-gray-900 text-white"
-								: "border border-gray-300 text-gray-600 hover:bg-gray-100"
-							}`}
+						className={`relative rounded-full overflow-hidden px-5 py-2 text-sm font-medium transition-all ${
+							activeKategoriId === tab.id ? "text-white" : "text-gray-900"
+						}`}
 					>
-						{tab.nama}
+						{tab.image ? (
+							<>
+								<img
+									src={tab.image}
+									alt=""
+									className="absolute inset-0 w-full h-full object-cover object-center"
+								/>
+								<div
+									className={`absolute inset-0 ${activeKategoriId === tab.id ? "bg-black/50" : "bg-white/60"}`}
+								/>
+							</>
+						) : (
+							<div
+								className={`absolute inset-0 rounded-full ${
+									activeKategoriId === tab.id
+										? "bg-gray-900"
+										: "border border-gray-300 bg-white"
+								}`}
+							/>
+						)}
+						<span className="relative z-10">{tab.nama}</span>
 					</button>
 				))}
 			</div>

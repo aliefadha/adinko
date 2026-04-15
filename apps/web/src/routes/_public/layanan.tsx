@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 
-import { createPageMeta, SITE_CONFIG } from "@/lib/seo";
+import { createPageMeta } from "@/lib/seo";
+import { useKontak } from "@/hooks/use-kontak";
 import { getPerusahaan } from "@/functions/get-perusahaan";
 import { getPerusahaanTag } from "@/functions/get-perusahaan-tag";
 import { getLayanan } from "@/functions/get-layanan";
@@ -43,6 +44,7 @@ export const Route = createFileRoute("/_public/layanan")({
 });
 
 function RouteComponent() {
+	const { whatsappUrl } = useKontak();
 	return (
 		<div>
 			{/* ── Hero ── */}
@@ -77,12 +79,15 @@ function RouteComponent() {
 
 				{/* Floating WhatsApp button */}
 				<div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2">
-					<span className="rounded-full bg-[#E0D28F] px-3 py-1 text-xs font-semibold text-[#3a5c00] shadow-md">
+					<span className="rounded-full bg-[#E0D28F] px-3 py-1 text-xs font-semibold text-[#3a5c00] shadow-md md:hidden">
+						Pesan slot sekarang!
+					</span>
+					<span className="hidden md:inline rounded-full bg-[#E0D28F] px-3 py-1 text-xs font-semibold text-[#3a5c00] shadow-md">
 						Slot terbatas - Pesan sekarang!
 					</span>
 					<a
 						id="hero-whatsapp"
-						href={SITE_CONFIG.whatsappUrl}
+						href={whatsappUrl}
 						target="_blank"
 						rel="noreferrer"
 						aria-label="Chat WhatsApp"
@@ -146,26 +151,26 @@ function BrandSection() {
 				<div className="flex flex-wrap gap-2 mt-auto">
 					{adinkoTags.length > 0
 						? adinkoTags.map((tag) => (
-							<span
-								key={tag.id}
-								className="rounded-full border border-[#518100]/30 bg-[#ECF3E0] px-4 py-1.5 font-medium text-[#518100]"
-							>
-								{tag.tag}
-							</span>
-						))
+								<span
+									key={tag.id}
+									className="rounded-full border border-[#518100]/30 bg-[#ECF3E0] px-4 py-1.5 font-medium text-[#518100]"
+								>
+									{tag.tag}
+								</span>
+							))
 						: [
-							"Rumput Sintetis",
-							"Vertical Garden",
-							"Taman Custom",
-							"Mini Golf",
-						].map((tag) => (
-							<span
-								key={tag}
-								className="rounded-full border border-[#518100]/30 bg-[#ECF3E0] px-4 py-1.5 font-medium text-[#518100]"
-							>
-								{tag}
-							</span>
-						))}
+								"Rumput Sintetis",
+								"Vertical Garden",
+								"Taman Custom",
+								"Mini Golf",
+							].map((tag) => (
+								<span
+									key={tag}
+									className="rounded-full border border-[#518100]/30 bg-[#ECF3E0] px-4 py-1.5 font-medium text-[#518100]"
+								>
+									{tag}
+								</span>
+							))}
 				</div>
 			</div>
 
@@ -187,26 +192,26 @@ function BrandSection() {
 				<div className="flex flex-wrap gap-2 mt-auto">
 					{ghaziTags.length > 0
 						? ghaziTags.map((tag) => (
-							<span
-								key={tag.id}
-								className="rounded-full border border-gray-300 bg-[#26272529] px-4 py-1.5 font-medium"
-							>
-								{tag.tag}
-							</span>
-						))
+								<span
+									key={tag.id}
+									className="rounded-full border border-gray-300 bg-[#26272529] px-4 py-1.5 font-medium"
+								>
+									{tag.tag}
+								</span>
+							))
 						: [
-							"Futsal & Minisoccer",
-							"Padel & Tenis",
-							"Basket & Voli",
-							"Instalasi Jaring",
-						].map((tag) => (
-							<span
-								key={tag}
-								className="rounded-full border border-gray-300 bg-[#26272529] px-4 py-1.5 font-medium"
-							>
-								{tag}
-							</span>
-						))}
+								"Futsal & Minisoccer",
+								"Padel & Tenis",
+								"Basket & Voli",
+								"Instalasi Jaring",
+							].map((tag) => (
+								<span
+									key={tag}
+									className="rounded-full border border-gray-300 bg-[#26272529] px-4 py-1.5 font-medium"
+								>
+									{tag}
+								</span>
+							))}
 				</div>
 			</div>
 		</>
@@ -214,6 +219,7 @@ function BrandSection() {
 }
 
 function LayananGrid() {
+	const { whatsappUrl } = useKontak();
 	const { layananList } = Route.useLoaderData();
 
 	const hasData = layananList && layananList.length > 0;
@@ -252,7 +258,7 @@ function LayananGrid() {
 			<div className="flex justify-center">
 				<a
 					id="layanan-konsultasi"
-					href={SITE_CONFIG.whatsappUrl}
+					href={whatsappUrl}
 					target="_blank"
 					rel="noreferrer"
 					className="flex items-center gap-2 rounded-full bg-[#518100] px-7 py-3 text-white hover:bg-[#518100]/80 active:scale-95 transition-all"

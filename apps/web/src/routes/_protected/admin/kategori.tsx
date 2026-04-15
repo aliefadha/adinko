@@ -28,6 +28,94 @@ import {
 
 import { api } from "@/lib/api";
 
+function ImageUpload({
+	value,
+	onChange,
+	onUploadingChange,
+}: {
+	value: string;
+	onChange: (url: string) => void;
+	onUploadingChange?: (uploading: boolean) => void;
+}) {
+	const [preview, setPreview] = useState<string | null>(value || null);
+	const [uploading, setUploading] = useState(false);
+	const [progress, setProgress] = useState(0);
+	const inputId = `file-upload-kategori-${Math.random().toString(36).slice(2)}`;
+
+	const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+		const file = e.target.files?.[0];
+		if (!file) return;
+
+		setPreview(URL.createObjectURL(file));
+		setUploading(true);
+		setProgress(0);
+		onUploadingChange?.(true);
+
+		try {
+			const url = await api.upload.uploadFile(file, "kategori", (p) => {
+				setProgress(p);
+			});
+			onChange(url);
+			toast.success("Image uploaded");
+		} catch {
+			toast.error("Failed to upload image");
+			setPreview(null);
+		} finally {
+			setUploading(false);
+			onUploadingChange?.(false);
+		}
+	};
+
+	return (
+		<div className="flex flex-col gap-3">
+			<Label>Image</Label>
+			<div className="flex items-center gap-4">
+				<input
+					type="file"
+					id={inputId}
+					accept="image/*"
+					onChange={handleFileChange}
+					className="hidden"
+				/>
+				<label
+					htmlFor={inputId}
+					className="cursor-pointer inline-flex items-center justify-center rounded-md text-sm font-medium border border-input bg-background hover:bg-accent hover:text-accent-foreground px-4 py-2"
+				>
+					Choose file
+				</label>
+				{preview && (
+					<img
+						src={preview}
+						alt="Preview"
+						className="size-16 object-cover border rounded-md"
+					/>
+				)}
+			</div>
+			{uploading && (
+				<div className="flex flex-col gap-1">
+					<div className="flex items-center justify-between text-xs">
+						<span className="text-muted-foreground">Uploading...</span>
+						<span className="font-medium">{progress}%</span>
+					</div>
+					<div className="h-2 bg-muted rounded-full overflow-hidden">
+						<div
+							className="h-full bg-primary transition-all duration-300 ease-linear"
+							style={{ width: `${progress}%` }}
+						/>
+					</div>
+				</div>
+			)}
+			{value && !preview && !uploading && (
+				<img
+					src={value}
+					alt="Current"
+					className="size-16 object-cover border rounded-md"
+				/>
+			)}
+		</div>
+	);
+}
+
 export const Route = createFileRoute("/_protected/admin/kategori")({
 	component: KategoriPage,
 });
@@ -35,6 +123,7 @@ export const Route = createFileRoute("/_protected/admin/kategori")({
 type Kategori = {
 	id: string;
 	nama: string;
+	image: string | null;
 	createdAt: string;
 };
 
@@ -42,7 +131,7 @@ function KategoriPage() {
 	const { data: kategoriList } = useQuery({
 		queryKey: ["kategori"],
 		queryFn: () => api.kategori.list().then((r) => r.data as Kategori[]),
-	})
+	});
 
 	const [createOpen, setCreateOpen] = useState(false);
 	const [editOpen, setEditOpen] = useState(false);
@@ -81,16 +170,25 @@ function KategoriPage() {
 							kategoriList.map((kategori) => (
 								<div
 									key={kategori.id}
-									className="flex items-center justify-between border p-3"
+									className="flex items-center justify-between border p-3 rounded-md"
 								>
-									<span>{kategori.nama}</span>
+									<div className="flex items-center gap-3">
+										{kategori.image && (
+											<img
+												src={kategori.image}
+												alt={kategori.nama}
+												className="size-16 rounded object-cover border"
+											/>
+										)}
+										<span>{kategori.nama}</span>
+									</div>
 									<div className="flex gap-2">
 										<Button
 											size="icon-sm"
 											variant="ghost"
 											onClick={() => {
-												setEditKategori(kategori)
-												setEditOpen(true)
+												setEditKategori(kategori);
+												setEditOpen(true);
 											}}
 										>
 											<PencilIcon className="size-4" />
@@ -99,8 +197,8 @@ function KategoriPage() {
 											size="icon-sm"
 											variant="ghost"
 											onClick={() => {
-												setDeleteKategori(kategori)
-												setDeleteOpen(true)
+												setDeleteKategori(kategori);
+												setDeleteOpen(true);
 											}}
 										>
 											<TrashIcon className="size-4" />
@@ -119,8 +217,8 @@ function KategoriPage() {
 						<EditForm
 							kategori={editKategori}
 							onSuccess={() => {
-								setEditOpen(false)
-								setEditKategori(null)
+								setEditOpen(false);
+								setEditKategori(null);
 							}}
 						/>
 					)}
@@ -133,29 +231,34 @@ function KategoriPage() {
 						<DeleteConfirm
 							kategori={deleteKategori}
 							onSuccess={() => {
-								setDeleteOpen(false)
-								setDeleteKategori(null)
+								setDeleteOpen(false);
+								setDeleteKategori(null);
 							}}
 						/>
 					)}
 				</DialogContent>
 			</Dialog>
 		</div>
-	)
+	);
 }
 
 function CreateForm({ onSuccess }: { onSuccess: () => void }) {
 	const queryClient = useQueryClient();
+	const [imageUrl, setImageUrl] = useState("");
+	const [uploading, setUploading] = useState(false);
 	const form = useForm({
 		defaultValues: {
 			nama: "",
 		},
 		onSubmit: async ({ value }) => {
 			try {
-				await api.kategori.create({ nama: value.nama });
+				await api.kategori.create({
+					nama: value.nama,
+					image: imageUrl || undefined,
+				});
 				toast.success("Kategori created");
 				queryClient.invalidateQueries({ queryKey: ["kategori"] });
-				onSuccess()
+				onSuccess();
 			} catch {
 				toast.error("Failed to create kategori");
 			}
@@ -165,7 +268,7 @@ function CreateForm({ onSuccess }: { onSuccess: () => void }) {
 				nama: z.string().min(1, "Nama is required"),
 			}),
 		},
-	})
+	});
 
 	return (
 		<form
@@ -201,20 +304,26 @@ function CreateForm({ onSuccess }: { onSuccess: () => void }) {
 				)}
 			</form.Field>
 
+			<ImageUpload
+				value={imageUrl}
+				onChange={setImageUrl}
+				onUploadingChange={setUploading}
+			/>
+
 			<DialogFooter>
 				<DialogClose render={<Button variant="outline">Cancel</Button>}>
 					Cancel
 				</DialogClose>
 				<form.Subscribe selector={(state) => state.canSubmit}>
 					{(canSubmit) => (
-						<Button type="submit" disabled={!canSubmit}>
+						<Button type="submit" disabled={!canSubmit || uploading}>
 							Create
 						</Button>
 					)}
 				</form.Subscribe>
 			</DialogFooter>
 		</form>
-	)
+	);
 }
 
 function EditForm({
@@ -225,16 +334,21 @@ function EditForm({
 	onSuccess: () => void;
 }) {
 	const queryClient = useQueryClient();
+	const [imageUrl, setImageUrl] = useState(kategori.image || "");
+	const [uploading, setUploading] = useState(false);
 	const form = useForm({
 		defaultValues: {
 			nama: kategori.nama,
 		},
 		onSubmit: async ({ value }) => {
 			try {
-				await api.kategori.update(kategori.id, { nama: value.nama });
+				await api.kategori.update(kategori.id, {
+					nama: value.nama,
+					image: imageUrl || undefined,
+				});
 				toast.success("Kategori updated");
 				queryClient.invalidateQueries({ queryKey: ["kategori"] });
-				onSuccess()
+				onSuccess();
 			} catch {
 				toast.error("Failed to update kategori");
 			}
@@ -244,7 +358,7 @@ function EditForm({
 				nama: z.string().min(1, "Nama is required"),
 			}),
 		},
-	})
+	});
 
 	return (
 		<form
@@ -280,20 +394,26 @@ function EditForm({
 				)}
 			</form.Field>
 
+			<ImageUpload
+				value={imageUrl}
+				onChange={setImageUrl}
+				onUploadingChange={setUploading}
+			/>
+
 			<DialogFooter>
 				<DialogClose render={<Button variant="outline">Cancel</Button>}>
 					Cancel
 				</DialogClose>
 				<form.Subscribe selector={(state) => state.canSubmit}>
 					{(canSubmit) => (
-						<Button type="submit" disabled={!canSubmit}>
+						<Button type="submit" disabled={!canSubmit || uploading}>
 							Save
 						</Button>
 					)}
 				</form.Subscribe>
 			</DialogFooter>
 		</form>
-	)
+	);
 }
 
 function DeleteConfirm({
@@ -314,7 +434,7 @@ function DeleteConfirm({
 		onError: () => {
 			toast.error("Failed to delete kategori");
 		},
-	})
+	});
 
 	return (
 		<>
@@ -338,5 +458,5 @@ function DeleteConfirm({
 				</Button>
 			</DialogFooter>
 		</>
-	)
+	);
 }

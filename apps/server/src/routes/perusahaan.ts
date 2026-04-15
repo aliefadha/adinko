@@ -29,9 +29,17 @@ app.put("/:nama", async (c) => {
 
 	const db = createDb();
 	const { nama } = c.req.param();
-	const { logo, title, subtitle, visi, misi } = await c.req.json();
+	const {
+		nama: newNama,
+		logo,
+		title,
+		subtitle,
+		visi,
+		misi,
+	} = await c.req.json();
 
 	const updateData: Record<string, unknown> = {};
+	if (newNama !== undefined) updateData.nama = newNama;
 	if (logo !== undefined) updateData.logo = logo;
 	if (title !== undefined) updateData.title = title;
 	if (subtitle !== undefined) updateData.subtitle = subtitle;

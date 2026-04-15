@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "@tanstack/react-form";
 import { PlusIcon, PencilIcon, TrashIcon, TagIcon } from "lucide-react";
@@ -72,6 +72,115 @@ type PerusahaanLayanan = {
 	namaLayanan: string;
 	createdAt: string;
 };
+
+function InfoTab({ perusahaan }: { perusahaan: Perusahaan }) {
+	const queryClient = useQueryClient();
+	const navigate = useNavigate();
+
+	const form = useForm({
+		defaultValues: {
+			nama: perusahaan.nama,
+			title: perusahaan.title || "",
+			subtitle: perusahaan.subtitle || "",
+		},
+		onSubmit: async ({ value }) => {
+			try {
+				await api.perusahaan.update(perusahaan.nama, {
+					nama: value.nama,
+					title: value.title,
+					subtitle: value.subtitle,
+				});
+				toast.success("Info updated");
+				queryClient.invalidateQueries({
+					queryKey: ["perusahaan", perusahaan.nama],
+				});
+				if (value.nama !== perusahaan.nama) {
+					navigate({
+						to: "/admin/perusahaan/$nama",
+						params: { nama: value.nama },
+					});
+				}
+			} catch {
+				toast.error("Failed to update info");
+			}
+		},
+	});
+
+	return (
+		<div className="flex flex-col gap-6">
+			<div>
+				<h2 className="text-lg font-semibold">Info</h2>
+			</div>
+
+			<Card>
+				<CardContent className="p-6">
+					<form
+						onSubmit={(e) => {
+							e.preventDefault();
+							e.stopPropagation();
+							form.handleSubmit();
+						}}
+						className="flex flex-col gap-4"
+					>
+						<form.Field name="nama">
+							{(field) => (
+								<div className="flex flex-col gap-2">
+									<Label htmlFor={field.name}>Nama</Label>
+									<Input
+										id={field.name}
+										name={field.name}
+										value={field.state.value}
+										onBlur={field.handleBlur}
+										onChange={(e) => field.handleChange(e.target.value)}
+										disabled
+									/>
+								</div>
+							)}
+						</form.Field>
+						<form.Field name="title">
+							{(field) => (
+								<div className="flex flex-col gap-2">
+									<Label htmlFor={field.name}>Title</Label>
+									<Input
+										id={field.name}
+										name={field.name}
+										value={field.state.value}
+										onBlur={field.handleBlur}
+										onChange={(e) => field.handleChange(e.target.value)}
+									/>
+								</div>
+							)}
+						</form.Field>
+						<form.Field name="subtitle">
+							{(field) => (
+								<div className="flex flex-col gap-2">
+									<Label htmlFor={field.name}>Subtitle</Label>
+									<Input
+										id={field.name}
+										name={field.name}
+										value={field.state.value}
+										onBlur={field.handleBlur}
+										onChange={(e) => field.handleChange(e.target.value)}
+									/>
+								</div>
+							)}
+						</form.Field>
+
+						<div className="flex justify-end">
+							<form.Subscribe selector={(state) => state.canSubmit}>
+								{(canSubmit) => (
+									<Button type="submit" disabled={!canSubmit}>
+										Save
+									</Button>
+								)}
+							</form.Subscribe>
+						</div>
+					</form>
+				</CardContent>
+			</Card>
+		</div>
+	);
+}
 
 function ImageUpload({
 	value,
@@ -176,9 +285,6 @@ function ImagesTab({ perusahaan }: { perusahaan: Perusahaan }) {
 			<div className="flex items-center justify-between">
 				<div>
 					<h2 className="text-lg font-semibold">Images</h2>
-					<p className="text-sm text-muted-foreground">
-						Images for "Siapa Kami" section
-					</p>
 				</div>
 				<Dialog open={createOpen} onOpenChange={setCreateOpen}>
 					<DialogTrigger render={<Button>Create</Button>}>
@@ -1405,14 +1511,18 @@ function PerusahaanPage() {
 				</div>
 			</div>
 
-			<Tabs defaultValue="images">
+			<Tabs defaultValue="info">
 				<TabsList>
-					<TabsTrigger value="images">Images</TabsTrigger>
+					<TabsTrigger value="info">Info</TabsTrigger>
+					<TabsTrigger value="images">Gambar</TabsTrigger>
 					<TabsTrigger value="tags">Tags</TabsTrigger>
 					<TabsTrigger value="alasan">Why Us</TabsTrigger>
 					<TabsTrigger value="layanan">Layanan</TabsTrigger>
 				</TabsList>
 
+				<TabsContent value="info">
+					<InfoTab perusahaan={perusahaanData} />
+				</TabsContent>
 				<TabsContent value="images">
 					<ImagesTab perusahaan={perusahaanData} />
 				</TabsContent>

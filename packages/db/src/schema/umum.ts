@@ -4,6 +4,7 @@ import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 export const kategori = sqliteTable("kategori", {
 	id: text("id").primaryKey(),
 	nama: text("nama").notNull(),
+	image: text("image"),
 	createdAt: integer("created_at", { mode: "timestamp_ms" })
 		.default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
 		.notNull(),

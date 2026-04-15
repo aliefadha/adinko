@@ -1,4 +1,10 @@
 import { Button } from "@adinko/ui/components/button";
+import {
+	Card,
+	CardContent,
+	CardHeader,
+	CardTitle,
+} from "@adinko/ui/components/card";
 import { Input } from "@adinko/ui/components/input";
 import { Label } from "@adinko/ui/components/label";
 import { useForm } from "@tanstack/react-form";
@@ -54,16 +60,19 @@ export default function SignInForm() {
 
 	return (
 		<div className="mx-auto w-full mt-10 max-w-md p-6">
-			<h1 className="mb-6 text-center text-3xl font-bold">Welcome</h1>
-
-			<form
-				onSubmit={(e) => {
-					e.preventDefault();
-					e.stopPropagation();
-					form.handleSubmit();
-				}}
-				className="space-y-4"
-			>
+			<Card className="border-0 shadow-lg ring-1 ring-border/50">
+				<CardHeader>
+					<CardTitle className="text-center text-2xl font-bold">Login</CardTitle>
+				</CardHeader>
+				<CardContent>
+					<form
+						onSubmit={(e) => {
+							e.preventDefault();
+							e.stopPropagation();
+							form.handleSubmit();
+						}}
+						className="space-y-4"
+					>
 				<div>
 					<form.Field name="email">
 						{(field) => (
@@ -126,7 +135,9 @@ export default function SignInForm() {
 						</Button>
 					)}
 				</form.Subscribe>
-			</form>
+					</form>
+				</CardContent>
+			</Card>
 		</div>
 	);
 }

@@ -20,7 +20,6 @@ import { Route as PublicKontakRouteImport } from './routes/_public/kontak'
 import { Route as PublicGhaziSportsHubRouteImport } from './routes/_public/ghazi-sports-hub'
 import { Route as PublicAdinkoRouteImport } from './routes/_public/adinko'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
-import { Route as ProtectedAdminTestimoniRouteImport } from './routes/_protected/admin/testimoni'
 import { Route as ProtectedAdminPortfolioRouteImport } from './routes/_protected/admin/portfolio'
 import { Route as ProtectedAdminLayananRouteImport } from './routes/_protected/admin/layanan'
 import { Route as ProtectedAdminKontakRouteImport } from './routes/_protected/admin/kontak'
@@ -80,11 +79,6 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => AuthRoute,
 } as any)
-const ProtectedAdminTestimoniRoute = ProtectedAdminTestimoniRouteImport.update({
-  id: '/admin/testimoni',
-  path: '/admin/testimoni',
-  getParentRoute: () => ProtectedRoute,
-} as any)
 const ProtectedAdminPortfolioRoute = ProtectedAdminPortfolioRouteImport.update({
   id: '/admin/portfolio',
   path: '/admin/portfolio',
@@ -131,7 +125,6 @@ export interface FileRoutesByFullPath {
   '/admin/kontak': typeof ProtectedAdminKontakRoute
   '/admin/layanan': typeof ProtectedAdminLayananRoute
   '/admin/portfolio': typeof ProtectedAdminPortfolioRoute
-  '/admin/testimoni': typeof ProtectedAdminTestimoniRoute
   '/admin/perusahaan/$nama': typeof ProtectedAdminPerusahaanNamaRoute
 }
 export interface FileRoutesByTo {
@@ -148,7 +141,6 @@ export interface FileRoutesByTo {
   '/admin/kontak': typeof ProtectedAdminKontakRoute
   '/admin/layanan': typeof ProtectedAdminLayananRoute
   '/admin/portfolio': typeof ProtectedAdminPortfolioRoute
-  '/admin/testimoni': typeof ProtectedAdminTestimoniRoute
   '/admin/perusahaan/$nama': typeof ProtectedAdminPerusahaanNamaRoute
 }
 export interface FileRoutesById {
@@ -169,7 +161,6 @@ export interface FileRoutesById {
   '/_protected/admin/kontak': typeof ProtectedAdminKontakRoute
   '/_protected/admin/layanan': typeof ProtectedAdminLayananRoute
   '/_protected/admin/portfolio': typeof ProtectedAdminPortfolioRoute
-  '/_protected/admin/testimoni': typeof ProtectedAdminTestimoniRoute
   '/_protected/admin/perusahaan/$nama': typeof ProtectedAdminPerusahaanNamaRoute
 }
 export interface FileRouteTypes {
@@ -188,7 +179,6 @@ export interface FileRouteTypes {
     | '/admin/kontak'
     | '/admin/layanan'
     | '/admin/portfolio'
-    | '/admin/testimoni'
     | '/admin/perusahaan/$nama'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -205,7 +195,6 @@ export interface FileRouteTypes {
     | '/admin/kontak'
     | '/admin/layanan'
     | '/admin/portfolio'
-    | '/admin/testimoni'
     | '/admin/perusahaan/$nama'
   id:
     | '__root__'
@@ -225,7 +214,6 @@ export interface FileRouteTypes {
     | '/_protected/admin/kontak'
     | '/_protected/admin/layanan'
     | '/_protected/admin/portfolio'
-    | '/_protected/admin/testimoni'
     | '/_protected/admin/perusahaan/$nama'
   fileRoutesById: FileRoutesById
 }
@@ -314,13 +302,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthLoginRouteImport
       parentRoute: typeof AuthRoute
     }
-    '/_protected/admin/testimoni': {
-      id: '/_protected/admin/testimoni'
-      path: '/admin/testimoni'
-      fullPath: '/admin/testimoni'
-      preLoaderRoute: typeof ProtectedAdminTestimoniRouteImport
-      parentRoute: typeof ProtectedRoute
-    }
     '/_protected/admin/portfolio': {
       id: '/_protected/admin/portfolio'
       path: '/admin/portfolio'
@@ -382,7 +363,6 @@ interface ProtectedRouteChildren {
   ProtectedAdminKontakRoute: typeof ProtectedAdminKontakRoute
   ProtectedAdminLayananRoute: typeof ProtectedAdminLayananRoute
   ProtectedAdminPortfolioRoute: typeof ProtectedAdminPortfolioRoute
-  ProtectedAdminTestimoniRoute: typeof ProtectedAdminTestimoniRoute
   ProtectedAdminPerusahaanNamaRoute: typeof ProtectedAdminPerusahaanNamaRoute
 }
 
@@ -392,7 +372,6 @@ const ProtectedRouteChildren: ProtectedRouteChildren = {
   ProtectedAdminKontakRoute: ProtectedAdminKontakRoute,
   ProtectedAdminLayananRoute: ProtectedAdminLayananRoute,
   ProtectedAdminPortfolioRoute: ProtectedAdminPortfolioRoute,
-  ProtectedAdminTestimoniRoute: ProtectedAdminTestimoniRoute,
   ProtectedAdminPerusahaanNamaRoute: ProtectedAdminPerusahaanNamaRoute,
 }
 

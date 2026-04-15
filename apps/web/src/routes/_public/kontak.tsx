@@ -1,7 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
+import { useState } from "react";
 
 import { createPageMeta, SITE_CONFIG } from "@/lib/seo";
+import { useKontak } from "@/hooks/use-kontak";
+import { getLayanan } from "@/functions/get-layanan";
 
 export const Route = createFileRoute("/_public/kontak")({
 	head: () =>
@@ -11,10 +14,49 @@ export const Route = createFileRoute("/_public/kontak")({
 				"Hubungi Adinko untuk konsultasi gratis tentang rumput sintetis dan pembangunan lapangan olahraga. Tim kami siap membantu dari survei awal hingga purna jual. Respons dalam 1 jam.",
 			path: "/kontak",
 		}),
+	loader: async () => {
+		const layananResponse = await getLayanan();
+		return {
+			layananList: layananResponse.data as { id: string; title: string }[],
+		};
+	},
 	component: RouteComponent,
 });
 
 function RouteComponent() {
+	const { whatsappUrl, alamat } = useKontak();
+	const { layananList } = Route.useLoaderData();
+
+	const [nama, setNama] = useState("");
+	const [wa, setWa] = useState("");
+	const [lokasi, setLokasi] = useState("");
+	const [kebutuhan, setKebutuhan] = useState("");
+	const [keterangan, setKeterangan] = useState("");
+	const [errors, setErrors] = useState<{ nama?: string; wa?: string }>({});
+
+	const validate = () => {
+		const newErrors: { nama?: string; wa?: string } = {};
+		if (!nama.trim()) newErrors.nama = "Nama wajib diisi";
+		if (!wa.trim()) newErrors.wa = "WhatsApp wajib diisi";
+		setErrors(newErrors);
+		return Object.keys(newErrors).length === 0;
+	};
+
+	const handleSubmit = (e: React.FormEvent) => {
+		e.preventDefault();
+		if (!validate()) return;
+
+		const message = `Saya ingin berkonsultasi tentang:
+
+*Nama:* ${nama}
+*WhatsApp:* ${wa}
+*Lokasi Proyek:* ${lokasi}
+*Kebutuhan:* ${kebutuhan}
+*Keterangan:* ${keterangan}`.trim();
+
+		const encodedMessage = encodeURIComponent(message);
+		window.open(`${whatsappUrl}?text=${encodedMessage}`, "_blank");
+	};
 	return (
 		<div>
 			{/* ── Hero ── */}
@@ -50,7 +92,7 @@ function RouteComponent() {
 					<div className="mt-8 flex flex-wrap gap-3">
 						<a
 							id="hero-konsultasi"
-							href={SITE_CONFIG.whatsappUrl}
+							href={whatsappUrl}
 							target="_blank"
 							rel="noreferrer"
 							className="inline-flex items-center gap-3 rounded-full bg-[#25D366] px-6 py-4 font-semibold text-white hover:bg-[#25D366]/90 active:scale-95 transition-all text-base"
@@ -71,12 +113,15 @@ function RouteComponent() {
 
 				{/* Floating WhatsApp button */}
 				<div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2">
-					<span className="rounded-full bg-[#E0D28F] px-3 py-1 text-xs font-semibold text-[#3a5c00] shadow-md">
+					<span className="rounded-full bg-[#E0D28F] px-3 py-1 text-xs font-semibold text-[#3a5c00] shadow-md md:hidden">
+						Pesan slot sekarang!
+					</span>
+					<span className="hidden md:inline rounded-full bg-[#E0D28F] px-3 py-1 text-xs font-semibold text-[#3a5c00] shadow-md">
 						Slot terbatas - Pesan sekarang!
 					</span>
 					<a
 						id="hero-whatsapp"
-						href={SITE_CONFIG.whatsappUrl}
+						href={whatsappUrl}
 						target="_blank"
 						rel="noreferrer"
 						aria-label="Chat WhatsApp"
@@ -128,9 +173,7 @@ function RouteComponent() {
 								<div>
 									<p className="font-bold text-gray-900 text-sm">Alamat</p>
 									<p className="text-sm text-gray-500 mt-0.5">
-										Jl. Todak No.113 Tangkerang Barat,
-										<br />
-										Kec Marpoyan Damai, Kota Pekanbaru, Riau
+										{alamat ?? "Alamat tidak tersedia"}
 									</p>
 								</div>
 							</div>
@@ -200,7 +243,7 @@ function RouteComponent() {
 						{/* CTA */}
 						<a
 							id="kontak-whatsapp"
-							href={SITE_CONFIG.whatsappUrl}
+							href={whatsappUrl}
 							target="_blank"
 							rel="noreferrer"
 							className="self-start flex items-center gap-2 rounded-full bg-[#518100] px-6 py-3 font-semibold text-white hover:bg-[#518100]/80 active:scale-95 transition-all"
@@ -213,61 +256,91 @@ function RouteComponent() {
 					</div>
 
 					{/* Right — form */}
-					<div className="bg-[#F1F2F6] rounded-3xl p-8 flex flex-col gap-5">
+					<form
+						onSubmit={handleSubmit}
+						className="bg-[#F1F2F6] rounded-3xl p-8 flex flex-col gap-5"
+					>
 						<h2 className="text-xl font-bold text-gray-900">
 							Kirim Pesan Sekarang
 						</h2>
 
 						<div className="flex flex-col gap-4">
 							<div>
-								<label className="block text-sm font-medium text-gray-700 mb-1.5">
+								<label
+									htmlFor="kontak-nama"
+									className="block text-sm font-medium text-gray-700 mb-1.5"
+								>
 									Nama Lengkap
 								</label>
 								<input
 									id="kontak-nama"
 									type="text"
 									placeholder="Nama Anda"
+									value={nama}
+									onChange={(e) => setNama(e.target.value)}
 									className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#518100]/40"
 								/>
+								{errors.nama && (
+									<p className="text-red-500 text-xs mt-1">{errors.nama}</p>
+								)}
 							</div>
 
 							<div>
-								<label className="block text-sm font-medium text-gray-700 mb-1.5">
+								<label
+									htmlFor="kontak-wa"
+									className="block text-sm font-medium text-gray-700 mb-1.5"
+								>
 									No. WhatsApp
 								</label>
 								<input
 									id="kontak-wa"
 									type="tel"
 									placeholder="0822-xxxx-xxxx"
+									value={wa}
+									onChange={(e) => setWa(e.target.value)}
 									className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#518100]/40"
 								/>
+								{errors.wa && (
+									<p className="text-red-500 text-xs mt-1">{errors.wa}</p>
+								)}
 							</div>
 
 							<div>
-								<label className="block text-sm font-medium text-gray-700 mb-1.5">
+								<label
+									htmlFor="kontak-lokasi"
+									className="block text-sm font-medium text-gray-700 mb-1.5"
+								>
 									Lokasi Proyek
 								</label>
 								<input
 									id="kontak-lokasi"
 									type="text"
 									placeholder="Kota / Kecamatan"
+									value={lokasi}
+									onChange={(e) => setLokasi(e.target.value)}
 									className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#518100]/40"
 								/>
 							</div>
 
 							<div>
-								<label className="block text-sm font-medium text-gray-700 mb-1.5">
+								<label
+									htmlFor="kontak-kebutuhan"
+									className="block text-sm font-medium text-gray-700 mb-1.5"
+								>
 									Kebutuhan Anda
 								</label>
 								<div className="relative">
 									<select
 										id="kontak-kebutuhan"
+										value={kebutuhan}
+										onChange={(e) => setKebutuhan(e.target.value)}
 										className="w-full appearance-none rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#518100]/40"
 									>
-										<option>Instalasi jaringan</option>
-										<option>Taman Rumput Sintetis</option>
-										<option>Lapangan Futsal</option>
-										<option>Lapangan Minisoccer</option>
+										{layananList.map((layanan) => (
+											<option key={layanan.id} value={layanan.title}>
+												{layanan.title}
+											</option>
+										))}
 										<option>Lainnya</option>
 									</select>
 									<span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">
@@ -288,13 +361,18 @@ function RouteComponent() {
 							</div>
 
 							<div>
-								<label className="block text-sm font-medium text-gray-700 mb-1.5">
+								<label
+									htmlFor="kontak-keterangan"
+									className="block text-sm font-medium text-gray-700 mb-1.5"
+								>
 									Keterangan
 								</label>
 								<textarea
 									id="kontak-keterangan"
 									rows={4}
 									placeholder="Ceritakan detail kebutuhan anda..."
+									value={keterangan}
+									onChange={(e) => setKeterangan(e.target.value)}
 									className="w-full resize-none rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#518100]/40"
 								/>
 							</div>
@@ -312,7 +390,7 @@ function RouteComponent() {
 								</button>
 							</div>
 						</div>
-					</div>
+					</form>
 				</div>
 			</section>
 		</div>
