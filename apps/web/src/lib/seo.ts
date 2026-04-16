@@ -62,7 +62,7 @@ export function createPageMeta({
 			{ property: "og:type", content: "website" },
 			{ property: "og:url", content: canonicalUrl },
 			{ property: "og:image", content: ogImage },
-			{ property: "og:image:alt", content: fullTitle }
+			{ property: "og:image:alt", content: fullTitle },
 			{ property: "og:site_name", content: SITE_CONFIG.name },
 			{ property: "og:locale", content: "id_ID" },
 		],
