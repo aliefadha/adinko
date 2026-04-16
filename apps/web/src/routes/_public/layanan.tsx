@@ -20,7 +20,7 @@ type Layanan = { id: string; title: string; image: string | null };
 export const Route = createFileRoute("/_public/layanan")({
 	head: () =>
 		createPageMeta({
-			title: "Layanan",
+			title: "Layanan Adinko dan Ghazi Sports Hub",
 			description:
 				"Adinko dan GhaziSportsHub menyediakan layanan lengkap rumput sintetis dan pembangunan lapangan olahraga profesional di Pekanbaru. Dari taman rumah hingga lapangan futsal dan minisoccer.",
 			path: "/layanan",
@@ -151,26 +151,26 @@ function BrandSection() {
 				<div className="flex flex-wrap gap-2 mt-auto">
 					{adinkoTags.length > 0
 						? adinkoTags.map((tag) => (
-								<span
-									key={tag.id}
-									className="rounded-full border border-[#518100]/30 bg-[#ECF3E0] px-4 py-1.5 font-medium text-[#518100]"
-								>
-									{tag.tag}
-								</span>
-							))
+							<span
+								key={tag.id}
+								className="rounded-full border border-[#518100]/30 bg-[#ECF3E0] px-4 py-1.5 font-medium text-[#518100]"
+							>
+								{tag.tag}
+							</span>
+						))
 						: [
-								"Rumput Sintetis",
-								"Vertical Garden",
-								"Taman Custom",
-								"Mini Golf",
-							].map((tag) => (
-								<span
-									key={tag}
-									className="rounded-full border border-[#518100]/30 bg-[#ECF3E0] px-4 py-1.5 font-medium text-[#518100]"
-								>
-									{tag}
-								</span>
-							))}
+							"Rumput Sintetis",
+							"Vertical Garden",
+							"Taman Custom",
+							"Mini Golf",
+						].map((tag) => (
+							<span
+								key={tag}
+								className="rounded-full border border-[#518100]/30 bg-[#ECF3E0] px-4 py-1.5 font-medium text-[#518100]"
+							>
+								{tag}
+							</span>
+						))}
 				</div>
 			</div>
 
@@ -192,26 +192,26 @@ function BrandSection() {
 				<div className="flex flex-wrap gap-2 mt-auto">
 					{ghaziTags.length > 0
 						? ghaziTags.map((tag) => (
-								<span
-									key={tag.id}
-									className="rounded-full border border-gray-300 bg-[#26272529] px-4 py-1.5 font-medium"
-								>
-									{tag.tag}
-								</span>
-							))
+							<span
+								key={tag.id}
+								className="rounded-full border border-gray-300 bg-[#26272529] px-4 py-1.5 font-medium"
+							>
+								{tag.tag}
+							</span>
+						))
 						: [
-								"Futsal & Minisoccer",
-								"Padel & Tenis",
-								"Basket & Voli",
-								"Instalasi Jaring",
-							].map((tag) => (
-								<span
-									key={tag}
-									className="rounded-full border border-gray-300 bg-[#26272529] px-4 py-1.5 font-medium"
-								>
-									{tag}
-								</span>
-							))}
+							"Futsal & Minisoccer",
+							"Padel & Tenis",
+							"Basket & Voli",
+							"Instalasi Jaring",
+						].map((tag) => (
+							<span
+								key={tag}
+								className="rounded-full border border-gray-300 bg-[#26272529] px-4 py-1.5 font-medium"
+							>
+								{tag}
+							</span>
+						))}
 				</div>
 			</div>
 		</>

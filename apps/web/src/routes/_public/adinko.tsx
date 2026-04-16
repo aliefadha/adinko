@@ -14,7 +14,7 @@ import { getPerusahaanLayanan } from "@/functions/get-perusahaan-layanan";
 export const Route = createFileRoute("/_public/adinko")({
 	head: () =>
 		createPageMeta({
-			title: "Tentang Adinko",
+			title: "Adinko | Jasa Rumput Sintetis & Pembuatan Lapangan Olahraga Pekanbaru",
 			description:
 				"Adinko adalah penyedia jasa rumput sintetis di Pekanbaru yang telah dipercaya oleh berbagai klien. Kami fokus pada kualitas material, kerapian pengerjaan, dan hasil akhir yang estetis serta tahan lama.",
 			path: "/adinko",

@@ -2,9 +2,9 @@ export const SITE_CONFIG = {
 	name: "Adinko",
 	baseUrl: "https://adinkorumputsintetis.com",
 	defaultTitle:
-		"Adinko | Jasa Rumput Sintetis Pekanbaru & Pembuatan Lapangan Olahraga Profesional",
+		"Adinko | Jasa Rumput Sintetis & Pembuatan Lapangan Olahraga Pekanbaru",
 	defaultDescription:
-		"Adinko adalah penyedia jasa rumput sintetis di Pekanbaru yang telah dipercaya oleh berbagai klien, mulai dari rumah pribadi hingga proyek komersial.",
+		"Adinko menyediakan jasa rumput sintetis untuk taman, lapangan olahraga, dan playground di Pekanbaru dengan kualitas tinggi yang telah dipercaya oleh berbagai klien..",
 	whatsapp: "6285264456566",
 	whatsappUrl: "https://wa.me/6285264456566",
 	address:
@@ -41,27 +41,28 @@ export function createPageMeta({
 	path?: string;
 	image?: string;
 }): HeadOutput {
-	const fullTitle = title
-		? `${title} | ${SITE_CONFIG.name}`
-		: SITE_CONFIG.defaultTitle;
+	const fullTitle = title ? `${title}` : SITE_CONFIG.defaultTitle;
 	const metaDescription = description ?? SITE_CONFIG.defaultDescription;
 	const canonicalUrl = path
 		? `${SITE_CONFIG.baseUrl}${path}`
 		: SITE_CONFIG.baseUrl;
-	const ogImage = image ?? `${SITE_CONFIG.baseUrl}/og-image.webp`;
+	const ogImage = image ?? `${SITE_CONFIG.baseUrl}/og-adinko.webp`;
 
 	return {
 		title: fullTitle,
 		meta: [
 			{ charSet: "utf-8" },
 			{ name: "viewport", content: "width=device-width, initial-scale=1" },
+			{ name: "robots", content: "index, follow" },
+			{ name: "googlebot", content: "index, follow" },
+			{ name: "description", content: fullTitle },
 			{ name: "description", content: metaDescription },
-			{ name: "canonical", content: canonicalUrl },
 			{ property: "og:title", content: fullTitle },
 			{ property: "og:description", content: metaDescription },
 			{ property: "og:type", content: "website" },
 			{ property: "og:url", content: canonicalUrl },
 			{ property: "og:image", content: ogImage },
+			{ property: "og:image:alt", content: fullTitle }
 			{ property: "og:site_name", content: SITE_CONFIG.name },
 			{ property: "og:locale", content: "id_ID" },
 		],

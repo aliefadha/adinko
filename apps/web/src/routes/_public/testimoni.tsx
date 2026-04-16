@@ -21,9 +21,9 @@ type Testimoni = {
 export const Route = createFileRoute("/_public/testimoni")({
 	head: () =>
 		createPageMeta({
-			title: "Testimoni Klien",
+			title: "Testimoni Klien Adinko dan Ghazi Sports Hub",
 			description:
-				"Apa kata klien kami tentang Adinko. Lebih dari 1000 klien telah mempercayakan proyek rumput sintetis dan lapangan olahraga mereka kepada kami dengan hasil memuaskan.",
+				"Apa kata klien kami tentang Adinko dan Ghazi Sports Hub. Lebih dari 100 klien telah mempercayakan proyek rumput sintetis dan lapangan olahraga mereka kepada kami dengan hasil memuaskan.",
 			path: "/testimoni",
 		}),
 	loader: async () => {

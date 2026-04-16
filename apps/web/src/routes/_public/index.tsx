@@ -12,9 +12,6 @@ import { useKontak } from "@/hooks/use-kontak";
 export const Route = createFileRoute("/_public/")({
 	head: () =>
 		createPageMeta({
-			title: "Jasa Rumput Sintetis & Lapangan Olahraga Pekanbaru",
-			description:
-				"Adinko menyediakan jasa rumput sintetis dan pembangunan lapangan olahraga profesional di Pekanbaru. Solusi lengkap untuk taman, dekorasi, futsal, minisoccer dengan hasil rapi dan bergaransi.",
 			path: "/",
 		}),
 	loader: async () => {

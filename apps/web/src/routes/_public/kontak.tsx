@@ -9,7 +9,7 @@ import { getLayanan } from "@/functions/get-layanan";
 export const Route = createFileRoute("/_public/kontak")({
 	head: () =>
 		createPageMeta({
-			title: "Kontak",
+			title: "Kontak Adinko dan Ghazi Sports Hub",
 			description:
 				"Hubungi Adinko untuk konsultasi gratis tentang rumput sintetis dan pembangunan lapangan olahraga. Tim kami siap membantu dari survei awal hingga purna jual. Respons dalam 1 jam.",
 			path: "/kontak",

@@ -14,9 +14,9 @@ import { getPerusahaanLayanan } from "@/functions/get-perusahaan-layanan";
 export const Route = createFileRoute("/_public/ghazi-sports-hub")({
 	head: () =>
 		createPageMeta({
-			title: "Tentang GhaziSportsHub",
+			title: "Ghazi Sports Hub | Jasa Rumput Sintetis & Pembuatan Lapangan Olahraga Pekanbaru",
 			description:
-				"GhaziSportsHub adalah spesialis pembangunan lapangan olahraga profesional di Pekanbaru. Futsal, minisoccer, padel, basket, tenis, badminton - standar konstruksi tinggi dan fasilitas tahan lama.",
+				"Ghazi Sports Hub adalah spesialis pembangunan lapangan olahraga profesional di Pekanbaru. Futsal, minisoccer, padel, basket, tenis, badminton - standar konstruksi tinggi dan fasilitas tahan lama.",
 			path: "/ghazi-sports-hub",
 		}),
 	loader: async () => {

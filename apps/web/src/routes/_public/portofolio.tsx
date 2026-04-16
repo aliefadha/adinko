@@ -23,7 +23,7 @@ type Portfolio = {
 export const Route = createFileRoute("/_public/portofolio")({
 	head: () =>
 		createPageMeta({
-			title: "Portofolio",
+			title: "Portofolio Adinko dan Ghazi Sports Hub",
 			description:
 				"Hasil pekerjaan Adinko dari berbagai proyek rumput sintetis dan lapangan olahraga. Dari skala rumahan hingga komersial besar, setiap proyek adalah bukti komitmen kami terhadap kualitas.",
 			path: "/portofolio",
@@ -132,9 +132,8 @@ function PortfolioGrid() {
 							setActiveKategoriId(tab.id);
 							setDisplayLimit(9);
 						}}
-						className={`relative rounded-full overflow-hidden px-5 py-2 text-sm font-medium transition-all ${
-							activeKategoriId === tab.id ? "text-white" : "text-gray-900"
-						}`}
+						className={`relative rounded-full overflow-hidden px-5 py-2 text-sm font-medium transition-all ${activeKategoriId === tab.id ? "text-white" : "text-gray-900"
+							}`}
 					>
 						{tab.image ? (
 							<>
@@ -149,11 +148,10 @@ function PortfolioGrid() {
 							</>
 						) : (
 							<div
-								className={`absolute inset-0 rounded-full ${
-									activeKategoriId === tab.id
+								className={`absolute inset-0 rounded-full ${activeKategoriId === tab.id
 										? "bg-gray-900"
 										: "border border-gray-300 bg-white"
-								}`}
+									}`}
 							/>
 						)}
 						<span className="relative z-10">{tab.nama}</span>
