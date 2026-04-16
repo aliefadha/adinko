@@ -15,7 +15,6 @@ import perusahaanImageRoute from "./routes/perusahaan-image";
 import perusahaanTagRoute from "./routes/perusahaan-tag";
 import perusahaanAlasanRoute from "./routes/perusahaan-alasan";
 import perusahaanLayananRoute from "./routes/perusahaan-layanan";
-import assetsRoute from "./routes/assets";
 
 const getAllowedOrigins = (): string[] => {
 	const defaultOrigins = ["http://localhost:3000", "http://localhost:5173"];
@@ -57,7 +56,6 @@ app.route("/api/perusahaan-image", perusahaanImageRoute);
 app.route("/api/perusahaan-tag", perusahaanTagRoute);
 app.route("/api/perusahaan-alasan", perusahaanAlasanRoute);
 app.route("/api/perusahaan-layanan", perusahaanLayananRoute);
-app.route("/api/assets", assetsRoute);
 
 app.get("/", (c) => {
 	return c.text("OK");

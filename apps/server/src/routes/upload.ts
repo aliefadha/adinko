@@ -2,10 +2,11 @@ import { Hono } from "hono";
 import { requireAuth } from "./_middleware";
 import { env } from "@adinko/env/server";
 
-import type { R2Bucket } from "@cloudflare/workers-types";
+import type { R2Bucket, ImagesBinding } from "@cloudflare/workers-types";
 
 type CloudflareEnv = {
 	R2_BUCKET: R2Bucket;
+	IMAGES: ImagesBinding;
 };
 
 const app = new Hono<{ Bindings: CloudflareEnv }>();
@@ -38,17 +39,28 @@ app.post("/file", async (c) => {
 	}
 
 	const r2 = c.env.R2_BUCKET;
-	const key = `${entity}/${Date.now()}-${file.name}`;
+	const id = `${Date.now()}-${crypto.randomUUID().slice(0, 8)}`;
+	const key = `${entity}/${id}.webp`;
 
 	const arrayBuffer = await file.arrayBuffer();
+	const inputStream = new Response(arrayBuffer).body;
 
-	await r2.put(key, arrayBuffer, {
+	const transformed = await c.env.IMAGES.input(inputStream!).output({
+		format: "image/webp",
+		quality: 80,
+	});
+
+	const transformedBuffer = await new Response(
+		transformed.image(),
+	).arrayBuffer();
+
+	await r2.put(key, transformedBuffer, {
 		httpMetadata: {
-			contentType: file.type,
+			contentType: "image/webp",
 		},
 	});
 
-	const publicUrl = `${env.SERVER_URL}/api/assets/${key}`;
+	const publicUrl = `${env.R2_PUBLIC_URL}/${key}`;
 
 	return c.json({ data: { key, publicUrl } });
 });

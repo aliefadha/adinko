@@ -1,6 +1,6 @@
 export const SITE_CONFIG = {
 	name: "Adinko",
-	baseUrl: "https://adinko.id",
+	baseUrl: "https://adinkorumputsintetis.com",
 	defaultTitle:
 		"Adinko | Jasa Rumput Sintetis Pekanbaru & Pembuatan Lapangan Olahraga Profesional",
 	defaultDescription:

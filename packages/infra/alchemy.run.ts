@@ -4,6 +4,7 @@ import { Worker } from "alchemy/cloudflare";
 import { D1Database } from "alchemy/cloudflare";
 import { R2Bucket } from "alchemy/cloudflare";
 import { KVNamespace } from "alchemy/cloudflare";
+import { Images } from "alchemy/cloudflare";
 import { config } from "dotenv";
 
 config({ path: "./.env" });
@@ -26,6 +27,8 @@ const reviewsCache = await KVNamespace("adinko-google-reviews", {
 	title: "Google Reviews Cache",
 });
 
+const images = Images();
+
 export const server = await Worker("server", {
 	cwd: "../../apps/server",
 	entrypoint: "src/index.ts",
@@ -42,13 +45,15 @@ export const server = await Worker("server", {
 		GOOGLE_PLACE_ID: alchemy.env.GOOGLE_PLACE_ID!,
 		SERPAPI_API_KEY: alchemy.env.SERPAPI_API_KEY!,
 		REVIEWS_CACHE: reviewsCache,
+		IMAGES: images,
 	},
 	compatibilityFlags: [
 		"nodejs_compat_populate_process_env",
 		"nodejs_compat",
 		"global_fetch_strictly_public",
 	],
-	url: true,
+	adopt: true,
+	domains: ["api.adinkorumputsintetis.com"],
 	dev: {
 		port: 3000,
 	},
@@ -57,7 +62,7 @@ export const server = await Worker("server", {
 export const web = await TanStackStart("web", {
 	cwd: "../../apps/web",
 	bindings: {
-		VITE_SERVER_URL: server.url!,
+		VITE_SERVER_URL: alchemy.env.VITE_SERVER_URL!,
 		DB: db,
 		BETTER_AUTH_SECRET: alchemy.secret.env.BETTER_AUTH_SECRET!,
 		BETTER_AUTH_URL: alchemy.env.BETTER_AUTH_URL!,
@@ -67,7 +72,8 @@ export const web = await TanStackStart("web", {
 		"nodejs_compat",
 		"global_fetch_strictly_public",
 	],
-	url: true,
+	adopt: true,
+	domains: ["adinkorumputsintetis.com"],
 });
 
 console.log(`Web    -> ${web.url}`);
