@@ -35,30 +35,30 @@ type NavItem = {
 const primaryNav: Array<NavItem> = [
 	{
 		title: "Kategori",
-		href: "/admin/kategori",
+		href: "/knbnw3/kategori",
 	},
 	{
 		title: "Portfolio",
-		href: "/admin/portfolio",
+		href: "/knbnw3/portfolio",
 	},
 	{
 		title: "Layanan",
-		href: "/admin/layanan",
+		href: "/knbnw3/layanan",
 	},
 	{
 		title: "Kontak",
-		href: "/admin/kontak",
+		href: "/knbnw3/kontak",
 	},
 ];
 
 const perusahaanNav: Array<NavItem> = [
 	{
 		title: "Adinko",
-		href: "/admin/perusahaan/Adinko",
+		href: "/knbnw3/perusahaan/Adinko",
 	},
 	{
 		title: "Ghazisportshub",
-		href: "/admin/perusahaan/Ghazisportshub",
+		href: "/knbnw3/perusahaan/Ghazisportshub",
 	},
 ];
 const sidebarTheme = {
@@ -78,7 +78,7 @@ export const Route = createFileRoute("/_protected")({
 	loader: async ({ context }) => {
 		if (!context.session) {
 			throw redirect({
-				to: "/login",
+				to: "/4928fn",
 			});
 		}
 	},
@@ -196,7 +196,7 @@ function ProtectedLayout() {
 
 	if (!session) {
 		return (
-			<Link to="/login">
+			<Link to="/4928fn">
 				<Button variant="outline">Sign In</Button>
 			</Link>
 		);

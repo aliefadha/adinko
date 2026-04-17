@@ -46,7 +46,7 @@ export function createPageMeta({
 	const canonicalUrl = path
 		? `${SITE_CONFIG.baseUrl}${path}`
 		: SITE_CONFIG.baseUrl;
-	const ogImage = image ?? `${SITE_CONFIG.baseUrl}/og-adinko.webp`;
+	const ogImage = image ?? `${SITE_CONFIG.baseUrl}/og-root.webp`;
 
 	return {
 		title: fullTitle,
@@ -55,7 +55,6 @@ export function createPageMeta({
 			{ name: "viewport", content: "width=device-width, initial-scale=1" },
 			{ name: "robots", content: "index, follow" },
 			{ name: "googlebot", content: "index, follow" },
-			{ name: "description", content: fullTitle },
 			{ name: "description", content: metaDescription },
 			{ property: "og:title", content: fullTitle },
 			{ property: "og:description", content: metaDescription },

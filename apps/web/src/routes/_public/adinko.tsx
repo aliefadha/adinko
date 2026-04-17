@@ -14,10 +14,12 @@ import { getPerusahaanLayanan } from "@/functions/get-perusahaan-layanan";
 export const Route = createFileRoute("/_public/adinko")({
 	head: () =>
 		createPageMeta({
-			title: "Adinko | Jasa Rumput Sintetis & Pembuatan Lapangan Olahraga Pekanbaru",
+			title:
+				"Adinko | Jasa Rumput Sintetis & Pembuatan Lapangan Olahraga Pekanbaru",
 			description:
 				"Adinko adalah penyedia jasa rumput sintetis di Pekanbaru yang telah dipercaya oleh berbagai klien. Kami fokus pada kualitas material, kerapian pengerjaan, dan hasil akhir yang estetis serta tahan lama.",
 			path: "/adinko",
+			image: "/og-adinko.webp",
 		}),
 	loader: async () => {
 		const [perusahaanRes, tagRes, alasanRes, imageRes, layananRes] =
@@ -82,8 +84,7 @@ function RouteComponent() {
 				<div className="relative z-10 text-center flex flex-col justify-center items-center min-h-screen px-6 sm:px-10 lg:px-20 max-w-5xl mx-auto pb-16">
 					{/* Badge */}
 					<span className="mt-32 lg:mt-0 inline-flex items-center rounded-full border border-[#D5C167] bg-[#D5C167]/10 backdrop-blur-sm px-4 py-1.5 text-xs lg:text-xl font-medium text-[#FBF9EF]">
-						Tentang {perusahaan?.nama ||
-							"Adinko"}
+						Tentang {perusahaan?.nama || "Adinko"}
 					</span>
 
 					{/* Headline */}
@@ -155,8 +156,8 @@ function RouteComponent() {
 										key={tag}
 										type="button"
 										className={`rounded-full px-5 py-2 text-sm font-semibold transition-all ${i === 0
-											? "bg-[#518100] text-white hover:bg-[#518100]/80"
-											: "border border-[#518100] text-[#518100] hover:bg-[#518100]/10"
+												? "bg-[#518100] text-white hover:bg-[#518100]/80"
+												: "border border-[#518100] text-[#518100] hover:bg-[#518100]/10"
 											}`}
 									>
 										{tag}
@@ -168,8 +169,8 @@ function RouteComponent() {
 											key={tab}
 											type="button"
 											className={`rounded-full px-5 py-2 text-sm font-semibold transition-all ${i === 0
-												? "bg-[#518100] text-white hover:bg-[#518100]/80"
-												: "border border-[#518100] text-[#518100] hover:bg-[#518100]/10"
+													? "bg-[#518100] text-white hover:bg-[#518100]/80"
+													: "border border-[#518100] text-[#518100] hover:bg-[#518100]/10"
 												}`}
 										>
 											{tab}
@@ -189,8 +190,8 @@ function RouteComponent() {
 									src={slide.src}
 									alt={slide.alt}
 									className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${i === current
-										? "opacity-100"
-										: "opacity-0 pointer-events-none"
+											? "opacity-100"
+											: "opacity-0 pointer-events-none"
 										}`}
 								/>
 							))}
@@ -363,8 +364,8 @@ function RouteComponent() {
 									<div
 										key={num}
 										className={`rounded-2xl p-5 flex flex-col justify-between gap-8 min-h-44 ${active
-											? "border-2 border-[#518100] bg-white"
-											: "bg-white border border-gray-100"
+												? "border-2 border-[#518100] bg-white"
+												: "bg-white border border-gray-100"
 											}`}
 									>
 										<div className="flex justify-end w-full">
@@ -485,8 +486,8 @@ function RouteComponent() {
 								<div
 									key={num}
 									className={`rounded-2xl p-5 flex flex-col justify-between gap-8 min-h-44 ${active
-										? "border-2 border-[#518100] bg-white"
-										: "bg-white border border-gray-100"
+											? "border-2 border-[#518100] bg-white"
+											: "bg-white border border-gray-100"
 										}`}
 								>
 									<div className="flex justify-end w-full">

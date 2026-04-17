@@ -19,13 +19,13 @@ import { Route as PublicLayananRouteImport } from './routes/_public/layanan'
 import { Route as PublicKontakRouteImport } from './routes/_public/kontak'
 import { Route as PublicGhaziSportsHubRouteImport } from './routes/_public/ghazi-sports-hub'
 import { Route as PublicAdinkoRouteImport } from './routes/_public/adinko'
-import { Route as AuthLoginRouteImport } from './routes/_auth/login'
-import { Route as ProtectedAdminPortfolioRouteImport } from './routes/_protected/admin/portfolio'
-import { Route as ProtectedAdminLayananRouteImport } from './routes/_protected/admin/layanan'
-import { Route as ProtectedAdminKontakRouteImport } from './routes/_protected/admin/kontak'
-import { Route as ProtectedAdminKategoriRouteImport } from './routes/_protected/admin/kategori'
-import { Route as ProtectedAdminIndexRouteImport } from './routes/_protected/admin/_index'
-import { Route as ProtectedAdminPerusahaanNamaRouteImport } from './routes/_protected/admin/perusahaan.$nama'
+import { Route as Auth4928fnRouteImport } from './routes/_auth/4928fn'
+import { Route as ProtectedKnbnw3PortfolioRouteImport } from './routes/_protected/knbnw3/portfolio'
+import { Route as ProtectedKnbnw3LayananRouteImport } from './routes/_protected/knbnw3/layanan'
+import { Route as ProtectedKnbnw3KontakRouteImport } from './routes/_protected/knbnw3/kontak'
+import { Route as ProtectedKnbnw3KategoriRouteImport } from './routes/_protected/knbnw3/kategori'
+import { Route as ProtectedKnbnw3IndexRouteImport } from './routes/_protected/knbnw3/_index'
+import { Route as ProtectedKnbnw3PerusahaanNamaRouteImport } from './routes/_protected/knbnw3/perusahaan.$nama'
 
 const PublicRoute = PublicRouteImport.update({
   id: '/_public',
@@ -74,81 +74,82 @@ const PublicAdinkoRoute = PublicAdinkoRouteImport.update({
   path: '/adinko',
   getParentRoute: () => PublicRoute,
 } as any)
-const AuthLoginRoute = AuthLoginRouteImport.update({
-  id: '/login',
-  path: '/login',
+const Auth4928fnRoute = Auth4928fnRouteImport.update({
+  id: '/4928fn',
+  path: '/4928fn',
   getParentRoute: () => AuthRoute,
 } as any)
-const ProtectedAdminPortfolioRoute = ProtectedAdminPortfolioRouteImport.update({
-  id: '/admin/portfolio',
-  path: '/admin/portfolio',
+const ProtectedKnbnw3PortfolioRoute =
+  ProtectedKnbnw3PortfolioRouteImport.update({
+    id: '/knbnw3/portfolio',
+    path: '/knbnw3/portfolio',
+    getParentRoute: () => ProtectedRoute,
+  } as any)
+const ProtectedKnbnw3LayananRoute = ProtectedKnbnw3LayananRouteImport.update({
+  id: '/knbnw3/layanan',
+  path: '/knbnw3/layanan',
   getParentRoute: () => ProtectedRoute,
 } as any)
-const ProtectedAdminLayananRoute = ProtectedAdminLayananRouteImport.update({
-  id: '/admin/layanan',
-  path: '/admin/layanan',
+const ProtectedKnbnw3KontakRoute = ProtectedKnbnw3KontakRouteImport.update({
+  id: '/knbnw3/kontak',
+  path: '/knbnw3/kontak',
   getParentRoute: () => ProtectedRoute,
 } as any)
-const ProtectedAdminKontakRoute = ProtectedAdminKontakRouteImport.update({
-  id: '/admin/kontak',
-  path: '/admin/kontak',
+const ProtectedKnbnw3KategoriRoute = ProtectedKnbnw3KategoriRouteImport.update({
+  id: '/knbnw3/kategori',
+  path: '/knbnw3/kategori',
   getParentRoute: () => ProtectedRoute,
 } as any)
-const ProtectedAdminKategoriRoute = ProtectedAdminKategoriRouteImport.update({
-  id: '/admin/kategori',
-  path: '/admin/kategori',
+const ProtectedKnbnw3IndexRoute = ProtectedKnbnw3IndexRouteImport.update({
+  id: '/knbnw3/_index',
+  path: '/knbnw3',
   getParentRoute: () => ProtectedRoute,
 } as any)
-const ProtectedAdminIndexRoute = ProtectedAdminIndexRouteImport.update({
-  id: '/admin/_index',
-  path: '/admin',
-  getParentRoute: () => ProtectedRoute,
-} as any)
-const ProtectedAdminPerusahaanNamaRoute =
-  ProtectedAdminPerusahaanNamaRouteImport.update({
-    id: '/admin/perusahaan/$nama',
-    path: '/admin/perusahaan/$nama',
+const ProtectedKnbnw3PerusahaanNamaRoute =
+  ProtectedKnbnw3PerusahaanNamaRouteImport.update({
+    id: '/knbnw3/perusahaan/$nama',
+    path: '/knbnw3/perusahaan/$nama',
     getParentRoute: () => ProtectedRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof PublicIndexRoute
-  '/login': typeof AuthLoginRoute
+  '/4928fn': typeof Auth4928fnRoute
   '/adinko': typeof PublicAdinkoRoute
   '/ghazi-sports-hub': typeof PublicGhaziSportsHubRoute
   '/kontak': typeof PublicKontakRoute
   '/layanan': typeof PublicLayananRoute
   '/portofolio': typeof PublicPortofolioRoute
   '/testimoni': typeof PublicTestimoniRoute
-  '/admin': typeof ProtectedAdminIndexRoute
-  '/admin/kategori': typeof ProtectedAdminKategoriRoute
-  '/admin/kontak': typeof ProtectedAdminKontakRoute
-  '/admin/layanan': typeof ProtectedAdminLayananRoute
-  '/admin/portfolio': typeof ProtectedAdminPortfolioRoute
-  '/admin/perusahaan/$nama': typeof ProtectedAdminPerusahaanNamaRoute
+  '/knbnw3': typeof ProtectedKnbnw3IndexRoute
+  '/knbnw3/kategori': typeof ProtectedKnbnw3KategoriRoute
+  '/knbnw3/kontak': typeof ProtectedKnbnw3KontakRoute
+  '/knbnw3/layanan': typeof ProtectedKnbnw3LayananRoute
+  '/knbnw3/portfolio': typeof ProtectedKnbnw3PortfolioRoute
+  '/knbnw3/perusahaan/$nama': typeof ProtectedKnbnw3PerusahaanNamaRoute
 }
 export interface FileRoutesByTo {
   '/': typeof PublicIndexRoute
-  '/login': typeof AuthLoginRoute
+  '/4928fn': typeof Auth4928fnRoute
   '/adinko': typeof PublicAdinkoRoute
   '/ghazi-sports-hub': typeof PublicGhaziSportsHubRoute
   '/kontak': typeof PublicKontakRoute
   '/layanan': typeof PublicLayananRoute
   '/portofolio': typeof PublicPortofolioRoute
   '/testimoni': typeof PublicTestimoniRoute
-  '/admin': typeof ProtectedAdminIndexRoute
-  '/admin/kategori': typeof ProtectedAdminKategoriRoute
-  '/admin/kontak': typeof ProtectedAdminKontakRoute
-  '/admin/layanan': typeof ProtectedAdminLayananRoute
-  '/admin/portfolio': typeof ProtectedAdminPortfolioRoute
-  '/admin/perusahaan/$nama': typeof ProtectedAdminPerusahaanNamaRoute
+  '/knbnw3': typeof ProtectedKnbnw3IndexRoute
+  '/knbnw3/kategori': typeof ProtectedKnbnw3KategoriRoute
+  '/knbnw3/kontak': typeof ProtectedKnbnw3KontakRoute
+  '/knbnw3/layanan': typeof ProtectedKnbnw3LayananRoute
+  '/knbnw3/portfolio': typeof ProtectedKnbnw3PortfolioRoute
+  '/knbnw3/perusahaan/$nama': typeof ProtectedKnbnw3PerusahaanNamaRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_auth': typeof AuthRouteWithChildren
   '/_protected': typeof ProtectedRouteWithChildren
   '/_public': typeof PublicRouteWithChildren
-  '/_auth/login': typeof AuthLoginRoute
+  '/_auth/4928fn': typeof Auth4928fnRoute
   '/_public/adinko': typeof PublicAdinkoRoute
   '/_public/ghazi-sports-hub': typeof PublicGhaziSportsHubRoute
   '/_public/kontak': typeof PublicKontakRoute
@@ -156,52 +157,52 @@ export interface FileRoutesById {
   '/_public/portofolio': typeof PublicPortofolioRoute
   '/_public/testimoni': typeof PublicTestimoniRoute
   '/_public/': typeof PublicIndexRoute
-  '/_protected/admin/_index': typeof ProtectedAdminIndexRoute
-  '/_protected/admin/kategori': typeof ProtectedAdminKategoriRoute
-  '/_protected/admin/kontak': typeof ProtectedAdminKontakRoute
-  '/_protected/admin/layanan': typeof ProtectedAdminLayananRoute
-  '/_protected/admin/portfolio': typeof ProtectedAdminPortfolioRoute
-  '/_protected/admin/perusahaan/$nama': typeof ProtectedAdminPerusahaanNamaRoute
+  '/_protected/knbnw3/_index': typeof ProtectedKnbnw3IndexRoute
+  '/_protected/knbnw3/kategori': typeof ProtectedKnbnw3KategoriRoute
+  '/_protected/knbnw3/kontak': typeof ProtectedKnbnw3KontakRoute
+  '/_protected/knbnw3/layanan': typeof ProtectedKnbnw3LayananRoute
+  '/_protected/knbnw3/portfolio': typeof ProtectedKnbnw3PortfolioRoute
+  '/_protected/knbnw3/perusahaan/$nama': typeof ProtectedKnbnw3PerusahaanNamaRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/login'
+    | '/4928fn'
     | '/adinko'
     | '/ghazi-sports-hub'
     | '/kontak'
     | '/layanan'
     | '/portofolio'
     | '/testimoni'
-    | '/admin'
-    | '/admin/kategori'
-    | '/admin/kontak'
-    | '/admin/layanan'
-    | '/admin/portfolio'
-    | '/admin/perusahaan/$nama'
+    | '/knbnw3'
+    | '/knbnw3/kategori'
+    | '/knbnw3/kontak'
+    | '/knbnw3/layanan'
+    | '/knbnw3/portfolio'
+    | '/knbnw3/perusahaan/$nama'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/login'
+    | '/4928fn'
     | '/adinko'
     | '/ghazi-sports-hub'
     | '/kontak'
     | '/layanan'
     | '/portofolio'
     | '/testimoni'
-    | '/admin'
-    | '/admin/kategori'
-    | '/admin/kontak'
-    | '/admin/layanan'
-    | '/admin/portfolio'
-    | '/admin/perusahaan/$nama'
+    | '/knbnw3'
+    | '/knbnw3/kategori'
+    | '/knbnw3/kontak'
+    | '/knbnw3/layanan'
+    | '/knbnw3/portfolio'
+    | '/knbnw3/perusahaan/$nama'
   id:
     | '__root__'
     | '/_auth'
     | '/_protected'
     | '/_public'
-    | '/_auth/login'
+    | '/_auth/4928fn'
     | '/_public/adinko'
     | '/_public/ghazi-sports-hub'
     | '/_public/kontak'
@@ -209,12 +210,12 @@ export interface FileRouteTypes {
     | '/_public/portofolio'
     | '/_public/testimoni'
     | '/_public/'
-    | '/_protected/admin/_index'
-    | '/_protected/admin/kategori'
-    | '/_protected/admin/kontak'
-    | '/_protected/admin/layanan'
-    | '/_protected/admin/portfolio'
-    | '/_protected/admin/perusahaan/$nama'
+    | '/_protected/knbnw3/_index'
+    | '/_protected/knbnw3/kategori'
+    | '/_protected/knbnw3/kontak'
+    | '/_protected/knbnw3/layanan'
+    | '/_protected/knbnw3/portfolio'
+    | '/_protected/knbnw3/perusahaan/$nama'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -295,84 +296,84 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PublicAdinkoRouteImport
       parentRoute: typeof PublicRoute
     }
-    '/_auth/login': {
-      id: '/_auth/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof AuthLoginRouteImport
+    '/_auth/4928fn': {
+      id: '/_auth/4928fn'
+      path: '/4928fn'
+      fullPath: '/4928fn'
+      preLoaderRoute: typeof Auth4928fnRouteImport
       parentRoute: typeof AuthRoute
     }
-    '/_protected/admin/portfolio': {
-      id: '/_protected/admin/portfolio'
-      path: '/admin/portfolio'
-      fullPath: '/admin/portfolio'
-      preLoaderRoute: typeof ProtectedAdminPortfolioRouteImport
+    '/_protected/knbnw3/portfolio': {
+      id: '/_protected/knbnw3/portfolio'
+      path: '/knbnw3/portfolio'
+      fullPath: '/knbnw3/portfolio'
+      preLoaderRoute: typeof ProtectedKnbnw3PortfolioRouteImport
       parentRoute: typeof ProtectedRoute
     }
-    '/_protected/admin/layanan': {
-      id: '/_protected/admin/layanan'
-      path: '/admin/layanan'
-      fullPath: '/admin/layanan'
-      preLoaderRoute: typeof ProtectedAdminLayananRouteImport
+    '/_protected/knbnw3/layanan': {
+      id: '/_protected/knbnw3/layanan'
+      path: '/knbnw3/layanan'
+      fullPath: '/knbnw3/layanan'
+      preLoaderRoute: typeof ProtectedKnbnw3LayananRouteImport
       parentRoute: typeof ProtectedRoute
     }
-    '/_protected/admin/kontak': {
-      id: '/_protected/admin/kontak'
-      path: '/admin/kontak'
-      fullPath: '/admin/kontak'
-      preLoaderRoute: typeof ProtectedAdminKontakRouteImport
+    '/_protected/knbnw3/kontak': {
+      id: '/_protected/knbnw3/kontak'
+      path: '/knbnw3/kontak'
+      fullPath: '/knbnw3/kontak'
+      preLoaderRoute: typeof ProtectedKnbnw3KontakRouteImport
       parentRoute: typeof ProtectedRoute
     }
-    '/_protected/admin/kategori': {
-      id: '/_protected/admin/kategori'
-      path: '/admin/kategori'
-      fullPath: '/admin/kategori'
-      preLoaderRoute: typeof ProtectedAdminKategoriRouteImport
+    '/_protected/knbnw3/kategori': {
+      id: '/_protected/knbnw3/kategori'
+      path: '/knbnw3/kategori'
+      fullPath: '/knbnw3/kategori'
+      preLoaderRoute: typeof ProtectedKnbnw3KategoriRouteImport
       parentRoute: typeof ProtectedRoute
     }
-    '/_protected/admin/_index': {
-      id: '/_protected/admin/_index'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof ProtectedAdminIndexRouteImport
+    '/_protected/knbnw3/_index': {
+      id: '/_protected/knbnw3/_index'
+      path: '/knbnw3'
+      fullPath: '/knbnw3'
+      preLoaderRoute: typeof ProtectedKnbnw3IndexRouteImport
       parentRoute: typeof ProtectedRoute
     }
-    '/_protected/admin/perusahaan/$nama': {
-      id: '/_protected/admin/perusahaan/$nama'
-      path: '/admin/perusahaan/$nama'
-      fullPath: '/admin/perusahaan/$nama'
-      preLoaderRoute: typeof ProtectedAdminPerusahaanNamaRouteImport
+    '/_protected/knbnw3/perusahaan/$nama': {
+      id: '/_protected/knbnw3/perusahaan/$nama'
+      path: '/knbnw3/perusahaan/$nama'
+      fullPath: '/knbnw3/perusahaan/$nama'
+      preLoaderRoute: typeof ProtectedKnbnw3PerusahaanNamaRouteImport
       parentRoute: typeof ProtectedRoute
     }
   }
 }
 
 interface AuthRouteChildren {
-  AuthLoginRoute: typeof AuthLoginRoute
+  Auth4928fnRoute: typeof Auth4928fnRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
-  AuthLoginRoute: AuthLoginRoute,
+  Auth4928fnRoute: Auth4928fnRoute,
 }
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 interface ProtectedRouteChildren {
-  ProtectedAdminIndexRoute: typeof ProtectedAdminIndexRoute
-  ProtectedAdminKategoriRoute: typeof ProtectedAdminKategoriRoute
-  ProtectedAdminKontakRoute: typeof ProtectedAdminKontakRoute
-  ProtectedAdminLayananRoute: typeof ProtectedAdminLayananRoute
-  ProtectedAdminPortfolioRoute: typeof ProtectedAdminPortfolioRoute
-  ProtectedAdminPerusahaanNamaRoute: typeof ProtectedAdminPerusahaanNamaRoute
+  ProtectedKnbnw3IndexRoute: typeof ProtectedKnbnw3IndexRoute
+  ProtectedKnbnw3KategoriRoute: typeof ProtectedKnbnw3KategoriRoute
+  ProtectedKnbnw3KontakRoute: typeof ProtectedKnbnw3KontakRoute
+  ProtectedKnbnw3LayananRoute: typeof ProtectedKnbnw3LayananRoute
+  ProtectedKnbnw3PortfolioRoute: typeof ProtectedKnbnw3PortfolioRoute
+  ProtectedKnbnw3PerusahaanNamaRoute: typeof ProtectedKnbnw3PerusahaanNamaRoute
 }
 
 const ProtectedRouteChildren: ProtectedRouteChildren = {
-  ProtectedAdminIndexRoute: ProtectedAdminIndexRoute,
-  ProtectedAdminKategoriRoute: ProtectedAdminKategoriRoute,
-  ProtectedAdminKontakRoute: ProtectedAdminKontakRoute,
-  ProtectedAdminLayananRoute: ProtectedAdminLayananRoute,
-  ProtectedAdminPortfolioRoute: ProtectedAdminPortfolioRoute,
-  ProtectedAdminPerusahaanNamaRoute: ProtectedAdminPerusahaanNamaRoute,
+  ProtectedKnbnw3IndexRoute: ProtectedKnbnw3IndexRoute,
+  ProtectedKnbnw3KategoriRoute: ProtectedKnbnw3KategoriRoute,
+  ProtectedKnbnw3KontakRoute: ProtectedKnbnw3KontakRoute,
+  ProtectedKnbnw3LayananRoute: ProtectedKnbnw3LayananRoute,
+  ProtectedKnbnw3PortfolioRoute: ProtectedKnbnw3PortfolioRoute,
+  ProtectedKnbnw3PerusahaanNamaRoute: ProtectedKnbnw3PerusahaanNamaRoute,
 }
 
 const ProtectedRouteWithChildren = ProtectedRoute._addFileChildren(

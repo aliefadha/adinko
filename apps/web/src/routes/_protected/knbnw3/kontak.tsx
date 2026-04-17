@@ -16,7 +16,7 @@ import { Label } from "@adinko/ui/components/label";
 
 import { api } from "@/lib/api";
 
-export const Route = createFileRoute("/_protected/admin/kontak")({
+export const Route = createFileRoute("/_protected/knbnw3/kontak")({
 	component: KontakPage,
 });
 

@@ -8,7 +8,7 @@ import {
 import { lazy, Suspense } from "react";
 
 import appCss from "../index.css?url";
-import { SITE_CONFIG, getJsonLd } from "@/lib/seo";
+import { getJsonLd } from "@/lib/seo";
 
 const TanStackRouterDevtools =
 	process.env.NODE_ENV === "production"
@@ -36,51 +36,11 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
 				name: "viewport",
 				content: "width=device-width, initial-scale=1",
 			},
-			{
-				title: SITE_CONFIG.defaultTitle,
-			},
-			{
-				name: "description",
-				content: SITE_CONFIG.defaultDescription,
-			},
-			{
-				property: "og:title",
-				content: SITE_CONFIG.defaultTitle,
-			},
-			{
-				property: "og:description",
-				content: SITE_CONFIG.defaultDescription,
-			},
-			{
-				property: "og:type",
-				content: "website",
-			},
-			{
-				property: "og:url",
-				content: SITE_CONFIG.baseUrl,
-			},
-			{
-				property: "og:site_name",
-				content: SITE_CONFIG.name,
-			},
-			{
-				property: "og:locale",
-				content: "id_ID",
-			},
 		],
 		links: [
 			{
 				rel: "stylesheet",
 				href: appCss,
-			},
-			{
-				rel: "canonical",
-				href: SITE_CONFIG.baseUrl,
-			},
-			{
-				rel: "icon",
-				type: "image/x-icon",
-				href: "/favicon.ico",
 			},
 		],
 	}),

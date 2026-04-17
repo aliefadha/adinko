@@ -1,5 +1,4 @@
 import { createAuth } from "@adinko/auth";
-import { env } from "@adinko/env/server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
@@ -16,9 +15,9 @@ import perusahaanTagRoute from "./routes/perusahaan-tag";
 import perusahaanAlasanRoute from "./routes/perusahaan-alasan";
 import perusahaanLayananRoute from "./routes/perusahaan-layanan";
 
-const getAllowedOrigins = (): string[] => {
-	const defaultOrigins = ["http://localhost:3000", "http://localhost:5173"];
-	const envOrigins = env.ALLOWED_ORIGINS;
+const defaultOrigins = ["http://localhost:3000", "http://localhost:5173"];
+
+const parseAllowedOrigins = (envOrigins: string | undefined): string[] => {
 	if (!envOrigins) {
 		return defaultOrigins;
 	}
@@ -33,7 +32,13 @@ const app = new Hono();
 app.use(
 	"/*",
 	cors({
-		origin: getAllowedOrigins(),
+		origin: (origin, c) => {
+			const envOrigins = (c.env as Record<string, unknown>).ALLOWED_ORIGINS as
+				| string
+				| undefined;
+			const allowed = parseAllowedOrigins(envOrigins);
+			return allowed.includes(origin) ? origin : allowed[0];
+		},
 		allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
 		allowHeaders: ["Content-Type", "Authorization"],
 		exposeHeaders: ["Content-Length"],

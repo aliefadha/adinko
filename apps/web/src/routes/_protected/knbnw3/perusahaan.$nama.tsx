@@ -28,7 +28,7 @@ import {
 
 import { api } from "@/lib/api";
 
-export const Route = createFileRoute("/_protected/admin/perusahaan/$nama")({
+export const Route = createFileRoute("/_protected/knbnw3/perusahaan/$nama")({
 	component: PerusahaanPage,
 });
 
@@ -89,22 +89,22 @@ function InfoTab({ perusahaan }: { perusahaan: Perusahaan }) {
 					nama: value.nama,
 					title: value.title,
 					subtitle: value.subtitle,
-				});
+				})
 				toast.success("Info updated");
 				queryClient.invalidateQueries({
 					queryKey: ["perusahaan", perusahaan.nama],
-				});
+				})
 				if (value.nama !== perusahaan.nama) {
 					navigate({
 						to: "/admin/perusahaan/$nama",
 						params: { nama: value.nama },
-					});
+					})
 				}
 			} catch {
 				toast.error("Failed to update info");
 			}
 		},
-	});
+	})
 
 	return (
 		<div className="flex flex-col gap-6">
@@ -116,9 +116,9 @@ function InfoTab({ perusahaan }: { perusahaan: Perusahaan }) {
 				<CardContent className="p-6">
 					<form
 						onSubmit={(e) => {
-							e.preventDefault();
-							e.stopPropagation();
-							form.handleSubmit();
+							e.preventDefault()
+							e.stopPropagation()
+							form.handleSubmit()
 						}}
 						className="flex flex-col gap-4"
 					>
@@ -179,7 +179,7 @@ function InfoTab({ perusahaan }: { perusahaan: Perusahaan }) {
 				</CardContent>
 			</Card>
 		</div>
-	);
+	)
 }
 
 function ImageUpload({
@@ -210,7 +210,7 @@ function ImageUpload({
 		try {
 			const url = await api.upload.uploadFile(file, entity, (p) => {
 				setProgress(p);
-			});
+			})
 			onChange(url);
 			toast.success("Image uploaded");
 		} catch {
@@ -220,7 +220,7 @@ function ImageUpload({
 			setUploading(false);
 			onUploadingChange?.(false);
 		}
-	};
+	}
 
 	return (
 		<div className="flex flex-col gap-3">
@@ -261,7 +261,7 @@ function ImageUpload({
 				</div>
 			)}
 		</div>
-	);
+	)
 }
 
 function ImagesTab({ perusahaan }: { perusahaan: Perusahaan }) {
@@ -274,7 +274,7 @@ function ImagesTab({ perusahaan }: { perusahaan: Perusahaan }) {
 				.list(perusahaan.id)
 				.then((r) => r.data as PerusahaanImage[]),
 		staleTime: 0,
-	});
+	})
 
 	const [createOpen, setCreateOpen] = useState(false);
 	const [deleteOpen, setDeleteOpen] = useState(false);
@@ -295,10 +295,10 @@ function ImagesTab({ perusahaan }: { perusahaan: Perusahaan }) {
 						<CreateImageForm
 							perusahaanId={perusahaan.id}
 							onSuccess={() => {
-								setCreateOpen(false);
+								setCreateOpen(false)
 								queryClient.invalidateQueries({
 									queryKey: ["perusahaanImage", perusahaan.id],
-								});
+								})
 							}}
 						/>
 					</DialogContent>
@@ -332,8 +332,8 @@ function ImagesTab({ perusahaan }: { perusahaan: Perusahaan }) {
 									size="icon-sm"
 									variant="destructive"
 									onClick={() => {
-										setDeleteImage(img);
-										setDeleteOpen(true);
+										setDeleteImage(img)
+										setDeleteOpen(true)
 									}}
 								>
 									<TrashIcon className="size-4" />
@@ -350,18 +350,18 @@ function ImagesTab({ perusahaan }: { perusahaan: Perusahaan }) {
 						<DeleteImageConfirm
 							image={deleteImage}
 							onSuccess={() => {
-								setDeleteOpen(false);
-								setDeleteImage(null);
+								setDeleteOpen(false)
+								setDeleteImage(null)
 								queryClient.invalidateQueries({
 									queryKey: ["perusahaanImage", perusahaan.id],
-								});
+								})
 							}}
 						/>
 					)}
 				</DialogContent>
 			</Dialog>
 		</div>
-	);
+	)
 }
 
 function CreateImageForm({
@@ -377,19 +377,19 @@ function CreateImageForm({
 	const handleSubmit = async () => {
 		if (!imageUrl) {
 			toast.error("Please upload an image");
-			return;
+			return
 		}
 		try {
 			await api.perusahaanImage.create({
 				perusahaanId,
 				image: imageUrl,
-			});
+			})
 			toast.success("Image added");
 			onSuccess();
 		} catch {
 			toast.error("Failed to add image");
 		}
-	};
+	}
 
 	return (
 		<>
@@ -416,7 +416,7 @@ function CreateImageForm({
 				</Button>
 			</DialogFooter>
 		</>
-	);
+	)
 }
 
 function DeleteImageConfirm({
@@ -435,7 +435,7 @@ function DeleteImageConfirm({
 		onError: () => {
 			toast.error("Failed to delete image");
 		},
-	});
+	})
 
 	return (
 		<>
@@ -459,7 +459,7 @@ function DeleteImageConfirm({
 				</Button>
 			</DialogFooter>
 		</>
-	);
+	)
 }
 
 function TagsTab({ perusahaan }: { perusahaan: Perusahaan }) {
@@ -472,7 +472,7 @@ function TagsTab({ perusahaan }: { perusahaan: Perusahaan }) {
 				.list(perusahaan.id)
 				.then((r) => r.data as PerusahaanTag[]),
 		staleTime: 0,
-	});
+	})
 
 	const [createOpen, setCreateOpen] = useState(false);
 	const [editOpen, setEditOpen] = useState(false);
@@ -495,10 +495,10 @@ function TagsTab({ perusahaan }: { perusahaan: Perusahaan }) {
 						<CreateTagForm
 							perusahaanId={perusahaan.id}
 							onSuccess={() => {
-								setCreateOpen(false);
+								setCreateOpen(false)
 								queryClient.invalidateQueries({
 									queryKey: ["perusahaanTag", perusahaan.id],
-								});
+								})
 							}}
 						/>
 					</DialogContent>
@@ -528,8 +528,8 @@ function TagsTab({ perusahaan }: { perusahaan: Perusahaan }) {
 								size="icon-sm"
 								variant="ghost"
 								onClick={() => {
-									setEditTag(tag);
-									setEditOpen(true);
+									setEditTag(tag)
+									setEditOpen(true)
 								}}
 							>
 								<PencilIcon className="size-3" />
@@ -538,8 +538,8 @@ function TagsTab({ perusahaan }: { perusahaan: Perusahaan }) {
 								size="icon-sm"
 								variant="ghost"
 								onClick={() => {
-									setDeleteTag(tag);
-									setDeleteOpen(true);
+									setDeleteTag(tag)
+									setDeleteOpen(true)
 								}}
 							>
 								<TrashIcon className="size-3" />
@@ -555,11 +555,11 @@ function TagsTab({ perusahaan }: { perusahaan: Perusahaan }) {
 						<EditTagForm
 							tag={editTag}
 							onSuccess={() => {
-								setEditOpen(false);
-								setEditTag(null);
+								setEditOpen(false)
+								setEditTag(null)
 								queryClient.invalidateQueries({
 									queryKey: ["perusahaanTag", perusahaan.id],
-								});
+								})
 							}}
 						/>
 					)}
@@ -572,18 +572,18 @@ function TagsTab({ perusahaan }: { perusahaan: Perusahaan }) {
 						<DeleteTagConfirm
 							tag={deleteTag}
 							onSuccess={() => {
-								setDeleteOpen(false);
-								setDeleteTag(null);
+								setDeleteOpen(false)
+								setDeleteTag(null)
 								queryClient.invalidateQueries({
 									queryKey: ["perusahaanTag", perusahaan.id],
-								});
+								})
 							}}
 						/>
 					)}
 				</DialogContent>
 			</Dialog>
 		</div>
-	);
+	)
 }
 
 function CreateTagForm({
@@ -600,14 +600,14 @@ function CreateTagForm({
 				await api.perusahaanTag.create({
 					perusahaanId,
 					tag: value.tag,
-				});
+				})
 				toast.success("Tag added");
-				onSuccess();
+				onSuccess()
 			} catch {
 				toast.error("Failed to add tag");
 			}
 		},
-	});
+	})
 
 	return (
 		<form
@@ -650,7 +650,7 @@ function CreateTagForm({
 				</form.Subscribe>
 			</DialogFooter>
 		</form>
-	);
+	)
 }
 
 function EditTagForm({
@@ -666,12 +666,12 @@ function EditTagForm({
 			try {
 				await api.perusahaanTag.update(tag.id, { tag: value.tag });
 				toast.success("Tag updated");
-				onSuccess();
+				onSuccess()
 			} catch {
 				toast.error("Failed to update tag");
 			}
 		},
-	});
+	})
 
 	return (
 		<form
@@ -714,7 +714,7 @@ function EditTagForm({
 				</form.Subscribe>
 			</DialogFooter>
 		</form>
-	);
+	)
 }
 
 function DeleteTagConfirm({
@@ -733,7 +733,7 @@ function DeleteTagConfirm({
 		onError: () => {
 			toast.error("Failed to delete tag");
 		},
-	});
+	})
 
 	return (
 		<>
@@ -757,7 +757,7 @@ function DeleteTagConfirm({
 				</Button>
 			</DialogFooter>
 		</>
-	);
+	)
 }
 
 function AlasanTab({ perusahaan }: { perusahaan: Perusahaan }) {
@@ -770,7 +770,7 @@ function AlasanTab({ perusahaan }: { perusahaan: Perusahaan }) {
 				.list(perusahaan.id)
 				.then((r) => r.data as PerusahaanAlasan[]),
 		staleTime: 0,
-	});
+	})
 
 	const [createOpen, setCreateOpen] = useState(false);
 	const [editOpen, setEditOpen] = useState(false);
@@ -778,7 +778,7 @@ function AlasanTab({ perusahaan }: { perusahaan: Perusahaan }) {
 	const [deleteOpen, setDeleteOpen] = useState(false);
 	const [deleteAlasan, setDeleteAlasan] = useState<PerusahaanAlasan | null>(
 		null,
-	);
+	)
 
 	const MAX_ALASAN = 4;
 
@@ -798,10 +798,10 @@ function AlasanTab({ perusahaan }: { perusahaan: Perusahaan }) {
 							<CreateAlasanForm
 								perusahaanId={perusahaan.id}
 								onSuccess={() => {
-									setCreateOpen(false);
+									setCreateOpen(false)
 									queryClient.invalidateQueries({
 										queryKey: ["perusahaanAlasan", perusahaan.id],
-									});
+									})
 								}}
 							/>
 						</DialogContent>
@@ -833,8 +833,8 @@ function AlasanTab({ perusahaan }: { perusahaan: Perusahaan }) {
 											size="icon-sm"
 											variant="ghost"
 											onClick={() => {
-												setEditAlasan(alasan);
-												setEditOpen(true);
+												setEditAlasan(alasan)
+												setEditOpen(true)
 											}}
 										>
 											<PencilIcon className="size-4" />
@@ -843,8 +843,8 @@ function AlasanTab({ perusahaan }: { perusahaan: Perusahaan }) {
 											size="icon-sm"
 											variant="ghost"
 											onClick={() => {
-												setDeleteAlasan(alasan);
-												setDeleteOpen(true);
+												setDeleteAlasan(alasan)
+												setDeleteOpen(true)
 											}}
 										>
 											<TrashIcon className="size-4" />
@@ -863,11 +863,11 @@ function AlasanTab({ perusahaan }: { perusahaan: Perusahaan }) {
 						<EditAlasanForm
 							alasan={editAlasan}
 							onSuccess={() => {
-								setEditOpen(false);
-								setEditAlasan(null);
+								setEditOpen(false)
+								setEditAlasan(null)
 								queryClient.invalidateQueries({
 									queryKey: ["perusahaanAlasan", perusahaan.id],
-								});
+								})
 							}}
 						/>
 					)}
@@ -880,18 +880,18 @@ function AlasanTab({ perusahaan }: { perusahaan: Perusahaan }) {
 						<DeleteAlasanConfirm
 							alasan={deleteAlasan}
 							onSuccess={() => {
-								setDeleteOpen(false);
-								setDeleteAlasan(null);
+								setDeleteOpen(false)
+								setDeleteAlasan(null)
 								queryClient.invalidateQueries({
 									queryKey: ["perusahaanAlasan", perusahaan.id],
-								});
+								})
 							}}
 						/>
 					)}
 				</DialogContent>
 			</Dialog>
 		</div>
-	);
+	)
 }
 
 function CreateAlasanForm({
@@ -909,14 +909,14 @@ function CreateAlasanForm({
 					perusahaanId,
 					alasan: value.alasan,
 					sortOrder: value.sortOrder,
-				});
+				})
 				toast.success("Reason added");
-				onSuccess();
+				onSuccess()
 			} catch {
 				toast.error("Failed to add reason");
 			}
 		},
-	});
+	})
 
 	return (
 		<form
@@ -979,7 +979,7 @@ function CreateAlasanForm({
 				</form.Subscribe>
 			</DialogFooter>
 		</form>
-	);
+	)
 }
 
 function EditAlasanForm({
@@ -999,14 +999,14 @@ function EditAlasanForm({
 				await api.perusahaanAlasan.update(alasan.id, {
 					alasan: value.alasan,
 					sortOrder: value.sortOrder,
-				});
+				})
 				toast.success("Reason updated");
-				onSuccess();
+				onSuccess()
 			} catch {
 				toast.error("Failed to update reason");
 			}
 		},
-	});
+	})
 
 	return (
 		<form
@@ -1066,7 +1066,7 @@ function EditAlasanForm({
 				</form.Subscribe>
 			</DialogFooter>
 		</form>
-	);
+	)
 }
 
 function DeleteAlasanConfirm({
@@ -1085,7 +1085,7 @@ function DeleteAlasanConfirm({
 		onError: () => {
 			toast.error("Failed to delete reason");
 		},
-	});
+	})
 
 	return (
 		<>
@@ -1109,7 +1109,7 @@ function DeleteAlasanConfirm({
 				</Button>
 			</DialogFooter>
 		</>
-	);
+	)
 }
 
 function LayananTab({ perusahaan }: { perusahaan: Perusahaan }) {
@@ -1122,17 +1122,17 @@ function LayananTab({ perusahaan }: { perusahaan: Perusahaan }) {
 				.list(perusahaan.id)
 				.then((r) => r.data as PerusahaanLayanan[]),
 		staleTime: 0,
-	});
+	})
 
 	const [createOpen, setCreateOpen] = useState(false);
 	const [editOpen, setEditOpen] = useState(false);
 	const [editLayanan, setEditLayanan] = useState<PerusahaanLayanan | null>(
 		null,
-	);
+	)
 	const [deleteOpen, setDeleteOpen] = useState(false);
 	const [deleteLayanan, setDeleteLayanan] = useState<PerusahaanLayanan | null>(
 		null,
-	);
+	)
 
 	return (
 		<div className="flex flex-col gap-6">
@@ -1149,10 +1149,10 @@ function LayananTab({ perusahaan }: { perusahaan: Perusahaan }) {
 						<CreateLayananForm
 							perusahaanId={perusahaan.id}
 							onSuccess={() => {
-								setCreateOpen(false);
+								setCreateOpen(false)
 								queryClient.invalidateQueries({
 									queryKey: ["perusahaanLayanan", perusahaan.id],
-								});
+								})
 							}}
 						/>
 					</DialogContent>
@@ -1190,8 +1190,8 @@ function LayananTab({ perusahaan }: { perusahaan: Perusahaan }) {
 											size="icon-sm"
 											variant="ghost"
 											onClick={() => {
-												setEditLayanan(layanan);
-												setEditOpen(true);
+												setEditLayanan(layanan)
+												setEditOpen(true)
 											}}
 										>
 											<PencilIcon className="size-4" />
@@ -1200,8 +1200,8 @@ function LayananTab({ perusahaan }: { perusahaan: Perusahaan }) {
 											size="icon-sm"
 											variant="ghost"
 											onClick={() => {
-												setDeleteLayanan(layanan);
-												setDeleteOpen(true);
+												setDeleteLayanan(layanan)
+												setDeleteOpen(true)
 											}}
 										>
 											<TrashIcon className="size-4" />
@@ -1220,11 +1220,11 @@ function LayananTab({ perusahaan }: { perusahaan: Perusahaan }) {
 						<EditLayananForm
 							layanan={editLayanan}
 							onSuccess={() => {
-								setEditOpen(false);
-								setEditLayanan(null);
+								setEditOpen(false)
+								setEditLayanan(null)
 								queryClient.invalidateQueries({
 									queryKey: ["perusahaanLayanan", perusahaan.id],
-								});
+								})
 							}}
 						/>
 					)}
@@ -1237,18 +1237,18 @@ function LayananTab({ perusahaan }: { perusahaan: Perusahaan }) {
 						<DeleteLayananConfirm
 							layanan={deleteLayanan}
 							onSuccess={() => {
-								setDeleteOpen(false);
-								setDeleteLayanan(null);
+								setDeleteOpen(false)
+								setDeleteLayanan(null)
 								queryClient.invalidateQueries({
 									queryKey: ["perusahaanLayanan", perusahaan.id],
-								});
+								})
 							}}
 						/>
 					)}
 				</DialogContent>
 			</Dialog>
 		</div>
-	);
+	)
 }
 
 function CreateLayananForm({
@@ -1268,14 +1268,14 @@ function CreateLayananForm({
 					perusahaanId,
 					image: imageUrl || undefined,
 					namaLayanan: value.namaLayanan,
-				});
+				})
 				toast.success("Service added");
-				onSuccess();
+				onSuccess()
 			} catch {
 				toast.error("Failed to add service");
 			}
 		},
-	});
+	})
 
 	return (
 		<form
@@ -1330,7 +1330,7 @@ function CreateLayananForm({
 				</form.Subscribe>
 			</DialogFooter>
 		</form>
-	);
+	)
 }
 
 function EditLayananForm({
@@ -1351,14 +1351,14 @@ function EditLayananForm({
 				await api.perusahaanLayanan.update(layanan.id, {
 					image: imageUrl || undefined,
 					namaLayanan: value.namaLayanan,
-				});
+				})
 				toast.success("Service updated");
-				onSuccess();
+				onSuccess()
 			} catch {
 				toast.error("Failed to update service");
 			}
 		},
-	});
+	})
 
 	return (
 		<form
@@ -1411,7 +1411,7 @@ function EditLayananForm({
 				</form.Subscribe>
 			</DialogFooter>
 		</form>
-	);
+	)
 }
 
 function DeleteLayananConfirm({
@@ -1430,7 +1430,7 @@ function DeleteLayananConfirm({
 		onError: () => {
 			toast.error("Failed to delete service");
 		},
-	});
+	})
 
 	return (
 		<>
@@ -1454,7 +1454,7 @@ function DeleteLayananConfirm({
 				</Button>
 			</DialogFooter>
 		</>
-	);
+	)
 }
 
 function PerusahaanPage() {
@@ -1464,7 +1464,7 @@ function PerusahaanPage() {
 		queryKey: ["perusahaan", nama],
 		queryFn: () => api.perusahaan.get(nama).then((r) => r.data as Perusahaan),
 		staleTime: 0,
-	});
+	})
 
 	if (isLoading) {
 		return (
@@ -1481,7 +1481,7 @@ function PerusahaanPage() {
 					</CardContent>
 				</Card>
 			</div>
-		);
+		)
 	}
 
 	if (!perusahaanData) {
@@ -1499,7 +1499,7 @@ function PerusahaanPage() {
 					</CardContent>
 				</Card>
 			</div>
-		);
+		)
 	}
 
 	return (
@@ -1537,5 +1537,5 @@ function PerusahaanPage() {
 				</TabsContent>
 			</Tabs>
 		</div>
-	);
+	)
 }

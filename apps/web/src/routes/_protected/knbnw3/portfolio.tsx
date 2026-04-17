@@ -27,7 +27,7 @@ import {
 
 import { api } from "@/lib/api";
 
-export const Route = createFileRoute("/_protected/admin/portfolio")({
+export const Route = createFileRoute("/_protected/knbnw3/portfolio")({
 	component: PortfolioPage,
 });
 
@@ -73,7 +73,7 @@ function ImageUpload({
 		try {
 			const url = await api.upload.uploadFile(file, "portfolio", (p) => {
 				setProgress(p);
-			});
+			})
 			onChange(url);
 			toast.success("Image uploaded");
 		} catch {
@@ -83,7 +83,7 @@ function ImageUpload({
 			setUploading(false);
 			onUploadingChange?.(false);
 		}
-	};
+	}
 
 	return (
 		<div className="flex flex-col gap-3">
@@ -132,19 +132,19 @@ function ImageUpload({
 				/>
 			)}
 		</div>
-	);
+	)
 }
 
 function PortfolioPage() {
 	const { data: portfolioList } = useQuery({
 		queryKey: ["portfolio"],
 		queryFn: () => api.portfolio.list().then((r) => r.data as Portfolio[]),
-	});
+	})
 
 	const { data: kategoriList } = useQuery({
 		queryKey: ["kategori"],
 		queryFn: () => api.kategori.list().then((r) => r.data as Kategori[]),
-	});
+	})
 
 	const [createOpen, setCreateOpen] = useState(false);
 	const [editOpen, setEditOpen] = useState(false);
@@ -152,7 +152,7 @@ function PortfolioPage() {
 	const [deleteOpen, setDeleteOpen] = useState(false);
 	const [deletePortfolio, setDeletePortfolio] = useState<Portfolio | null>(
 		null,
-	);
+	)
 
 	return (
 		<div className="flex flex-col gap-6">
@@ -188,7 +188,7 @@ function PortfolioPage() {
 							portfolioList.map((item) => {
 								const kategori = kategoriList?.find(
 									(k) => k.id === item.kategoriId,
-								);
+								)
 								return (
 									<div
 										key={item.id}
@@ -216,8 +216,8 @@ function PortfolioPage() {
 												size="icon-sm"
 												variant="ghost"
 												onClick={() => {
-													setEditPortfolio(item);
-													setEditOpen(true);
+													setEditPortfolio(item)
+													setEditOpen(true)
 												}}
 											>
 												<PencilIcon className="size-4" />
@@ -226,15 +226,15 @@ function PortfolioPage() {
 												size="icon-sm"
 												variant="ghost"
 												onClick={() => {
-													setDeletePortfolio(item);
-													setDeleteOpen(true);
+													setDeletePortfolio(item)
+													setDeleteOpen(true)
 												}}
 											>
 												<TrashIcon className="size-4" />
 											</Button>
 										</div>
 									</div>
-								);
+								)
 							})
 						)}
 					</div>
@@ -248,8 +248,8 @@ function PortfolioPage() {
 							portfolio={editPortfolio}
 							kategoriList={kategoriList || []}
 							onSuccess={() => {
-								setEditOpen(false);
-								setEditPortfolio(null);
+								setEditOpen(false)
+								setEditPortfolio(null)
 							}}
 						/>
 					)}
@@ -262,7 +262,7 @@ function PortfolioPage() {
 						<DeleteConfirm
 							portfolio={deletePortfolio}
 							onSuccess={() => {
-								setDeleteOpen(false);
+								setDeleteOpen(false)
 								setDeletePortfolio(null);
 							}}
 						/>
@@ -270,7 +270,7 @@ function PortfolioPage() {
 				</DialogContent>
 			</Dialog>
 		</div>
-	);
+	)
 }
 
 function CreateForm({
@@ -300,15 +300,15 @@ function CreateForm({
 					image: imageUrl || undefined,
 					alamat: value.alamat || undefined,
 					tahun: value.tahun || undefined,
-				});
+				})
 				toast.success("Portfolio created");
 				queryClient.invalidateQueries({ queryKey: ["portfolio"] });
-				onSuccess();
+				onSuccess()
 			} catch {
 				toast.error("Failed to create portfolio");
 			}
 		},
-	});
+	})
 
 	return (
 		<form
@@ -426,7 +426,7 @@ function CreateForm({
 				</form.Subscribe>
 			</DialogFooter>
 		</form>
-	);
+	)
 }
 
 function EditForm({
@@ -458,15 +458,15 @@ function EditForm({
 					image: imageUrl || undefined,
 					alamat: value.alamat || undefined,
 					tahun: value.tahun || undefined,
-				});
+				})
 				toast.success("Portfolio updated");
 				queryClient.invalidateQueries({ queryKey: ["portfolio"] });
-				onSuccess();
+				onSuccess()
 			} catch {
 				toast.error("Failed to update portfolio");
 			}
 		},
-	});
+	})
 
 	return (
 		<form
@@ -584,7 +584,7 @@ function EditForm({
 				</form.Subscribe>
 			</DialogFooter>
 		</form>
-	);
+	)
 }
 
 function DeleteConfirm({
@@ -605,7 +605,7 @@ function DeleteConfirm({
 		onError: () => {
 			toast.error("Failed to delete portfolio");
 		},
-	});
+	})
 
 	return (
 		<>
@@ -629,5 +629,5 @@ function DeleteConfirm({
 				</Button>
 			</DialogFooter>
 		</>
-	);
+	)
 }
