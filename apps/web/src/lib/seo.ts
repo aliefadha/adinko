@@ -4,7 +4,7 @@ export const SITE_CONFIG = {
 	defaultTitle:
 		"Adinko | Jasa Rumput Sintetis & Pembuatan Lapangan Olahraga Pekanbaru",
 	defaultDescription:
-		"Adinko menyediakan jasa rumput sintetis untuk taman, lapangan olahraga, dan playground di Pekanbaru dengan kualitas tinggi yang telah dipercaya oleh berbagai klien..",
+		"Adinko menyediakan jasa rumput sintetis untuk taman, lapangan olahraga, dan playground di Pekanbaru dengan kualitas tinggi.",
 	whatsapp: "6285264456566",
 	whatsappUrl: "https://wa.me/6285264456566",
 	address:
@@ -25,7 +25,7 @@ type HeadEntry = {
 };
 
 type HeadOutput = {
-	title?: string;
+	title: string;
 	meta: HeadEntry[];
 	links: HeadEntry[];
 };
@@ -51,6 +51,7 @@ export function createPageMeta({
 	return {
 		title: fullTitle,
 		meta: [
+			{ title: fullTitle },
 			{ charSet: "utf-8" },
 			{ name: "viewport", content: "width=device-width, initial-scale=1" },
 			{ name: "robots", content: "index, follow" },

@@ -14,10 +14,10 @@ const TanStackRouterDevtools =
 	process.env.NODE_ENV === "production"
 		? () => null
 		: lazy(() =>
-				import("@tanstack/react-router-devtools").then((res) => ({
-					default: res.TanStackRouterDevtools,
-				})),
-			);
+			import("@tanstack/react-router-devtools").then((res) => ({
+				default: res.TanStackRouterDevtools,
+			})),
+		);
 
 export interface RouterAppContext {
 	session: {
