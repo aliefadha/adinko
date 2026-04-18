@@ -25,7 +25,6 @@ type HeadEntry = {
 };
 
 type HeadOutput = {
-	title: string;
 	meta: HeadEntry[];
 	links: HeadEntry[];
 };
@@ -49,7 +48,6 @@ export function createPageMeta({
 	const ogImage = image ?? `${SITE_CONFIG.baseUrl}/og-root.webp`;
 
 	return {
-		title: fullTitle,
 		meta: [
 			{ title: fullTitle },
 			{ charSet: "utf-8" },

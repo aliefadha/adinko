@@ -41,7 +41,17 @@ export const testimoni = sqliteTable("testimoni", {
 export const layanan = sqliteTable("layanan", {
 	id: text("id").primaryKey(),
 	title: text("title").notNull(),
-	image: text("image"),
+});
+
+export const layananImage = sqliteTable("layanan_image", {
+	id: text("id").primaryKey(),
+	layananId: text("layanan_id")
+		.notNull()
+		.references(() => layanan.id, { onDelete: "cascade" }),
+	image: text("image").notNull(),
+	createdAt: integer("created_at", { mode: "timestamp_ms" })
+		.default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+		.notNull(),
 });
 
 export const kontak = sqliteTable("kontak", {
@@ -68,5 +78,16 @@ export const testimoniRelations = relations(testimoni, ({ one }) => ({
 	kategori: one(kategori, {
 		fields: [testimoni.kategoriId],
 		references: [kategori.id],
+	}),
+}));
+
+export const layananRelations = relations(layanan, ({ many }) => ({
+	images: many(layananImage),
+}));
+
+export const layananImageRelations = relations(layananImage, ({ one }) => ({
+	layanan: one(layanan, {
+		fields: [layananImage.layananId],
+		references: [layanan.id],
 	}),
 }));

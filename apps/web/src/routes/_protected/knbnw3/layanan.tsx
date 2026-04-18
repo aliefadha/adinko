@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "@tanstack/react-form";
-import { BriefcaseIcon, PencilIcon, TrashIcon } from "lucide-react";
+import { BriefcaseIcon, PencilIcon, TrashIcon, PlusIcon, XIcon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -31,22 +31,26 @@ export const Route = createFileRoute("/_protected/knbnw3/layanan")({
 	component: LayananPage,
 });
 
+type LayananImage = {
+	id: string;
+	image: string;
+};
+
 type Layanan = {
 	id: string;
 	title: string;
-	image: string | null;
+	images: LayananImage[];
 };
 
-function ImageUpload({
-	value,
+function ImageUploader({
+	values,
 	onChange,
 	onUploadingChange,
 }: {
-	value: string;
-	onChange: (url: string) => void;
+	values: { id: string; image: string }[];
+	onChange: (images: { id: string; image: string }[]) => void;
 	onUploadingChange?: (uploading: boolean) => void;
 }) {
-	const [preview, setPreview] = useState<string | null>(value || null);
 	const [uploading, setUploading] = useState(false);
 	const [progress, setProgress] = useState(0);
 	const inputId = `file-upload-layanan-${Math.random().toString(36).slice(2)}`;
@@ -55,7 +59,6 @@ function ImageUpload({
 		const file = e.target.files?.[0];
 		if (!file) return;
 
-		setPreview(URL.createObjectURL(file));
 		setUploading(true);
 		setProgress(0);
 		onUploadingChange?.(true);
@@ -63,73 +66,73 @@ function ImageUpload({
 		try {
 			const url = await api.upload.uploadFile(file, "layanan", (p) => {
 				setProgress(p);
-			})
-			onChange(url);
+			});
+			onChange([...values, { id: Math.random().toString(36).slice(2), image: url }]);
 			toast.success("Image uploaded");
 		} catch {
 			toast.error("Failed to upload image");
-			setPreview(null);
 		} finally {
 			setUploading(false);
 			onUploadingChange?.(false);
 		}
-	}
+	};
+
+	const removeImage = (id: string) => {
+		onChange(values.filter((v) => v.id !== id));
+	};
 
 	return (
 		<div className="flex flex-col gap-3">
-			<Label>Image</Label>
-			<div className="flex items-center gap-4">
-				<input
-					type="file"
-					id={inputId}
-					accept="image/*"
-					onChange={handleFileChange}
-					className="hidden"
-				/>
-				<label
-					htmlFor={inputId}
-					className="cursor-pointer inline-flex items-center justify-center rounded-md text-sm font-medium border border-input bg-background hover:bg-accent hover:text-accent-foreground px-4 py-2"
-				>
-					Choose file
-				</label>
-				{preview && (
-					<img
-						src={preview}
-						alt="Preview"
-						className="size-16 object-cover border rounded-md"
-					/>
-				)}
-			</div>
-			{uploading && (
-				<div className="flex flex-col gap-1">
-					<div className="flex items-center justify-between text-xs">
-						<span className="text-muted-foreground">Uploading...</span>
-						<span className="font-medium">{progress}%</span>
-					</div>
-					<div className="h-2 bg-muted rounded-full overflow-hidden">
-						<div
-							className="h-full bg-primary transition-all duration-300 ease-linear"
-							style={{ width: `${progress}%` }}
+			<Label>Images</Label>
+			<div className="flex flex-wrap gap-3">
+				{values.map((v) => (
+					<div key={v.id} className="relative group">
+						<img
+							src={v.image}
+							alt=""
+							className="size-16 object-cover border rounded-md"
 						/>
+						<button
+							type="button"
+							onClick={() => removeImage(v.id)}
+							className="absolute -top-2 -right-2 size-5 bg-destructive text-destructive-foreground rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+						>
+							<XIcon className="size-3" />
+						</button>
 					</div>
+				))}
+				<div>
+					<input
+						type="file"
+						id={inputId}
+						accept="image/*"
+						onChange={handleFileChange}
+						className="hidden"
+					/>
+					<label
+						htmlFor={inputId}
+						className="cursor-pointer inline-flex items-center justify-center rounded-md text-sm font-medium border border-input bg-background hover:bg-accent hover:text-accent-foreground size-16 flex-col gap-1"
+					>
+						{uploading ? (
+							<span className="text-xs">{progress}%</span>
+						) : (
+							<>
+								<PlusIcon className="size-4" />
+								<span className="text-xs">Add</span>
+							</>
+						)}
+					</label>
 				</div>
-			)}
-			{value && !preview && !uploading && (
-				<img
-					src={value}
-					alt="Current"
-					className="size-16 object-cover border rounded-md"
-				/>
-			)}
+			</div>
 		</div>
-	)
+	);
 }
 
 function LayananPage() {
 	const { data: layananList } = useQuery({
 		queryKey: ["layanan"],
 		queryFn: () => api.layanan.list().then((r) => r.data as Layanan[]),
-	})
+	});
 
 	const [createOpen, setCreateOpen] = useState(false);
 	const [editOpen, setEditOpen] = useState(false);
@@ -171,13 +174,29 @@ function LayananPage() {
 									className="flex items-center justify-between border p-3"
 								>
 									<div className="flex items-center gap-3">
-										{item.image && (
-											<img
-												src={item.image}
-												alt={item.title}
-												className="size-16 rounded object-cover border"
-											/>
-										)}
+										<div className="flex items-center gap-2">
+											{item.images && item.images.length > 0 ? (
+												<>
+													{item.images.slice(0, 3).map((img) => (
+														<img
+															key={img.id}
+															src={img.image}
+															alt=""
+															className="size-16 rounded object-cover border"
+														/>
+													))}
+													{item.images.length > 3 && (
+														<div className="size-16 rounded object-cover border bg-muted flex items-center justify-center text-xs text-muted-foreground">
+															+{item.images.length - 3}
+														</div>
+													)}
+												</>
+											) : (
+												<div className="size-16 rounded object-cover border bg-muted flex items-center justify-center text-xs text-muted-foreground">
+													No image
+												</div>
+											)}
+										</div>
 										<span>{item.title}</span>
 									</div>
 									<div className="flex gap-2">
@@ -185,8 +204,8 @@ function LayananPage() {
 											size="icon-sm"
 											variant="ghost"
 											onClick={() => {
-												setEditLayanan(item)
-												setEditOpen(true)
+												setEditLayanan(item);
+												setEditOpen(true);
 											}}
 										>
 											<PencilIcon className="size-4" />
@@ -195,8 +214,8 @@ function LayananPage() {
 											size="icon-sm"
 											variant="ghost"
 											onClick={() => {
-												setDeleteLayanan(item)
-												setDeleteOpen(true)
+												setDeleteLayanan(item);
+												setDeleteOpen(true);
 											}}
 										>
 											<TrashIcon className="size-4" />
@@ -215,8 +234,8 @@ function LayananPage() {
 						<EditForm
 							layanan={editLayanan}
 							onSuccess={() => {
-								setEditOpen(false)
-								setEditLayanan(null)
+								setEditOpen(false);
+								setEditLayanan(null);
 							}}
 						/>
 					)}
@@ -229,20 +248,20 @@ function LayananPage() {
 						<DeleteConfirm
 							layanan={deleteLayanan}
 							onSuccess={() => {
-								setDeleteOpen(false)
-								setDeleteLayanan(null)
+								setDeleteOpen(false);
+								setDeleteLayanan(null);
 							}}
 						/>
 					)}
 				</DialogContent>
 			</Dialog>
 		</div>
-	)
+	);
 }
 
 function CreateForm({ onSuccess }: { onSuccess: () => void }) {
 	const queryClient = useQueryClient();
-	const [imageUrl, setImageUrl] = useState("");
+	const [images, setImages] = useState<{ id: string; image: string }[]>([]);
 	const [uploading, setUploading] = useState(false);
 	const form = useForm({
 		defaultValues: {
@@ -252,16 +271,16 @@ function CreateForm({ onSuccess }: { onSuccess: () => void }) {
 			try {
 				await api.layanan.create({
 					title: value.title,
-					image: imageUrl || undefined,
-				})
+					images: images.map((i) => i.image),
+				});
 				toast.success("Layanan created");
 				queryClient.invalidateQueries({ queryKey: ["layanan"] });
-				onSuccess()
+				onSuccess();
 			} catch {
 				toast.error("Failed to create layanan");
 			}
 		},
-	})
+	});
 
 	return (
 		<form
@@ -292,9 +311,9 @@ function CreateForm({ onSuccess }: { onSuccess: () => void }) {
 				)}
 			</form.Field>
 
-			<ImageUpload
-				value={imageUrl}
-				onChange={setImageUrl}
+			<ImageUploader
+				values={images}
+				onChange={setImages}
 				onUploadingChange={setUploading}
 			/>
 
@@ -311,7 +330,7 @@ function CreateForm({ onSuccess }: { onSuccess: () => void }) {
 				</form.Subscribe>
 			</DialogFooter>
 		</form>
-	)
+	);
 }
 
 function EditForm({
@@ -322,7 +341,9 @@ function EditForm({
 	onSuccess: () => void;
 }) {
 	const queryClient = useQueryClient();
-	const [imageUrl, setImageUrl] = useState(layanan.image || "");
+	const [images, setImages] = useState<{ id: string; image: string }[]>(
+		layanan.images || [],
+	);
 	const [uploading, setUploading] = useState(false);
 	const form = useForm({
 		defaultValues: {
@@ -332,16 +353,16 @@ function EditForm({
 			try {
 				await api.layanan.update(layanan.id, {
 					title: value.title,
-					image: imageUrl || undefined,
-				})
+					images: images.map((i) => i.image),
+				});
 				toast.success("Layanan updated");
 				queryClient.invalidateQueries({ queryKey: ["layanan"] });
-				onSuccess()
+				onSuccess();
 			} catch {
 				toast.error("Failed to update layanan");
 			}
 		},
-	})
+	});
 
 	return (
 		<form
@@ -372,9 +393,9 @@ function EditForm({
 				)}
 			</form.Field>
 
-			<ImageUpload
-				value={imageUrl}
-				onChange={setImageUrl}
+			<ImageUploader
+				values={images}
+				onChange={setImages}
 				onUploadingChange={setUploading}
 			/>
 
@@ -391,7 +412,7 @@ function EditForm({
 				</form.Subscribe>
 			</DialogFooter>
 		</form>
-	)
+	);
 }
 
 function DeleteConfirm({
@@ -412,7 +433,7 @@ function DeleteConfirm({
 		onError: () => {
 			toast.error("Failed to delete layanan");
 		},
-	})
+	});
 
 	return (
 		<>
@@ -436,5 +457,5 @@ function DeleteConfirm({
 				</Button>
 			</DialogFooter>
 		</>
-	)
+	);
 }

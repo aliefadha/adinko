@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import { useCallback, useRef, useState } from "react";
 
 import { createPageMeta } from "@/lib/seo";
 import { useKontak } from "@/hooks/use-kontak";
@@ -15,7 +16,8 @@ type Perusahaan = {
 	logo: string | null;
 };
 type PerusahaanTag = { id: string; perusahaanId: string; tag: string };
-type Layanan = { id: string; title: string; image: string | null };
+type LayananImage = { id: string; image: string };
+type Layanan = { id: string; title: string; images: LayananImage[] };
 
 export const Route = createFileRoute("/_public/layanan")({
 	head: () =>
@@ -273,33 +275,114 @@ function LayananGrid() {
 	);
 }
 
+function ImageCarousel({ images }: { images: LayananImage[] }) {
+	const scrollRef = useRef<HTMLDivElement>(null);
+	const [activeIndex, setActiveIndex] = useState(0);
+
+	const checkScroll = useCallback(() => {
+		const el = scrollRef.current;
+		if (!el) return;
+		const index = Math.round(el.scrollLeft / el.clientWidth);
+		setActiveIndex(index);
+	}, []);
+
+	const scroll = (dir: "left" | "right") => {
+		const el = scrollRef.current;
+		if (!el) return;
+		const amount = el.clientWidth;
+		el.scrollBy({ left: dir === "right" ? amount : -amount, behavior: "smooth" });
+	};
+
+	if (images.length === 0) {
+		return (
+			<div className="w-full h-44 bg-gray-200 flex items-center justify-center">
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					strokeWidth="1"
+					className="w-10 h-10 text-gray-400"
+				>
+					<path
+						strokeLinecap="round"
+						strokeLinejoin="round"
+						d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"
+					/>
+				</svg>
+			</div>
+		);
+	}
+
+	if (images.length === 1) {
+		return (
+			<img
+				src={images[0].image}
+				alt=""
+				className="w-full h-44 object-cover"
+			/>
+		);
+	}
+
+	const canScrollLeft = activeIndex > 0;
+	const canScrollRight = activeIndex < images.length - 1;
+
+	return (
+		<div className="relative group">
+			<style>{`
+				.carousel-scroll::-webkit-scrollbar { display: none; }
+			`}</style>
+			<div
+				ref={scrollRef}
+				onScroll={checkScroll}
+				className="flex overflow-x-auto snap-x snap-mandatory carousel-scroll"
+				style={{ scrollbarWidth: "none" }}
+			>
+				{images.map((img) => (
+					<img
+						key={img.id}
+						src={img.image}
+						alt=""
+						className="w-full h-44 object-cover snap-center shrink-0"
+					/>
+				))}
+			</div>
+			{canScrollLeft && (
+				<button
+					type="button"
+					onClick={() => scroll("left")}
+					className="absolute left-2 top-1/2 -translate-y-1/2 size-8 rounded-full bg-white/80 shadow flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white"
+				>
+					<ChevronLeftIcon className="size-4" />
+				</button>
+			)}
+			{canScrollRight && (
+				<button
+					type="button"
+					onClick={() => scroll("right")}
+					className="absolute right-2 top-1/2 -translate-y-1/2 size-8 rounded-full bg-white/80 shadow flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white"
+				>
+					<ChevronRightIcon className="size-4" />
+				</button>
+			)}
+			{images.length > 1 && (
+				<div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1">
+					{images.map((_, i) => (
+						<div
+							key={i}
+							className={`size-1.5 rounded-full transition-colors ${i === activeIndex ? "bg-white" : "bg-white/50"}`}
+						/>
+					))}
+				</div>
+			)}
+		</div>
+	);
+}
+
 function LayananCard({ item }: { item: Layanan }) {
 	return (
 		<div className="rounded-2xl overflow-hidden bg-white border border-gray-100 shadow-sm">
-			{item.image ? (
-				<img
-					src={item.image}
-					alt={item.title}
-					className="w-full h-44 object-cover"
-				/>
-			) : (
-				<div className="w-full h-44 bg-gray-200 flex items-center justify-center">
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						strokeWidth="1"
-						className="w-10 h-10 text-gray-400"
-					>
-						<path
-							strokeLinecap="round"
-							strokeLinejoin="round"
-							d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"
-						/>
-					</svg>
-				</div>
-			)}
+			<ImageCarousel images={item.images} />
 			<div className="p-4">
 				<p className="text-sm font-semibold text-gray-900 pb-4">{item.title}</p>
 			</div>

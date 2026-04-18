@@ -123,14 +123,14 @@ const api = {
 			fetch(`${env.VITE_SERVER_URL}/api/layanan/${id}`, {
 				credentials: "include",
 			}).then((r) => r.json()),
-		create: (data: { title: string; image?: string }) =>
+		create: (data: { title: string; images?: string[] }) =>
 			fetch(`${env.VITE_SERVER_URL}/api/layanan`, {
 				method: "POST",
 				credentials: "include",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify(data),
 			}).then((r) => r.json()),
-		update: (id: string, data: { title?: string; image?: string }) =>
+		update: (id: string, data: { title?: string; images?: string[] }) =>
 			fetch(`${env.VITE_SERVER_URL}/api/layanan/${id}`, {
 				method: "PUT",
 				credentials: "include",

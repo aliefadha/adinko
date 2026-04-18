@@ -10,7 +10,14 @@ const app = new Hono();
 app.get("/", async (c) => {
 	const db = createDb();
 	const result = await db.select().from(schema.layanan);
-	return c.json({ data: result });
+	const images = await db.select().from(schema.layananImage);
+
+	const resultWithImages = result.map((layanan) => ({
+		...layanan,
+		images: images.filter((img) => img.layananId === layanan.id),
+	}));
+
+	return c.json({ data: resultWithImages });
 });
 
 app.get("/:id", async (c) => {
@@ -21,7 +28,13 @@ app.get("/:id", async (c) => {
 		.from(schema.layanan)
 		.where(eq(schema.layanan.id, id));
 	if (!result[0]) return c.json({ data: null }, 404);
-	return c.json({ data: result[0] });
+
+	const images = await db
+		.select()
+		.from(schema.layananImage)
+		.where(eq(schema.layananImage.layananId, id));
+
+	return c.json({ data: { ...result[0], images } });
 });
 
 app.post("/", async (c) => {
@@ -29,7 +42,7 @@ app.post("/", async (c) => {
 	if (authSession instanceof Response) return authSession;
 
 	const db = createDb();
-	const { title, image } = await c.req.json();
+	const { title, images } = await c.req.json();
 
 	if (!title) return c.json({ error: "title is required" }, 400);
 
@@ -37,14 +50,28 @@ app.post("/", async (c) => {
 	await db.insert(schema.layanan).values({
 		id,
 		title,
-		image,
 	});
+
+	if (images && Array.isArray(images)) {
+		for (const img of images) {
+			await db.insert(schema.layananImage).values({
+				id: randomUUID(),
+				layananId: id,
+				image: img,
+			});
+		}
+	}
 
 	const created = await db
 		.select()
 		.from(schema.layanan)
 		.where(eq(schema.layanan.id, id));
-	return c.json({ data: created[0] }, 201);
+	const createdImages = await db
+		.select()
+		.from(schema.layananImage)
+		.where(eq(schema.layananImage.layananId, id));
+
+	return c.json({ data: { ...created[0], images: createdImages } }, 201);
 });
 
 app.put("/:id", async (c) => {
@@ -53,16 +80,31 @@ app.put("/:id", async (c) => {
 
 	const db = createDb();
 	const { id } = c.req.param();
-	const { title, image } = await c.req.json();
+	const { title, images } = await c.req.json();
 
 	const updateData: Record<string, unknown> = {};
 	if (title !== undefined) updateData.title = title;
-	if (image !== undefined) updateData.image = image;
 
-	await db
-		.update(schema.layanan)
-		.set(updateData)
-		.where(eq(schema.layanan.id, id));
+	if (Object.keys(updateData).length > 0) {
+		await db
+			.update(schema.layanan)
+			.set(updateData)
+			.where(eq(schema.layanan.id, id));
+	}
+
+	if (images !== undefined && Array.isArray(images)) {
+		await db
+			.delete(schema.layananImage)
+			.where(eq(schema.layananImage.layananId, id));
+
+		for (const img of images) {
+			await db.insert(schema.layananImage).values({
+				id: randomUUID(),
+				layananId: id,
+				image: img,
+			});
+		}
+	}
 
 	const updated = await db
 		.select()
@@ -70,7 +112,13 @@ app.put("/:id", async (c) => {
 		.where(eq(schema.layanan.id, id));
 
 	if (!updated[0]) return c.json({ error: "not found" }, 404);
-	return c.json({ data: updated[0] });
+
+	const updatedImages = await db
+		.select()
+		.from(schema.layananImage)
+		.where(eq(schema.layananImage.layananId, id));
+
+	return c.json({ data: { ...updated[0], images: updatedImages } });
 });
 
 app.delete("/:id", async (c) => {
