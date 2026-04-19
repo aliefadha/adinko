@@ -57,6 +57,13 @@
       "when": 1776513530245,
       "tag": "0007_slim_black_tom",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1776583543870,
+      "tag": "0008_sweet_agent_brand",
+      "breakpoints": true
     }
   ]
 }

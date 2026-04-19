@@ -42,6 +42,7 @@ const api = {
 			image?: string;
 			alamat?: string;
 			tahun?: string;
+			images?: string[];
 		}) =>
 			fetch(`${env.VITE_SERVER_URL}/api/portfolio`, {
 				method: "POST",
@@ -58,6 +59,7 @@ const api = {
 				image?: string;
 				alamat?: string;
 				tahun?: string;
+				images?: string[];
 			},
 		) =>
 			fetch(`${env.VITE_SERVER_URL}/api/portfolio/${id}`, {

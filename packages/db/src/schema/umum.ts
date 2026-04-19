@@ -25,6 +25,17 @@ export const portfolio = sqliteTable("portfolio", {
 		.notNull(),
 });
 
+export const portfolioImage = sqliteTable("portfolio_image", {
+	id: text("id").primaryKey(),
+	portfolioId: text("portfolio_id")
+		.notNull()
+		.references(() => portfolio.id, { onDelete: "cascade" }),
+	image: text("image").notNull(),
+	createdAt: integer("created_at", { mode: "timestamp_ms" })
+		.default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+		.notNull(),
+});
+
 export const testimoni = sqliteTable("testimoni", {
 	id: text("id").primaryKey(),
 	kategoriId: text("kategori_id")
@@ -67,12 +78,23 @@ export const kategoriRelations = relations(kategori, ({ many }) => ({
 	testimonis: many(testimoni),
 }));
 
-export const portfolioRelations = relations(portfolio, ({ one }) => ({
+export const portfolioRelations = relations(portfolio, ({ one, many }) => ({
 	kategori: one(kategori, {
 		fields: [portfolio.kategoriId],
 		references: [kategori.id],
 	}),
+	images: many(portfolioImage),
 }));
+
+export const portfolioImageRelations = relations(
+	portfolioImage,
+	({ one }) => ({
+		portfolio: one(portfolio, {
+			fields: [portfolioImage.portfolioId],
+			references: [portfolio.id],
+		}),
+	}),
+);
 
 export const testimoniRelations = relations(testimoni, ({ one }) => ({
 	kategori: one(kategori, {

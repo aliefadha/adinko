@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "@tanstack/react-form";
-import { ImageIcon, PencilIcon, TrashIcon } from "lucide-react";
+import { ImageIcon, PencilIcon, PlusIcon, TrashIcon, XIcon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -31,6 +31,11 @@ export const Route = createFileRoute("/_protected/knbnw3/portfolio")({
 	component: PortfolioPage,
 });
 
+type PortfolioImage = {
+	id: string;
+	image: string;
+};
+
 type Portfolio = {
 	id: string;
 	kategoriId: string;
@@ -40,6 +45,7 @@ type Portfolio = {
 	alamat: string | null;
 	tahun: string | null;
 	createdAt: string;
+	images: PortfolioImage[];
 };
 
 type Kategori = {
@@ -47,25 +53,23 @@ type Kategori = {
 	nama: string;
 };
 
-function ImageUpload({
-	value,
+function MultiImageUpload({
+	values,
 	onChange,
 	onUploadingChange,
 }: {
-	value: string;
-	onChange: (url: string) => void;
+	values: { id: string; image: string }[];
+	onChange: (images: { id: string; image: string }[]) => void;
 	onUploadingChange?: (uploading: boolean) => void;
 }) {
-	const [preview, setPreview] = useState<string | null>(value || null);
 	const [uploading, setUploading] = useState(false);
 	const [progress, setProgress] = useState(0);
-	const inputId = `file-upload-portfolio-${Math.random().toString(36).slice(2)}`;
+	const inputId = `file-upload-portfolio-multi-${Math.random().toString(36).slice(2)}`;
 
 	const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
 		if (!file) return;
 
-		setPreview(URL.createObjectURL(file));
 		setUploading(true);
 		setProgress(0);
 		onUploadingChange?.(true);
@@ -73,66 +77,66 @@ function ImageUpload({
 		try {
 			const url = await api.upload.uploadFile(file, "portfolio", (p) => {
 				setProgress(p);
-			})
-			onChange(url);
+			});
+			onChange([...values, { id: Math.random().toString(36).slice(2), image: url }]);
 			toast.success("Image uploaded");
 		} catch {
 			toast.error("Failed to upload image");
-			setPreview(null);
 		} finally {
 			setUploading(false);
 			onUploadingChange?.(false);
 		}
-	}
+	};
+
+	const removeImage = (id: string) => {
+		onChange(values.filter((v) => v.id !== id));
+	};
 
 	return (
 		<div className="flex flex-col gap-3">
-			<Label>Image</Label>
-			<div className="flex items-center gap-4">
-				<input
-					type="file"
-					id={inputId}
-					accept="image/*"
-					onChange={handleFileChange}
-					className="hidden"
-				/>
-				<label
-					htmlFor={inputId}
-					className="cursor-pointer inline-flex items-center justify-center rounded-md text-sm font-medium border border-input bg-background hover:bg-accent hover:text-accent-foreground px-4 py-2"
-				>
-					Choose file
-				</label>
-				{preview && (
-					<img
-						src={preview}
-						alt="Preview"
-						className="size-16 object-cover border rounded-md"
-					/>
-				)}
-			</div>
-			{uploading && (
-				<div className="flex flex-col gap-1">
-					<div className="flex items-center justify-between text-xs">
-						<span className="text-muted-foreground">Uploading...</span>
-						<span className="font-medium">{progress}%</span>
-					</div>
-					<div className="h-2 bg-muted rounded-full overflow-hidden">
-						<div
-							className="h-full bg-primary transition-all duration-300 ease-linear"
-							style={{ width: `${progress}%` }}
+			<Label>Additional Images</Label>
+			<div className="flex flex-wrap gap-3">
+				{values.map((v) => (
+					<div key={v.id} className="relative group">
+						<img
+							src={v.image}
+							alt=""
+							className="size-16 object-cover border rounded-md"
 						/>
+						<button
+							type="button"
+							onClick={() => removeImage(v.id)}
+							className="absolute -top-2 -right-2 size-5 bg-destructive text-destructive-foreground rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+						>
+							<XIcon className="size-3" />
+						</button>
 					</div>
+				))}
+				<div>
+					<input
+						type="file"
+						id={inputId}
+						accept="image/*"
+						onChange={handleFileChange}
+						className="hidden"
+					/>
+					<label
+						htmlFor={inputId}
+						className="cursor-pointer inline-flex items-center justify-center rounded-md text-sm font-medium border border-input bg-background hover:bg-accent hover:text-accent-foreground size-16 flex-col gap-1"
+					>
+						{uploading ? (
+							<span className="text-xs">{progress}%</span>
+						) : (
+							<>
+								<PlusIcon className="size-4" />
+								<span className="text-xs">Add</span>
+							</>
+						)}
+					</label>
 				</div>
-			)}
-			{value && !preview && !uploading && (
-				<img
-					src={value}
-					alt="Current"
-					className="size-16 object-cover border rounded-md"
-				/>
-			)}
+			</div>
 		</div>
-	)
+	);
 }
 
 function PortfolioPage() {
@@ -195,9 +199,9 @@ function PortfolioPage() {
 										className="flex items-center justify-between border p-3"
 									>
 										<div className="flex items-center gap-3">
-											{item.image && (
+											{item.images && item.images.length > 0 && (
 												<img
-													src={item.image}
+													src={item.images[0].image}
 													alt={item.title}
 													className="size-16 rounded object-cover border"
 												/>
@@ -208,6 +212,9 @@ function PortfolioPage() {
 													{kategori?.nama || "Unknown"} •{" "}
 													{item.alamat || "No alamat"} •{" "}
 													{item.tahun || "No tahun"}
+													{item.images && item.images.length > 1 && (
+														<> • {item.images.length} img</>
+													)}
 												</span>
 											</div>
 										</div>
@@ -281,7 +288,7 @@ function CreateForm({
 	onSuccess: () => void;
 }) {
 	const queryClient = useQueryClient();
-	const [imageUrl, setImageUrl] = useState("");
+	const [additionalImages, setAdditionalImages] = useState<{ id: string; image: string }[]>([]);
 	const [uploading, setUploading] = useState(false);
 	const form = useForm({
 		defaultValues: {
@@ -297,9 +304,9 @@ function CreateForm({
 					kategoriId: value.kategoriId,
 					title: value.title,
 					subtitle: value.subtitle || undefined,
-					image: imageUrl || undefined,
 					alamat: value.alamat || undefined,
 					tahun: value.tahun || undefined,
+					images: additionalImages.map((i) => i.image),
 				})
 				toast.success("Portfolio created");
 				queryClient.invalidateQueries({ queryKey: ["portfolio"] });
@@ -377,9 +384,9 @@ function CreateForm({
 				)}
 			</form.Field>
 
-			<ImageUpload
-				value={imageUrl}
-				onChange={setImageUrl}
+			<MultiImageUpload
+				values={additionalImages}
+				onChange={setAdditionalImages}
 				onUploadingChange={setUploading}
 			/>
 
@@ -439,7 +446,9 @@ function EditForm({
 	onSuccess: () => void;
 }) {
 	const queryClient = useQueryClient();
-	const [imageUrl, setImageUrl] = useState(portfolio.image || "");
+	const [additionalImages, setAdditionalImages] = useState<{ id: string; image: string }[]>(
+		portfolio.images || [],
+	);
 	const [uploading, setUploading] = useState(false);
 	const form = useForm({
 		defaultValues: {
@@ -455,9 +464,9 @@ function EditForm({
 					kategoriId: value.kategoriId,
 					title: value.title,
 					subtitle: value.subtitle || undefined,
-					image: imageUrl || undefined,
 					alamat: value.alamat || undefined,
 					tahun: value.tahun || undefined,
+					images: additionalImages.map((i) => i.image),
 				})
 				toast.success("Portfolio updated");
 				queryClient.invalidateQueries({ queryKey: ["portfolio"] });
@@ -535,9 +544,9 @@ function EditForm({
 				)}
 			</form.Field>
 
-			<ImageUpload
-				value={imageUrl}
-				onChange={setImageUrl}
+			<MultiImageUpload
+				values={additionalImages}
+				onChange={setAdditionalImages}
 				onUploadingChange={setUploading}
 			/>
 

@@ -26,7 +26,15 @@ app.get("/", async (c) => {
 			schema.kategori,
 			eq(schema.portfolio.kategoriId, schema.kategori.id),
 		);
-	return c.json({ data: result });
+
+	const images = await db.select().from(schema.portfolioImage);
+
+	const resultWithImages = result.map((p) => ({
+		...p,
+		images: images.filter((img) => img.portfolioId === p.id),
+	}));
+
+	return c.json({ data: resultWithImages });
 });
 
 app.get("/:id", async (c) => {
@@ -37,7 +45,13 @@ app.get("/:id", async (c) => {
 		.from(schema.portfolio)
 		.where(eq(schema.portfolio.id, id));
 	if (!result[0]) return c.json({ data: null }, 404);
-	return c.json({ data: result[0] });
+
+	const images = await db
+		.select()
+		.from(schema.portfolioImage)
+		.where(eq(schema.portfolioImage.portfolioId, id));
+
+	return c.json({ data: { ...result[0], images } });
 });
 
 app.post("/", async (c) => {
@@ -45,7 +59,7 @@ app.post("/", async (c) => {
 	if (authSession instanceof Response) return authSession;
 
 	const db = createDb();
-	const { kategoriId, title, subtitle, image, alamat, tahun } =
+	const { kategoriId, title, subtitle, image, alamat, tahun, images } =
 		await c.req.json();
 
 	if (!kategoriId) return c.json({ error: "kategoriId is required" }, 400);
@@ -64,11 +78,26 @@ app.post("/", async (c) => {
 		createdAt: now,
 	});
 
+	if (images && Array.isArray(images)) {
+		for (const img of images) {
+			await db.insert(schema.portfolioImage).values({
+				id: randomUUID(),
+				portfolioId: id,
+				image: img,
+			});
+		}
+	}
+
 	const created = await db
 		.select()
 		.from(schema.portfolio)
 		.where(eq(schema.portfolio.id, id));
-	return c.json({ data: created[0] }, 201);
+	const createdImages = await db
+		.select()
+		.from(schema.portfolioImage)
+		.where(eq(schema.portfolioImage.portfolioId, id));
+
+	return c.json({ data: { ...created[0], images: createdImages } }, 201);
 });
 
 app.put("/:id", async (c) => {
@@ -77,7 +106,7 @@ app.put("/:id", async (c) => {
 
 	const db = createDb();
 	const { id } = c.req.param();
-	const { kategoriId, title, subtitle, image, alamat, tahun } =
+	const { kategoriId, title, subtitle, image, alamat, tahun, images } =
 		await c.req.json();
 
 	const updateData: Record<string, unknown> = {};
@@ -88,10 +117,26 @@ app.put("/:id", async (c) => {
 	if (alamat !== undefined) updateData.alamat = alamat;
 	if (tahun !== undefined) updateData.tahun = tahun;
 
-	await db
-		.update(schema.portfolio)
-		.set(updateData)
-		.where(eq(schema.portfolio.id, id));
+	if (Object.keys(updateData).length > 0) {
+		await db
+			.update(schema.portfolio)
+			.set(updateData)
+			.where(eq(schema.portfolio.id, id));
+	}
+
+	if (images !== undefined && Array.isArray(images)) {
+		await db
+			.delete(schema.portfolioImage)
+			.where(eq(schema.portfolioImage.portfolioId, id));
+
+		for (const img of images) {
+			await db.insert(schema.portfolioImage).values({
+				id: randomUUID(),
+				portfolioId: id,
+				image: img,
+			});
+		}
+	}
 
 	const updated = await db
 		.select()
@@ -99,7 +144,13 @@ app.put("/:id", async (c) => {
 		.where(eq(schema.portfolio.id, id));
 
 	if (!updated[0]) return c.json({ error: "not found" }, 404);
-	return c.json({ data: updated[0] });
+
+	const updatedImages = await db
+		.select()
+		.from(schema.portfolioImage)
+		.where(eq(schema.portfolioImage.portfolioId, id));
+
+	return c.json({ data: { ...updated[0], images: updatedImages } });
 });
 
 app.delete("/:id", async (c) => {
